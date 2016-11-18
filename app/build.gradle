@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.zxt.dlna"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 24
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -19,29 +20,35 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:cardview-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:multidex:1.0.1'
+
     compile files('libs/cdi-api.jar')
     compile files('libs/http-2.2.1.jar')
     compile files('libs/httpclient-4.2.2.jar')
     compile files('libs/httpcore-4.2.3.jar')
     compile files('libs/javax.annotation_1.0.jar')
     compile files('libs/javax.inject.jar')
-    compile files('libs/javax.servlet-3.0.0.v201103241009.jar')
-    compile files('libs/jetty-client-8.1.9.v20130131.jar')
-    compile files('libs/jetty-continuation-8.1.9.v20130131.jar')
-    compile files('libs/jetty-http-8.1.9.v20130131.jar')
-    compile files('libs/jetty-io-8.1.9.v20130131.jar')
-    compile files('libs/jetty-security-8.1.9.v20130131.jar')
-    compile files('libs/jetty-server-8.1.9.v20130131.jar')
-    compile files('libs/jetty-servlet-8.1.9.v20130131.jar')
-    compile files('libs/jetty-util-8.1.9.v20130131.jar')
-    compile files('libs/seamless-http-1.0-alpha2.jar')
-    compile files('libs/seamless-util-1.0-alpha2.jar')
-    compile files('libs/seamless-xml-1.0-alpha2.jar')
-    compile files('libs/slf4j-api-1.6.1.jar')
-    compile files('libs/slf4j-jdk14-1.6.1.jar')
+    compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-continuation', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-http', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-io', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-security', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '8.2.0.v20160908'
+    compile group: 'org.eclipse.jetty', name: 'jetty-util', version: '8.2.0.v20160908'
+    compile files('libs/seamless-http-1.1.1.jar')
+    compile files('libs/seamless-util-1.1.1.jar')
+    compile files('libs/seamless-xml-1.1.1.jar')
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
     compile files('libs/universal-image-loader-1.8.4-with-sources.jar')
+
+    // compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+    // compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.5'
+    // compile files('libs/javax.servlet-3.0.0.v201103241009.jar')
+    // compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 }

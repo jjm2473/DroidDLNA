@@ -19,8 +19,9 @@ import android.app.Application;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.multidex.MultiDexApplication;
 
-public class BaseApplication extends Application {
+public class BaseApplication extends MultiDexApplication {
 
 	public static DeviceItem deviceItem;
 

@@ -1,7 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zxt.dlna"
-    android:versionCode="2"
-    android:versionName="2.0" >
+    package="com.zxt.dlna">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -12,10 +10,6 @@
     </uses-permission>
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" >
     </uses-permission>
-
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="21" />
 
     <application
         android:name="com.zxt.dlna.application.BaseApplication"
@@ -101,7 +95,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="" />
                 <data android:scheme="file" />
                 <data android:scheme="ftp" />
                 <data android:scheme="content" />
