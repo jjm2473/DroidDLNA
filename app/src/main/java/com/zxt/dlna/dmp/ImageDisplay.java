@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -389,7 +388,7 @@ public class ImageDisplay extends Activity implements OnClickListener,
 	private float spacing(MotionEvent event) {
 		float x = event.getX(0) - event.getX(1);
 		float y = event.getY(0) - event.getY(1);
-		return FloatMath.sqrt(x * x + y * y);
+		return (float)Math.sqrt(x * x + y * y);
 	}
 
 	private void midPoint(PointF point, MotionEvent event) {

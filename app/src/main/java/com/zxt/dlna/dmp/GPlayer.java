@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -440,11 +439,11 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
             float widthRatio = (float) videoWidth / (float) currentDisplay.getWidth();
             if (heightRatio > 1 || widthRatio > 1) {
                 if (heightRatio > widthRatio) {
-                    videoHeight = (int) FloatMath.ceil((float) videoHeight / (float) heightRatio);
-                    videoWidth = (int) FloatMath.ceil((float) videoWidth / (float) heightRatio);
+                    videoHeight = (int) Math.ceil((float) videoHeight / (float) heightRatio);
+                    videoWidth = (int) Math.ceil((float) videoWidth / (float) heightRatio);
                 } else {
-                    videoHeight = (int) FloatMath.ceil((float) videoHeight / (float) widthRatio);
-                    videoWidth = (int) FloatMath.ceil((float) videoWidth / (float) widthRatio);
+                    videoHeight = (int) Math.ceil((float) videoHeight / (float) widthRatio);
+                    videoWidth = (int) Math.ceil((float) videoWidth / (float) widthRatio);
                 }
             }
         }

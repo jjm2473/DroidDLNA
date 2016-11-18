@@ -13,7 +13,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
@@ -301,7 +300,7 @@ public class SuperImageView extends ImageView {
 	private float spacing(float x1, float y1, float x2, float y2) {
 		float x = x1 - x2;
 		float y = y1 - y2;
-		return FloatMath.sqrt(x * x + y * y);
+		return Math.sqrt(x * x + y * y);
 	}
 
 	private void doubleClick(float x, float y) {
