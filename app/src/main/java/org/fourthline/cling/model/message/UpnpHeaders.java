@@ -48,9 +48,9 @@ public class UpnpHeaders extends Headers {
         super(inputStream);
     }
 
-    public UpnpHeaders(boolean normalizeHeaders) {
+/*    public UpnpHeaders(boolean normalizeHeaders) {
         super(normalizeHeaders);
-    }
+    }*/
 
     protected void parseHeaders() {
         // This runs as late as possible and only when necessary (getter called and map is dirty)
