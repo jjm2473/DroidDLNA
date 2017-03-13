@@ -192,14 +192,12 @@ public class DevicesActivity extends Activity {
         mDevLv.setAdapter(mDevAdapter);
         mDevLv.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                    long arg3) {
-
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 if (null != mDevList && mDevList.size() > 0) {
                     BaseApplication.deviceItem = mDevList.get(arg2);
-                    mDevAdapter.notifyDataSetChanged();
+                    startActivity(new Intent(DevicesActivity.this, ContentActivity.class));
+                    // mDevAdapter.notifyDataSetChanged();
                 }
-
             }
         });
 
@@ -213,15 +211,11 @@ public class DevicesActivity extends Activity {
         mDmrLv.setAdapter(mDmrDevAdapter);
         mDmrLv.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                    long arg3) {
-
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 if (null != mDmrList && mDmrList.size() > 0) {
-
                     if (null != mDmrList.get(arg2).getDevice()
                             && null != BaseApplication.deviceItem
-                            && null != mDmrList.get(arg2).getDevice()
-                            .getDetails().getModelDetails()
+                            && null != mDmrList.get(arg2).getDevice().getDetails().getModelDetails()
                             && Utils.DMR_NAME.equals(mDmrList.get(arg2)
                             .getDevice().getDetails().getModelDetails()
                             .getModelName())
@@ -746,7 +740,6 @@ public class DevicesActivity extends Activity {
                 view = this.mInflater.inflate(R.layout.dmr_item, null);
                 holder = new DevHolder();
                 holder.filename = ((TextView) view.findViewById(R.id.dmr_name_tv));
-                holder.checkBox = ((CheckBox) view.findViewById(R.id.dmr_cb));
                 view.setTag(holder);
             } else {
                 holder = (DevHolder) view.getTag();
@@ -754,19 +747,11 @@ public class DevicesActivity extends Activity {
 
             DeviceItem item = (DeviceItem) this.deviceItems.get(position);
             holder.filename.setText(item.toString());
-            if (null != BaseApplication.deviceItem && BaseApplication.deviceItem.equals(item)) {
-                holder.checkBox.setChecked(true);
-            } else if (null != BaseApplication.dmrDeviceItem && BaseApplication.dmrDeviceItem.equals(item)) {
-                holder.checkBox.setChecked(true);
-            } else {
-                holder.checkBox.setChecked(false);
-            }
             return view;
         }
 
         public final class DevHolder {
             public TextView filename;
-            public CheckBox checkBox;
         }
 
     }

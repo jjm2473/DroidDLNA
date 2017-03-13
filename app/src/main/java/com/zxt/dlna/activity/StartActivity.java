@@ -80,15 +80,7 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_lay);
         mContext = this;
-        createFolder();
-        getVideoFilePaths();
-        createVideoThumb();
         getIp();
-    }
-
-
-    private void createFolder() {
-        FileUtil.createSDCardDir(true);
     }
 
     private void getIp() {
@@ -120,70 +112,6 @@ public class StartActivity extends Activity {
 
     }
 
-    private void getVideoFilePaths() {
-        mVideoFilePaths = new ArrayList<Map<String, String>>();
-        Cursor cursor;
-        String[] videoColumns = {
-                MediaStore.Video.Media._ID, MediaStore.Video.Media.TITLE,
-                MediaStore.Video.Media.DATA, MediaStore.Video.Media.ARTIST,
-                MediaStore.Video.Media.MIME_TYPE, MediaStore.Video.Media.SIZE,
-                MediaStore.Video.Media.DURATION, MediaStore.Video.Media.RESOLUTION
-        };
-        cursor = mContext.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                videoColumns, null, null, null);
-        if (null != cursor && cursor.moveToFirst()) {
-            do {
-                String id = ContentTree.VIDEO_PREFIX
-                        + cursor.getInt(cursor.getColumnIndex(MediaStore.Video.Media._ID));
-                String filePath = cursor.getString(cursor
-                        .getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-                Map<String, String> fileInfoMap = new HashMap<String, String>();
-                fileInfoMap.put(id, filePath);
-                mVideoFilePaths.add(fileInfoMap);
-                // Log.v(LOGTAG, "added video item " + title + "from " +
-                // filePath);
-            } while (cursor.moveToNext());
-        }
-        if (null != cursor) {
-            cursor.close();
-        }
-
-    }
-
-    private void createVideoThumb() {
-        if (null != mVideoFilePaths && mVideoFilePaths.size() > 0) {
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    for (int i = 0; i < mVideoFilePaths.size(); i++) {
-                        Set entries = mVideoFilePaths.get(i).entrySet();
-                        if (entries != null) {
-                            Iterator iterator = entries.iterator();
-                            while (iterator.hasNext()) {
-                                Map.Entry entry = (Entry) iterator.next();
-                                Object id = entry.getKey();
-                                Object filePath = entry.getValue();
-
-                                Bitmap videoThumb = ImageUtil.getThumbnailForVideo(filePath
-                                        .toString());
-                                String videoSavePath = ImageUtil.getSaveVideoFilePath(
-                                        filePath.toString(), id.toString());
-                                try {
-                                    ImageUtil.saveBitmapWithFilePathSuffix(videoThumb,
-                                            videoSavePath);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }).start();
-        }
-    }
-
     private void setIp(InetAddress inetAddress) {
         BaseApplication.setLocalIpAddress(inetAddress);
     }
@@ -194,7 +122,7 @@ public class StartActivity extends Activity {
     }
 
     private void jumpToMain() {
-        Intent intent = new Intent(StartActivity.this, IndexActivity.class);
+        Intent intent = new Intent(StartActivity.this, DevicesActivity.class);
         startActivity(intent);
         this.finish();
     }

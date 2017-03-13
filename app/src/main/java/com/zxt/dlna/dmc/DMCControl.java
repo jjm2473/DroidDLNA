@@ -19,15 +19,11 @@ import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.UDAServiceType;
 
 public class DMCControl {
-
+    private static final String TAG = "DMCControl";
     public static final int TYPE_IMAGE = 1;
-
     public static final int TYPE_AUDIO = 2;
-
     public static final int TYPE_VIDEO = 3;
-
     public static final int CUT_VOC = 0;
-
     public static final int ADD_VOC = 1;
 
     public static boolean isExit = false;
@@ -44,23 +40,18 @@ public class DMCControl {
     private String metaData;
     private boolean threadGetState = false;
     private AndroidUpnpService upnpService;
-
     private String uriString;
 
     private Handler mHandle = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
-
             switch (msg.what) {
-
                 case DMCControlMessage.ADDVOLUME: {
-
                     break;
                 }
 
                 case DMCControlMessage.CONNECTIONFAILED: {
-
                     break;
                 }
 
@@ -77,7 +68,6 @@ public class DMCControl {
                 }
 
                 case DMCControlMessage.GETMEDIA: {
-
                     break;
                 }
 
@@ -93,39 +83,32 @@ public class DMCControl {
                 }
 
                 case DMCControlMessage.GETTRANSPORTINFO: {
-
                     break;
                 }
 
                 case DMCControlMessage.GET_CURRENT_VOLUME: {
-
                     break;
                 }
 
                 case DMCControlMessage.PAUSE: {
-
                     break;
                 }
 
                 case DMCControlMessage.PLAY: {
-                    mHandle.sendEmptyMessageDelayed(DMCControlMessage.GETPOTITION,
-                            500);
+                    mHandle.sendEmptyMessageDelayed(DMCControlMessage.GETPOTITION, 500);
                     play();
                     break;
                 }
 
                 case DMCControlMessage.PLAYAUDIOFAILED: {
-
                     break;
                 }
 
                 case DMCControlMessage.PLAYIMAGEFAILED: {
-
                     break;
                 }
 
                 case DMCControlMessage.PLAYVIDEOFAILED: {
-
                     break;
                 }
 
@@ -135,12 +118,10 @@ public class DMCControl {
                     break;
                 }
                 case DMCControlMessage.REDUCEVOLUME: {
-
                     break;
                 }
 
                 case DMCControlMessage.REMOTE_NOMEDIA: {
-
                     break;
                 }
 
@@ -171,12 +152,10 @@ public class DMCControl {
                 }
 
                 case DMCControlMessage.STOP: {
-
                     break;
                 }
 
                 case DMCControlMessage.UPDATE_PLAY_TRACK: {
-
                     break;
                 }
 
@@ -235,8 +214,7 @@ public class DMCControl {
             Service localService = this.executeDeviceItem.getDevice()
                     .findService(new UDAServiceType("AVTransport"));
             if (localService != null) {
-                this.upnpService.getControlPoint().execute(
-                        new GetDeviceCapabilitiesCallback(localService));
+                this.upnpService.getControlPoint().execute(new GetDeviceCapabilitiesCallback(localService));
             } else {
             }
         } catch (Exception localException) {
@@ -249,8 +227,7 @@ public class DMCControl {
             Service localService = this.executeDeviceItem.getDevice()
                     .findService(new UDAServiceType("AVTransport"));
             if (localService != null) {
-                this.upnpService.getControlPoint().execute(
-                        new GetMediaInfoCallback(localService));
+                this.upnpService.getControlPoint().execute(new GetMediaInfoCallback(localService));
             } else {
             }
         } catch (Exception localException) {
@@ -263,8 +240,7 @@ public class DMCControl {
             Service localService = this.executeDeviceItem.getDevice()
                     .findService(new UDAServiceType("RenderingControl"));
             if (localService != null) {
-                this.upnpService.getControlPoint().execute(
-                        new GetMuteCallback(localService, mHandle));
+                this.upnpService.getControlPoint().execute(new GetMuteCallback(localService, mHandle));
             } else {
             }
         } catch (Exception localException) {
@@ -341,8 +317,7 @@ public class DMCControl {
                     .findService(new UDAServiceType("AVTransport"));
             if (localService != null) {
                 Log.e("pause", "pause");
-                this.upnpService.getControlPoint().execute(
-                        new PauseCallback(localService));
+                this.upnpService.getControlPoint().execute(new PauseCallback(localService));
             } else {
                 Log.e("null", "null");
             }
@@ -357,8 +332,7 @@ public class DMCControl {
                     .findService(new UDAServiceType("AVTransport"));
             if (localService != null) {
                 Log.e("start play", "start play");
-                this.upnpService.getControlPoint().execute(
-                        new PlayerCallback(localService, mHandle));
+                this.upnpService.getControlPoint().execute(new PlayerCallback(localService, mHandle));
             } else {
                 Log.e("null", "null");
             }
@@ -389,13 +363,12 @@ public class DMCControl {
         try {
             Device localDevice = this.executeDeviceItem.getDevice();
             Log.e("control action", "seekBarPosition");
-            Service localService = localDevice.findService(new UDAServiceType(
-                    "AVTransport"));
+            Service localService = localDevice.findService(new UDAServiceType("AVTransport"));
+
             if (localService != null) {
-                Log.e("get seekBarPosition info", "get seekBarPosition info");
+                Log.e(TAG, "get seekBarPosition info");
                 this.upnpService.getControlPoint().execute(
-                        new SeekCallback(activity, localService, paramString,
-                                mHandle));
+                        new SeekCallback(activity, localService, paramString, mHandle));
             } else {
                 Log.e("null", "null");
             }
@@ -436,10 +409,8 @@ public class DMCControl {
             Service localService = this.executeDeviceItem.getDevice()
                     .findService(new UDAServiceType("RenderingControl"));
             if (localService != null) {
-                ControlPoint localControlPoint = this.upnpService
-                        .getControlPoint();
-                localControlPoint.execute(new SetMuteCalllback(localService,
-                        paramBoolean, mHandle));
+                ControlPoint localControlPoint = this.upnpService.getControlPoint();
+                localControlPoint.execute(new SetMuteCalllback(localService, paramBoolean, mHandle));
             } else {
                 Log.e("null", "null");
             }
@@ -459,21 +430,18 @@ public class DMCControl {
         }
         Service localService = null;
         try {
-            localService = this.executeDeviceItem.getDevice().findService(
-                    new UDAServiceType("RenderingControl"));
+            localService = this.executeDeviceItem.getDevice().findService(new UDAServiceType("RenderingControl"));
             if (localService != null) {
                 if (paramInt == CUT_VOC) {
                     if (paramLong >= 0L) {
                         paramLong -= 1L;
                     } else {
-                        Toast.makeText(activity, R.string.min_voc,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.min_voc, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     paramLong += 1L;
                 }
-                this.upnpService.getControlPoint().execute(
-                        new SetVolumeCallback(localService, paramLong));
+                this.upnpService.getControlPoint().execute(new SetVolumeCallback(localService, paramLong));
             }
         } catch (Exception localException) {
             localException.printStackTrace();

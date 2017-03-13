@@ -28,11 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.zxt.dlna.activity.IndexActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-        <activity
             android:name="com.zxt.dlna.activity.DevicesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
@@ -55,12 +50,6 @@
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-        <activity
-            android:name="com.zxt.dlna.activity.AboutActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.dmp.GPlayer"

@@ -77,13 +77,11 @@ public class ControlActivity extends Activity implements OnClickListener {
                 }
                 stopProgressDialog();
             }
-            if (paramIntent.getAction().equals("com.transport.info")) {
+/*            if (paramIntent.getAction().equals("com.transport.info")) {
                 initData(paramIntent);
-            }
-            if (paramIntent.getAction().equals(Action.PLAY_ERR_VIDEO)
-                    || paramIntent.getAction().equals(Action.PLAY_ERR_AUDIO)) {
-                Toast.makeText(ControlActivity.this, R.string.media_play_err,
-                        Toast.LENGTH_SHORT).show();
+            }*/
+            if (paramIntent.getAction().equals(Action.PLAY_ERR_VIDEO) || paramIntent.getAction().equals(Action.PLAY_ERR_AUDIO)) {
+                Toast.makeText(ControlActivity.this, R.string.media_play_err, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -103,7 +101,7 @@ public class ControlActivity extends Activity implements OnClickListener {
         localIntentFilter.addAction(Action.PLAY_ERR_VIDEO);
         localIntentFilter.addAction(Action.PLAY_ERR_AUDIO);
         registerReceiver(this.updatePlayTime, localIntentFilter);
-
+        initData(getIntent());
     }
 
     @Override
@@ -143,22 +141,18 @@ public class ControlActivity extends Activity implements OnClickListener {
 
     private void initData(Intent localIntent) {
         if (null == localIntent) {
-            Toast.makeText(this, getString(R.string.not_select_dev),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.not_select_dev), Toast.LENGTH_SHORT).show();
             return;
         }
         path = localIntent.getStringExtra("playURI");
         name = localIntent.getStringExtra("name");
-        currentContentFormatMimeType = localIntent
-                .getStringExtra("currentContentFormatMimeType");
+        currentContentFormatMimeType = localIntent.getStringExtra("currentContentFormatMimeType");
         metaData = localIntent.getStringExtra("metaData");
 
         mNameTitle.setText(name);
         mAuthorName.setText(name);
 
-        if (null != path && null != currentContentFormatMimeType
-                && null != metaData) {
-
+        if (null != path && null != currentContentFormatMimeType && null != metaData) {
             isplay = true;
             startProgressDialog();
             // TODO get
@@ -166,14 +160,11 @@ public class ControlActivity extends Activity implements OnClickListener {
 
             dmrDeviceItem = BaseApplication.dmrDeviceItem;
             upnpService = BaseApplication.upnpService;
-            dmcControl = new DMCControl(this, 3, dmrDeviceItem,
-                    this.upnpService, this.path, this.metaData);
+            dmcControl = new DMCControl(this, 3, dmrDeviceItem, this.upnpService, this.path, this.metaData);
             dmcControl.getProtocolInfos(currentContentFormatMimeType);
         } else {
-            Toast.makeText(this, getString(R.string.get_data_err),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.get_data_err), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void startProgressDialog() {
@@ -217,9 +208,6 @@ public class ControlActivity extends Activity implements OnClickListener {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return true;
-        }
         return super.onKeyDown(keyCode, event);
     }
 
@@ -271,8 +259,7 @@ public class ControlActivity extends Activity implements OnClickListener {
         PlaySeekBarListener() {
         }
 
-        public void onProgressChanged(SeekBar paramSeekBar, int paramInt,
-                                      boolean paramBoolean) {
+        public void onProgressChanged(SeekBar paramSeekBar, int paramInt, boolean paramBoolean) {
         }
 
         public void onStartTrackingTouch(SeekBar paramSeekBar) {

@@ -247,21 +247,18 @@ public class ContentActivity extends Activity {
     }
 
     private void jumpToControl(ContentItem localContentItem) {
-        Intent localIntent = new Intent("com.transport.info");
+        Intent localIntent = new Intent(this, ControlActivity.class);
         localIntent.putExtra("name", localContentItem.toString());
-        localIntent.putExtra("playURI", localContentItem.getItem()
-                .getFirstResource().getValue());
-        localIntent.putExtra("currentContentFormatMimeType",
-                currentContentFormatMimeType);
+        localIntent.putExtra("playURI", localContentItem.getItem().getFirstResource().getValue());
+        localIntent.putExtra("currentContentFormatMimeType", currentContentFormatMimeType);
+
         try {
-            localIntent.putExtra("metaData",
-                    new GenerateXml().generate(localContentItem));
+            localIntent.putExtra("metaData", new GenerateXml().generate(localContentItem));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        IndexActivity.mTabHost.setCurrentTabByTag(getString(R.string.control));
-        IndexActivity.setSelect();
-        this.sendBroadcast(localIntent);
+
+        startActivity(localIntent);
     }
 
     private void jumpToImage(ContentItem localContentItem) {
@@ -313,8 +310,6 @@ public class ContentActivity extends Activity {
                 mContentList.addAll(mSaveDirectoryMap.get(mCounter - 1));
                 mContentAdapter.notifyDataSetChanged();
                 return true;
-            } else {
-                return true;
             }
         }
         return super.onKeyDown(keyCode, event);
@@ -354,20 +349,15 @@ public class ContentActivity extends Activity {
 
         private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-        public ContentAdapter(Context paramContext,
-                              ArrayList<ContentItem> paramArrayList) {
-            this.mInflater = ((LayoutInflater) paramContext
-                    .getSystemService("layout_inflater"));
+        public ContentAdapter(Context paramContext, ArrayList<ContentItem> paramArrayList) {
+
+            this.mInflater = ((LayoutInflater) paramContext.getSystemService("layout_inflater"));
             this.context = paramContext;
             this.mDeviceItems = paramArrayList;
-            imageIcon = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.icon_image);
-            videoIcon = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.icon_video);
-            audioIcon = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.icon_audio);
-            folderIcon = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.icon_folder);
+            imageIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_image);
+            videoIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_video);
+            audioIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_audio);
+            folderIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_folder);
         }
 
         public int getCount() {
@@ -450,17 +440,11 @@ public class ContentActivity extends Activity {
         }
 
         class ContentHolder {
-
             public TextView filename;
-
             public ImageView folder;
-
             public ImageView arrow;
-
             public ContentHolder() {
             }
         }
-
     }
-
 }

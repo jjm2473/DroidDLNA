@@ -54,17 +54,6 @@ public class SettingActivity extends PreferenceActivity {
         addTitleBar();
     }
 
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
-                                         Preference preference) {
-        if (preference.getKey().equals("about")) {
-            Intent intent = new Intent(SettingActivity.this,
-                    AboutActivity.class);
-            startActivity(intent);
-        }
-        return super.onPreferenceTreeClick(preferenceScreen, preference);
-    }
-
     private void addTitleBar() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         PreferenceHead ph = new PreferenceHead(this);
