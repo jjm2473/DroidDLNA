@@ -79,16 +79,14 @@ import java.util.logging.Logger;
 public class AVTransportService<T extends AVTransport> extends AbstractAVTransportService {
 
     final private static Logger log = Logger.getLogger(AVTransportService.class.getName());
-
-    final private Map<Long, AVTransportStateMachine> stateMachines = new ConcurrentHashMap();
-
     final Class<? extends AVTransportStateMachine> stateMachineDefinition;
     final Class<? extends AbstractState> initialState;
     final Class<? extends AVTransport> transportClass;
+    final private Map<Long, AVTransportStateMachine> stateMachines = new ConcurrentHashMap();
 
     public AVTransportService(Class<? extends AVTransportStateMachine> stateMachineDefinition,
                               Class<? extends AbstractState> initialState) {
-        this(stateMachineDefinition, initialState, (Class<T>)AVTransport.class);
+        this(stateMachineDefinition, initialState, (Class<T>) AVTransport.class);
     }
 
     public AVTransportService(Class<? extends AVTransportStateMachine> stateMachineDefinition,
@@ -228,7 +226,7 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
     public void seek(UnsignedIntegerFourBytes instanceId, String unit, String target) throws AVTransportException {
         SeekMode seekMode;
         try {
-             seekMode = SeekMode.valueOrExceptionOf(unit);
+            seekMode = SeekMode.valueOrExceptionOf(unit);
         } catch (IllegalArgumentException ex) {
             throw new AVTransportException(
                     AVTransportErrorCode.SEEKMODE_NOT_SUPPORTED, "Unsupported seek mode: " + unit

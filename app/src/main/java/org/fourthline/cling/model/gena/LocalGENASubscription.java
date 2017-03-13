@@ -172,7 +172,7 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
      * Checks whether a state variable is moderated, and if this change is within the maximum rate and range limits.
      *
      * @param currentTime The current unix time.
-     * @param values The state variable values to moderate.
+     * @param values      The state variable values to moderate.
      * @return A collection of state variable values that although they might have changed, are excluded from the event.
      */
     synchronized protected Set<String> moderateStateVariables(long currentTime, Collection<StateVariableValue> values) {

@@ -89,10 +89,9 @@ import java.beans.PropertyChangeSupport;
 })
 public abstract class AbstractAudioRenderingControl implements LastChangeDelegator {
 
+    final protected PropertyChangeSupport propertyChangeSupport;
     @UpnpStateVariable(eventMaximumRateMilliseconds = 200)
     final private LastChange lastChange;
-
-    final protected PropertyChangeSupport propertyChangeSupport;
 
     protected AbstractAudioRenderingControl() {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -112,6 +111,10 @@ public abstract class AbstractAudioRenderingControl implements LastChangeDelegat
     protected AbstractAudioRenderingControl(PropertyChangeSupport propertyChangeSupport, LastChange lastChange) {
         this.propertyChangeSupport = propertyChangeSupport;
         this.lastChange = lastChange;
+    }
+
+    public static UnsignedIntegerFourBytes getDefaultInstanceID() {
+        return new UnsignedIntegerFourBytes(0);
     }
 
     @Override
@@ -136,10 +139,6 @@ public abstract class AbstractAudioRenderingControl implements LastChangeDelegat
 
     public PropertyChangeSupport getPropertyChangeSupport() {
         return propertyChangeSupport;
-    }
-
-    public static UnsignedIntegerFourBytes getDefaultInstanceID() {
-        return new UnsignedIntegerFourBytes(0);
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "CurrentPresetNameList", stateVariable = "PresetNameList"))
@@ -172,14 +171,14 @@ public abstract class AbstractAudioRenderingControl implements LastChangeDelegat
 
     @UpnpAction(out = @UpnpOutputArgument(name = "CurrentVolume", stateVariable = "VolumeDB"))
     public Integer getVolumeDB(@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes instanceId,
-                             @UpnpInputArgument(name = "Channel") String channelName) throws RenderingControlException {
+                               @UpnpInputArgument(name = "Channel") String channelName) throws RenderingControlException {
         return 0;
     }
 
     @UpnpAction
     public void setVolumeDB(@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes instanceId,
                             @UpnpInputArgument(name = "Channel") String channelName,
-                            @UpnpInputArgument(name = "DesiredVolume", stateVariable = "VolumeDB") Integer  desiredVolumeDB) throws RenderingControlException {
+                            @UpnpInputArgument(name = "DesiredVolume", stateVariable = "VolumeDB") Integer desiredVolumeDB) throws RenderingControlException {
         /*
         VolumeDB volumeDB = new VolumeDB();
         volumeDB.setChannel(channelName);

@@ -48,9 +48,8 @@ import java.util.List;
  * messages.
  * </p>
  *
- * @see org.fourthline.cling.protocol.ProtocolFactory
- *
  * @author Christian Bauer
+ * @see org.fourthline.cling.protocol.ProtocolFactory
  */
 public interface Router {
 
@@ -81,10 +80,9 @@ public interface Router {
     /**
      * Disables the router and releases all other resources.
      */
-    void shutdown() throws RouterException ;
+    void shutdown() throws RouterException;
 
     /**
-     *
      * @return <code>true</code> if the router is currently enabled.
      */
     boolean isEnabled() throws RouterException;
@@ -100,8 +98,8 @@ public interface Router {
     /**
      * @param preferredAddress A preferred stream server bound address or <code>null</code>.
      * @return An empty list if no stream server is currently active, otherwise a single network
-     *         address if the preferred address is active, or a list of all active bound
-     *         stream servers.
+     * address if the preferred address is active, or a list of all active bound
+     * stream servers.
      */
     public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException;
 
@@ -113,6 +111,7 @@ public interface Router {
      * the execution completes, the calling thread should be free to handle the next reception as
      * soon as possible.
      * </p>
+     *
      * @param msg The received datagram message.
      */
     public void received(IncomingDatagramMessage msg);
@@ -126,6 +125,7 @@ public interface Router {
      * should be free to process the next reception as soon as possible. Typically this means starting
      * a new thread of execution in this method.
      * </p>
+     *
      * @param stream
      */
     public void received(UpnpStream stream);
@@ -134,6 +134,7 @@ public interface Router {
      * <p>
      * Call this method to send a UDP datagram message.
      * </p>
+     *
      * @param msg The UDP datagram message to send.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
@@ -143,6 +144,7 @@ public interface Router {
      * <p>
      * Call this method to send a TCP (HTTP) stream message.
      * </p>
+     *
      * @param msg The TCP (HTTP) stream message to send.
      * @return The response received from the server.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
@@ -153,6 +155,7 @@ public interface Router {
      * <p>
      * Call this method to broadcast a UDP message to all hosts on the network.
      * </p>
+     *
      * @param bytes The byte payload of the UDP datagram.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */

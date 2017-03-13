@@ -36,20 +36,20 @@ public enum ConnectionManagerErrorCode {
         this.description = description;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public static ConnectionManagerErrorCode getByCode(int code) {
         for (ConnectionManagerErrorCode errorCode : ConnectionManagerErrorCode.values()) {
             if (errorCode.getCode() == code)
                 return errorCode;
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

@@ -30,6 +30,14 @@ public enum TransportStatus {
         this.value = name();
     }
 
+    public static TransportStatus valueOrCustomOf(String s) {
+        try {
+            return TransportStatus.valueOf(s);
+        } catch (IllegalArgumentException ex) {
+            return TransportStatus.CUSTOM.setValue(s);
+        }
+    }
+
     public String getValue() {
         return value;
     }
@@ -37,13 +45,5 @@ public enum TransportStatus {
     public TransportStatus setValue(String value) {
         this.value = value;
         return this;
-    }
-
-    public static TransportStatus valueOrCustomOf(String s) {
-        try {
-            return TransportStatus.valueOf(s);
-        } catch (IllegalArgumentException ex) {
-            return TransportStatus.CUSTOM.setValue(s);
-        }
     }
 }

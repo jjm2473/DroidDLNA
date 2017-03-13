@@ -52,66 +52,62 @@ import java.util.List;
 )
 
 @UpnpStateVariables({
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_ObjectID",
-                                    sendEvents = false,
-                                    datatype = "string"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_Result",
-                                    sendEvents = false,
-                                    datatype = "string"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_BrowseFlag",
-                                    sendEvents = false,
-                                    datatype = "string",
-                                    allowedValuesEnum = BrowseFlag.class),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_Filter",
-                                    sendEvents = false,
-                                    datatype = "string"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_SortCriteria",
-                                    sendEvents = false,
-                                    datatype = "string"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_Index",
-                                    sendEvents = false,
-                                    datatype = "ui4"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_Count",
-                                    sendEvents = false,
-                                    datatype = "ui4"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_UpdateID",
-                                    sendEvents = false,
-                                    datatype = "ui4"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_URI",
-                                    sendEvents = false,
-                                    datatype = "uri"),
-                            @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_SearchCriteria",
-                                    sendEvents = false,
-                                    datatype = "string")
-                    })
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_ObjectID",
+                sendEvents = false,
+                datatype = "string"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_Result",
+                sendEvents = false,
+                datatype = "string"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_BrowseFlag",
+                sendEvents = false,
+                datatype = "string",
+                allowedValuesEnum = BrowseFlag.class),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_Filter",
+                sendEvents = false,
+                datatype = "string"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_SortCriteria",
+                sendEvents = false,
+                datatype = "string"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_Index",
+                sendEvents = false,
+                datatype = "ui4"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_Count",
+                sendEvents = false,
+                datatype = "ui4"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_UpdateID",
+                sendEvents = false,
+                datatype = "ui4"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_URI",
+                sendEvents = false,
+                datatype = "uri"),
+        @UpnpStateVariable(
+                name = "A_ARG_TYPE_SearchCriteria",
+                sendEvents = false,
+                datatype = "string")
+})
 public abstract class AbstractContentDirectoryService {
 
     public static final String CAPS_WILDCARD = "*";
-
+    final protected PropertyChangeSupport propertyChangeSupport;
     @UpnpStateVariable(sendEvents = false)
     final private CSV<String> searchCapabilities;
-
     @UpnpStateVariable(sendEvents = false)
     final private CSV<String> sortCapabilities;
-
     @UpnpStateVariable(
             sendEvents = true,
             defaultValue = "0",
             eventMaximumRateMilliseconds = 200
     )
     private UnsignedIntegerFourBytes systemUpdateID = new UnsignedIntegerFourBytes(0);
-
-    final protected PropertyChangeSupport propertyChangeSupport;
 
     protected AbstractContentDirectoryService() {
         this(new ArrayList<String>(), new ArrayList<String>(), null);
@@ -168,17 +164,17 @@ public abstract class AbstractContentDirectoryService {
 
     @UpnpAction(out = {
             @UpnpOutputArgument(name = "Result",
-                                stateVariable = "A_ARG_TYPE_Result",
-                                getterName = "getResult"),
+                    stateVariable = "A_ARG_TYPE_Result",
+                    getterName = "getResult"),
             @UpnpOutputArgument(name = "NumberReturned",
-                                stateVariable = "A_ARG_TYPE_Count",
-                                getterName = "getCount"),
+                    stateVariable = "A_ARG_TYPE_Count",
+                    getterName = "getCount"),
             @UpnpOutputArgument(name = "TotalMatches",
-                                stateVariable = "A_ARG_TYPE_Count",
-                                getterName = "getTotalMatches"),
+                    stateVariable = "A_ARG_TYPE_Count",
+                    getterName = "getTotalMatches"),
             @UpnpOutputArgument(name = "UpdateID",
-                                stateVariable = "A_ARG_TYPE_UpdateID",
-                                getterName = "getContainerUpdateID")
+                    stateVariable = "A_ARG_TYPE_UpdateID",
+                    getterName = "getContainerUpdateID")
     })
     public BrowseResult browse(
             @UpnpInputArgument(name = "ObjectID", aliases = "ContainerID") String objectId,
@@ -229,17 +225,17 @@ public abstract class AbstractContentDirectoryService {
 
     @UpnpAction(out = {
             @UpnpOutputArgument(name = "Result",
-                                stateVariable = "A_ARG_TYPE_Result",
-                                getterName = "getResult"),
+                    stateVariable = "A_ARG_TYPE_Result",
+                    getterName = "getResult"),
             @UpnpOutputArgument(name = "NumberReturned",
-                                stateVariable = "A_ARG_TYPE_Count",
-                                getterName = "getCount"),
+                    stateVariable = "A_ARG_TYPE_Count",
+                    getterName = "getCount"),
             @UpnpOutputArgument(name = "TotalMatches",
-                                stateVariable = "A_ARG_TYPE_Count",
-                                getterName = "getTotalMatches"),
+                    stateVariable = "A_ARG_TYPE_Count",
+                    getterName = "getTotalMatches"),
             @UpnpOutputArgument(name = "UpdateID",
-                                stateVariable = "A_ARG_TYPE_UpdateID",
-                                getterName = "getContainerUpdateID")
+                    stateVariable = "A_ARG_TYPE_UpdateID",
+                    getterName = "getContainerUpdateID")
     })
     public BrowseResult search(
             @UpnpInputArgument(name = "ContainerID", stateVariable = "A_ARG_TYPE_ObjectID") String containerId,

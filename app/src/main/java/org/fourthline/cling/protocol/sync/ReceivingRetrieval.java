@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 
 /**
  * Handles reception of device/service descriptor and icon retrieval messages.
- *
+ * <p>
  * <p>
  * Requested device and service XML descriptors are generated on-the-fly for every request.
  * </p>
@@ -136,7 +136,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
             log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
             response = new StreamResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }
-        
+
         response.getHeaders().add(UpnpHeader.Type.SERVER, new ServerHeader());
 
         return response;

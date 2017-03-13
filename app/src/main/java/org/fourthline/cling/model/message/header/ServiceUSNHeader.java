@@ -35,16 +35,16 @@ public class ServiceUSNHeader extends UpnpHeader<NamedServiceType> {
         setValue(value);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(NamedServiceType.valueOf(s));
         } catch (Exception ex) {
             throw new InvalidHeaderException("Invalid service USN header value, " + ex.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 
 }

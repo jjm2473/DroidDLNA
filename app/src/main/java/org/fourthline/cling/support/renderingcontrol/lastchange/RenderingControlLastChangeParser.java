@@ -19,9 +19,10 @@ import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.support.lastchange.EventedValue;
 import org.fourthline.cling.support.lastchange.LastChangeParser;
 
+import java.util.Set;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.util.Set;
 
 /**
  * @author Christian Bauer

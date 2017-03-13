@@ -65,7 +65,7 @@ public class TextItem extends Item {
 
     public TextItem setAuthors(PersonWithRole[] persons) {
         removeProperties(UPNP.AUTHOR.class);
-        for (PersonWithRole p: persons) {
+        for (PersonWithRole p : persons) {
             addProperty(new UPNP.AUTHOR(p));
         }
         return this;

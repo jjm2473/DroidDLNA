@@ -46,20 +46,20 @@ public enum AVTransportErrorCode {
         this.description = description;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public static AVTransportErrorCode getByCode(int code) {
         for (AVTransportErrorCode errorCode : values()) {
             if (errorCode.getCode() == code)
                 return errorCode;
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

@@ -32,10 +32,6 @@ public class DLNACaps {
         this.caps = caps;
     }
 
-    public String[] getCaps() {
-        return caps;
-    }
-
     static public DLNACaps valueOf(String s) throws InvalidValueException {
         if (s == null || s.length() == 0) return new DLNACaps(new String[0]);
         String[] caps = s.split(",");
@@ -44,6 +40,10 @@ public class DLNACaps {
             trimmed[i] = caps[i].trim();
         }
         return new DLNACaps(trimmed);
+    }
+
+    public String[] getCaps() {
+        return caps;
     }
 
     @Override

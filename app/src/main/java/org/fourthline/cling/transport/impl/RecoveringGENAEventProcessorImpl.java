@@ -21,10 +21,11 @@ import org.fourthline.cling.model.message.gena.IncomingEventRequestMessage;
 import org.fourthline.cling.transport.spi.GENAEventProcessor;
 import org.seamless.xml.XmlPullParserUtils;
 
-import javax.enterprise.inject.Alternative;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.enterprise.inject.Alternative;
 
 
 /**
@@ -69,7 +70,7 @@ public class RecoveringGENAEventProcessorImpl extends PullGENAEventProcessorImpl
             String body = getMessageBody(requestMessage);
 
             String fixedBody = fixXMLEncodedLastChange(
-                XmlPullParserUtils.fixXMLEntities(body)
+                    XmlPullParserUtils.fixXMLEntities(body)
             );
 
             try {
@@ -103,7 +104,7 @@ public class RecoveringGENAEventProcessorImpl extends PullGENAEventProcessorImpl
             String fixedLastChange = lastChange;
 
             if (lastChange.charAt(0) == '<') {
-            // TODO: UPNP VIOLATION: Orange Liveradio does not encode LastChange XML properly
+                // TODO: UPNP VIOLATION: Orange Liveradio does not encode LastChange XML properly
                 fixedLastChange = XMLUtil.encodeText(fixedLastChange);
             } else {
                 /* Doesn't work for Philips NP2900, there is complete garbage after the HTML
@@ -118,13 +119,13 @@ public class RecoveringGENAEventProcessorImpl extends PullGENAEventProcessorImpl
             }
 
             return "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">" +
-                "<e:property>" +
-                "<LastChange>" +
-                fixedLastChange +
-                "</LastChange>" +
-                "</e:property>" +
-                "</e:propertyset>";
+                    "<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">" +
+                    "<e:property>" +
+                    "<LastChange>" +
+                    fixedLastChange +
+                    "</LastChange>" +
+                    "</e:property>" +
+                    "</e:propertyset>";
         }
         return xml;
     }

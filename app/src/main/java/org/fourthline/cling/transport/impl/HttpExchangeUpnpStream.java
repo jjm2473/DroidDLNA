@@ -16,6 +16,7 @@
 package org.fourthline.cling.transport.impl;
 
 import com.sun.net.httpserver.HttpExchange;
+
 import org.fourthline.cling.model.message.Connection;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.StreamResponseMessage;

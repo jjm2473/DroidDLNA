@@ -38,9 +38,8 @@ import java.util.logging.Logger;
  * implementing was successful or not, including not only creation but also delivery of the response.
  * </p>
  *
- * @param <IN> The type of incoming UPnP message handled by this protocol.
+ * @param <IN>  The type of incoming UPnP message handled by this protocol.
  * @param <OUT> The type of response UPnP message created by this protocol.
- *
  * @author Christian Bauer
  */
 public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends StreamResponseMessage> extends ReceivingAsync<IN> {

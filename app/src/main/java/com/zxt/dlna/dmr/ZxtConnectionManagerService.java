@@ -1,11 +1,10 @@
-
 package com.zxt.dlna.dmr;
-
-import java.util.logging.Logger;
 
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.fourthline.cling.support.model.ProtocolInfo;
 import org.seamless.util.MimeType;
+
+import java.util.logging.Logger;
 
 /**
  * @author zxt
@@ -23,7 +22,7 @@ public class ZxtConnectionManagerService extends ConnectionManagerService {
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/pjpeg")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/tiff")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/x-ms-bmp")));
-        
+
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/3gpp")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/mp4")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/3gp2")));

@@ -14,13 +14,13 @@
  */
 package org.fourthline.cling.support.model.dlna.types;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.fourthline.cling.model.types.InvalidValueException;
 import org.fourthline.cling.support.model.dlna.types.CodedDataBuffer.TransferMechanism;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- *
  * @author Mario Franco
  */
 public class BufferInfoType {
@@ -36,7 +36,7 @@ public class BufferInfoType {
     }
 
     public BufferInfoType(Long dejitterSize, CodedDataBuffer cdb,
-            Long targetDuration, Boolean fullnessReports) {
+                          Long targetDuration, Boolean fullnessReports) {
         this.dejitterSize = dejitterSize;
         this.cdb = cdb;
         this.targetDuration = targetDuration;
@@ -78,7 +78,7 @@ public class BufferInfoType {
             s += ";TD=" + targetDuration.toString();
         }
         if (fullnessReports != null) {
-            s += ";BFR=" + (fullnessReports?"1":"0");
+            s += ";BFR=" + (fullnessReports ? "1" : "0");
         }
         return s;
     }

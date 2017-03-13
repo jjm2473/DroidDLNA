@@ -15,13 +15,13 @@
 
 package org.fourthline.cling.model.meta;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.fourthline.cling.model.Constants;
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.types.UDN;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unique device name, received and offered during discovery with SSDP.
@@ -80,16 +80,16 @@ public class DeviceIdentity implements Validatable {
 
     @Override
     public List<ValidationError> validate() {
-    	List<ValidationError> errors = new ArrayList<>();
+        List<ValidationError> errors = new ArrayList<>();
 
-    	if (getUdn() == null) {
-    		errors.add(new ValidationError(
-    				getClass(),
-    				"major",
-    				"Device has no UDN"
-    				));
-    	}
+        if (getUdn() == null) {
+            errors.add(new ValidationError(
+                    getClass(),
+                    "major",
+                    "Device has no UDN"
+            ));
+        }
 
-    	return errors;
+        return errors;
     }
 }

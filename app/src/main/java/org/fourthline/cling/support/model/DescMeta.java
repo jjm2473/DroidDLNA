@@ -18,13 +18,14 @@ package org.fourthline.cling.support.model;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URI;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 
 /**
  * Descriptor metadata about an item/resource.
- *
+ * <p>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +40,6 @@ import java.net.URI;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 public class DescMeta<M> {
 

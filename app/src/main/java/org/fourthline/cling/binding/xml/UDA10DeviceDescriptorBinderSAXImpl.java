@@ -20,7 +20,6 @@ import org.fourthline.cling.binding.staging.MutableIcon;
 import org.fourthline.cling.binding.staging.MutableService;
 import org.fourthline.cling.binding.staging.MutableUDAVersion;
 import org.fourthline.cling.model.ValidationException;
-import org.fourthline.cling.model.XMLUtil;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.DLNACaps;
 import org.fourthline.cling.model.types.DLNADoc;
@@ -291,12 +290,12 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                     getInstance().height = Integer.valueOf(getCharacters());
                     break;
                 case depth:
-                	try {
-                		getInstance().depth = Integer.valueOf(getCharacters());
-                	} catch(NumberFormatException ex) {
-                		log.warning("Invalid icon depth '" + getCharacters() + "', using 16 as default: " + ex);
-                		getInstance().depth = 16;
-                	}
+                    try {
+                        getInstance().depth = Integer.valueOf(getCharacters());
+                    } catch (NumberFormatException ex) {
+                        log.warning("Invalid icon depth '" + getCharacters() + "', using 16 as default: " + ex);
+                        getInstance().depth = 16;
+                    }
                     break;
                 case url:
                     getInstance().uri = parseURI(getCharacters());
@@ -305,7 +304,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                     try {
                         getInstance().mimeType = getCharacters();
                         MimeType.valueOf(getInstance().mimeType);
-                    } catch(IllegalArgumentException ex) {
+                    } catch (IllegalArgumentException ex) {
                         log.warning("Ignoring invalid icon mime type: " + getInstance().mimeType);
                         getInstance().mimeType = "";
                     }
@@ -381,7 +380,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                 }
             } catch (InvalidValueException ex) {
                 log.warning(
-                    "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
+                        "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
                 );
             }
         }

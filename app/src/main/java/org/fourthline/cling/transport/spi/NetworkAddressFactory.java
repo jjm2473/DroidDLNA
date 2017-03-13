@@ -60,7 +60,7 @@ public interface NetworkAddressFactory {
      * The caller might <code>remove()</code> an address if initialization fails.
      *
      * @return The local addresses of the network interfaces bound to
-     *         sockets listening for unicast datagrams and TCP requests.
+     * sockets listening for unicast datagrams and TCP requests.
      */
     public Iterator<InetAddress> getBindAddresses();
 
@@ -77,14 +77,14 @@ public interface NetworkAddressFactory {
     /**
      * @param inetAddress An address of a local network interface.
      * @return The MAC hardware address of the network interface or <code>null</code> if no
-     *         hardware address could be obtained.
+     * hardware address could be obtained.
      */
     public byte[] getHardwareAddress(InetAddress inetAddress);
 
     /**
      * @param inetAddress An address of a local network interface.
      * @return The broadcast address of the network (interface) or <code>null</code> if no
-     *         broadcast address could be obtained.
+     * broadcast address could be obtained.
      */
     public InetAddress getBroadcastAddress(InetAddress inetAddress);
 
@@ -98,8 +98,8 @@ public interface NetworkAddressFactory {
      * </p>
      *
      * @param networkInterface The network interface to examine.
-     * @param isIPv6 True if the given remote address is an IPv6 address.
-     * @param remoteAddress The remote address for which to find a local address in the same subnet.
+     * @param isIPv6           True if the given remote address is an IPv6 address.
+     * @param remoteAddress    The remote address for which to find a local address in the same subnet.
      * @return A local address that is reachable from the given remote address.
      * @throws IllegalStateException If no local address reachable by the remote address has been found.
      */

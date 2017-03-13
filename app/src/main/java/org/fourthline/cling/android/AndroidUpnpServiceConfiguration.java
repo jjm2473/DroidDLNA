@@ -16,6 +16,7 @@
 package org.fourthline.cling.android;
 
 import android.os.Build;
+
 import org.fourthline.cling.DefaultUpnpServiceConfiguration;
 import org.fourthline.cling.binding.xml.DeviceDescriptorBinder;
 import org.fourthline.cling.binding.xml.RecoveringUDA10DeviceDescriptorBinderImpl;
@@ -87,20 +88,20 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
     public StreamClient createStreamClient() {
         // Use Jetty
         return new StreamClientImpl(
-            new StreamClientConfigurationImpl(
-                getSyncProtocolExecutorService()
-            ) {
-                @Override
-                public String getUserAgentValue(int majorVersion, int minorVersion) {
-                    // TODO: UPNP VIOLATION: Synology NAS requires User-Agent to contain
-                    // "Android" to return DLNA protocolInfo required to stream to Samsung TV
-			        // see: http://two-play.com/forums/viewtopic.php?f=6&t=81
-                    ServerClientTokens tokens = new ServerClientTokens(majorVersion, minorVersion);
-                    tokens.setOsName("Android");
-                    tokens.setOsVersion(Build.VERSION.RELEASE);
-                    return tokens.toString();
+                new StreamClientConfigurationImpl(
+                        getSyncProtocolExecutorService()
+                ) {
+                    @Override
+                    public String getUserAgentValue(int majorVersion, int minorVersion) {
+                        // TODO: UPNP VIOLATION: Synology NAS requires User-Agent to contain
+                        // "Android" to return DLNA protocolInfo required to stream to Samsung TV
+                        // see: http://two-play.com/forums/viewtopic.php?f=6&t=81
+                        ServerClientTokens tokens = new ServerClientTokens(majorVersion, minorVersion);
+                        tokens.setOsName("Android");
+                        tokens.setOsVersion(Build.VERSION.RELEASE);
+                        return tokens.toString();
+                    }
                 }
-            }
         );
     }
 
@@ -108,10 +109,10 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
     public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
         // Use Jetty, start/stop a new shared instance of JettyServletContainer
         return new AsyncServletStreamServerImpl(
-            new AsyncServletStreamServerConfigurationImpl(
-                JettyServletContainer.INSTANCE,
-                networkAddressFactory.getStreamListenPort()
-            )
+                new AsyncServletStreamServerConfigurationImpl(
+                        JettyServletContainer.INSTANCE,
+                        networkAddressFactory.getStreamListenPort()
+                )
         );
     }
 

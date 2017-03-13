@@ -15,12 +15,12 @@
 
 package org.fourthline.cling.registry;
 
-import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.RemoteGENASubscription;
 import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteDeviceIdentity;
+import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.types.UDN;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
                         : device.getIdentity().getMaxAgeSeconds()
         );
         log.fine("Adding hydrated remote device to registry with "
-                         + item.getExpirationDetails().getMaxAgeSeconds() + " seconds expiration: " + device);
+                + item.getExpirationDetails().getMaxAgeSeconds() + " seconds expiration: " + device);
         getDeviceItems().add(item);
 
         if (log.isLoggable(Level.FINEST)) {
@@ -257,7 +257,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
         for (RegistryItem<UDN, RemoteDevice> remoteItem : getDeviceItems()) {
             if (log.isLoggable(Level.FINEST))
                 log.finest("Device '" + remoteItem.getItem() + "' expires in seconds: "
-                                   + remoteItem.getExpirationDetails().getSecondsUntilExpiration());
+                        + remoteItem.getExpirationDetails().getSecondsUntilExpiration());
             if (remoteItem.getExpirationDetails().hasExpired(false)) {
                 expiredRemoteDevices.put(remoteItem.getKey(), remoteItem.getItem());
             }

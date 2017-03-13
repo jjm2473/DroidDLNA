@@ -44,6 +44,14 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
         getValue().add(url);
     }
 
+    public String getString() {
+        StringBuilder s = new StringBuilder();
+        for (URL url : getValue()) {
+            s.append("<").append(url.toString()).append(">");
+        }
+        return s.toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
 
         if (s.length() == 0) {
@@ -91,13 +99,5 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
         } catch (MalformedURLException ex) {
             throw new InvalidHeaderException("Can't parse callback URLs from '" + s + "': " + ex);
         }
-    }
-
-    public String getString() {
-        StringBuilder s = new StringBuilder();
-        for (URL url : getValue()) {
-            s.append("<").append(url.toString()).append(">");
-        }
-        return s.toString();
     }
 }

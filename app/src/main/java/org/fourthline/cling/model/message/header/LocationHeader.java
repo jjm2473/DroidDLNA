@@ -20,7 +20,7 @@ import java.net.URL;
 
 /**
  * TODO: UDA 1.1 says it should be RfC 3986 compatible.
- *
+ * <p>
  * <p>See http://blog.jclark.com/2008/11/what-allowed-in-uri.html</p>
  *
  * @author Christian Bauer
@@ -38,6 +38,10 @@ public class LocationHeader extends UpnpHeader<URL> {
         setString(s);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
             URL url = new URL(s);
@@ -45,9 +49,5 @@ public class LocationHeader extends UpnpHeader<URL> {
         } catch (MalformedURLException ex) {
             throw new InvalidHeaderException("Invalid URI: " + ex.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }

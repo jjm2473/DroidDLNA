@@ -37,23 +37,6 @@ import java.util.logging.Logger;
 public abstract class Browse extends ActionCallback {
 
     public static final String CAPS_WILDCARD = "*";
-
-    public enum Status {
-        NO_CONTENT("No Content"),
-        LOADING("Loading..."),
-        OK("OK");
-
-        private String defaultMessage;
-
-        Status(String defaultMessage) {
-            this.defaultMessage = defaultMessage;
-        }
-
-        public String getDefaultMessage() {
-            return defaultMessage;
-        }
-    }
-
     private static Logger log = Logger.getLogger(Browse.class.getName());
 
     /**
@@ -67,7 +50,7 @@ public abstract class Browse extends ActionCallback {
      * @param maxResults Can be <code>null</code>, then {@link #getDefaultMaxResults()} is used.
      */
     public Browse(Service service, String objectID, BrowseFlag flag,
-                                String filter, long firstResult, Long maxResults, SortCriterion... orderBy) {
+                  String filter, long firstResult, Long maxResults, SortCriterion... orderBy) {
 
         super(new ActionInvocation(service.getAction("Browse")));
 
@@ -144,6 +127,23 @@ public abstract class Browse extends ActionCallback {
     }
 
     public abstract void received(ActionInvocation actionInvocation, DIDLContent didl);
+
     public abstract void updateStatus(Status status);
+
+    public enum Status {
+        NO_CONTENT("No Content"),
+        LOADING("Loading..."),
+        OK("OK");
+
+        private String defaultMessage;
+
+        Status(String defaultMessage) {
+            this.defaultMessage = defaultMessage;
+        }
+
+        public String getDefaultMessage() {
+            return defaultMessage;
+        }
+    }
 
 }

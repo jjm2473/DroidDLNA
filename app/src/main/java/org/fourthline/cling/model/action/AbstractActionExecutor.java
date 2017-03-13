@@ -40,7 +40,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
     private static Logger log = Logger.getLogger(AbstractActionExecutor.class.getName());
 
     protected Map<ActionArgument<LocalService>, StateVariableAccessor> outputArgumentAccessors =
-        new HashMap<>();
+            new HashMap<>();
 
     protected AbstractActionExecutor() {
     }
@@ -101,11 +101,11 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
                 log.log(Level.FINE, "Exception root cause: ", rootCause);
             }
             actionInvocation.setFailure(
-                new ActionException(
-                    ErrorCode.ACTION_FAILED,
-                    (rootCause.getMessage() != null ? rootCause.getMessage() : rootCause.toString()),
-                    rootCause
-                )
+                    new ActionException(
+                            ErrorCode.ACTION_FAILED,
+                            (rootCause.getMessage() != null ? rootCause.getMessage() : rootCause.toString()),
+                            rootCause
+                    )
             );
         }
     }
@@ -115,10 +115,10 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
     /**
      * Reads the output arguments after an action execution using accessors.
      *
-     * @param action The action of which the output arguments are read.
+     * @param action   The action of which the output arguments are read.
      * @param instance The instance on which the accessors will be invoked.
      * @return <code>null</code> if the action has no output arguments, a single instance if it has one, an
-     *         <code>Object[]</code> otherwise.
+     * <code>Object[]</code> otherwise.
      * @throws Exception
      */
     protected Object readOutputArgumentValues(Action<LocalService> action, Object instance) throws Exception {

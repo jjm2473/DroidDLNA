@@ -54,7 +54,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         this.attributes.put(DLNAAttribute.Type.DLNA_ORG_PN, new DLNAProfileAttribute(profile));
         this.additionalInfo = this.getAttributesString();
     }
-    
+
     public DLNAProtocolInfo(Protocol protocol, String network, String contentFormat, String additionalInfo) {
         super(protocol, network, contentFormat, additionalInfo);
         parseAdditionalInfo();
@@ -68,9 +68,9 @@ public class DLNAProtocolInfo extends ProtocolInfo {
 
     public DLNAProtocolInfo(ProtocolInfo template) {
         this(template.getProtocol(),
-             template.getNetwork(),
-             template.getContentFormat(),
-             template.getAdditionalInfo()
+                template.getNetwork(),
+                template.getContentFormat(),
+                template.getAdditionalInfo()
         );
     }
 
@@ -88,9 +88,9 @@ public class DLNAProtocolInfo extends ProtocolInfo {
 
     protected String getAttributesString() {
         String s = "";
-        for (DLNAAttribute.Type type : DLNAAttribute.Type.values() ) {
-            String value = attributes.containsKey(type)?attributes.get(type).getString():null;
-            if (value!=null && value.length() != 0)
+        for (DLNAAttribute.Type type : DLNAAttribute.Type.values()) {
+            String value = attributes.containsKey(type) ? attributes.get(type).getString() : null;
+            if (value != null && value.length() != 0)
                 s += (s.length() == 0 ? "" : ";") + type.getAttributeName() + "=" + value;
         }
         return s;

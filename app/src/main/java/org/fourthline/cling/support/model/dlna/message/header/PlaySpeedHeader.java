@@ -31,19 +31,20 @@ public class PlaySpeedHeader extends DLNAHeader<TransportPlaySpeed> {
     }
 
     @Override
+    public String getString() {
+        return getValue().getValue();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 TransportPlaySpeed t = new TransportPlaySpeed(s);
                 setValue(t);
                 return;
-            } catch (InvalidValueException invalidValueException) {}
+            } catch (InvalidValueException invalidValueException) {
+            }
         }
         throw new InvalidHeaderException("Invalid PlaySpeed header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().getValue();
     }
 }

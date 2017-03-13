@@ -24,45 +24,18 @@ import java.util.Random;
 
 /**
  * https://sourceforge.net/apps/mediawiki/samygo/index.php?title=MessageBoxService_request_format
- * 
+ *
  * @author Christian Bauer
  */
 public abstract class Message implements ElementAppender {
 
     final protected Random randomGenerator = new Random();
-
-    public enum Category {
-        SMS("SMS"),
-        INCOMING_CALL("Incoming Call"),
-        SCHEDULE_REMINDER("Schedule Reminder");
-
-        public String text;
-
-        Category(String text) {
-            this.text = text;
-        }
-    }
-
-    public enum DisplayType {
-
-        MINIMUM("Minimum"),
-        MAXIMUM("Maximum");
-
-        public String text;
-
-        DisplayType(String text) {
-            this.text = text;
-        }
-    }
-
     private final int id;
     private final Category category;
     private DisplayType displayType;
-
     public Message(Category category, DisplayType displayType) {
         this(0, category, displayType);
     }
-
     public Message(int id, Category category, DisplayType displayType) {
         if (id == 0) id = randomGenerator.nextInt(Integer.MAX_VALUE);
         this.id = id;
@@ -117,9 +90,33 @@ public abstract class Message implements ElementAppender {
             return s.replaceAll("<Message xmlns=\"urn:samsung-com:messagebox-1-0\">", "")
                     .replaceAll("</Message>", "");
 
-            
+
         } catch (ParserException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    public enum Category {
+        SMS("SMS"),
+        INCOMING_CALL("Incoming Call"),
+        SCHEDULE_REMINDER("Schedule Reminder");
+
+        public String text;
+
+        Category(String text) {
+            this.text = text;
+        }
+    }
+
+    public enum DisplayType {
+
+        MINIMUM("Minimum"),
+        MAXIMUM("Maximum");
+
+        public String text;
+
+        DisplayType(String text) {
+            this.text = text;
         }
     }
 }

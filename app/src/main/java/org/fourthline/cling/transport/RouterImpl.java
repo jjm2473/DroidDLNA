@@ -34,10 +34,6 @@ import org.fourthline.cling.transport.spi.StreamServer;
 import org.fourthline.cling.transport.spi.UpnpStream;
 import org.seamless.util.Exceptions;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -54,6 +50,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+
 /**
  * Default implementation of network message router.
  * <p>
@@ -66,21 +67,18 @@ import java.util.logging.Logger;
 public class RouterImpl implements Router {
 
     private static Logger log = Logger.getLogger(Router.class.getName());
-
+    protected final Map<NetworkInterface, MulticastReceiver> multicastReceivers = new HashMap<>();
+    protected final Map<InetAddress, DatagramIO> datagramIOs = new HashMap<>();
+    protected final Map<InetAddress, StreamServer> streamServers = new HashMap<>();
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;
-
     protected volatile boolean enabled;
     protected ReentrantReadWriteLock routerLock = new ReentrantReadWriteLock(true);
     protected Lock readLock = routerLock.readLock();
     protected Lock writeLock = routerLock.writeLock();
-
     // These are created/destroyed when the router is enabled/disabled
     protected NetworkAddressFactory networkAddressFactory;
     protected StreamClient streamClient;
-    protected final Map<NetworkInterface, MulticastReceiver> multicastReceivers = new HashMap<>();
-    protected final Map<InetAddress, DatagramIO> datagramIOs = new HashMap<>();
-    protected final Map<InetAddress, StreamServer> streamServers = new HashMap<>();
 
     protected RouterImpl() {
     }
@@ -134,7 +132,7 @@ public class RouterImpl implements Router {
                     // The transports possibly removed some unusable network interfaces/addresses
                     if (!networkAddressFactory.hasUsableNetwork()) {
                         throw new NoNetworkException(
-                            "No usable network interface and/or addresses available, check the log for errors."
+                                "No usable network interface and/or addresses available, check the log for errors."
                         );
                     }
 
@@ -222,14 +220,14 @@ public class RouterImpl implements Router {
 
                 StreamServer preferredServer;
                 if (preferredAddress != null &&
-                    (preferredServer = streamServers.get(preferredAddress)) != null) {
+                        (preferredServer = streamServers.get(preferredAddress)) != null) {
                     streamServerAddresses.add(
-                        new NetworkAddress(
-                            preferredAddress,
-                            preferredServer.getPort(),
-                            networkAddressFactory.getHardwareAddress(preferredAddress)
+                            new NetworkAddress(
+                                    preferredAddress,
+                                    preferredServer.getPort(),
+                                    networkAddressFactory.getHardwareAddress(preferredAddress)
 
-                        )
+                            )
                     );
                     return streamServerAddresses;
                 }
@@ -237,7 +235,7 @@ public class RouterImpl implements Router {
                 for (Map.Entry<InetAddress, StreamServer> entry : streamServers.entrySet()) {
                     byte[] hardwareAddress = networkAddressFactory.getHardwareAddress(entry.getKey());
                     streamServerAddresses.add(
-                        new NetworkAddress(entry.getKey(), entry.getValue().getPort(), hardwareAddress)
+                            new NetworkAddress(entry.getKey(), entry.getValue().getPort(), hardwareAddress)
                     );
                 }
                 return streamServerAddresses;
@@ -321,7 +319,7 @@ public class RouterImpl implements Router {
      *
      * @param msg The TCP (HTTP) stream message to send.
      * @return The return value of the {@link org.fourthline.cling.transport.spi.StreamClient#sendRequest(StreamRequestMessage)}
-     *         method or <code>null</code> if no <code>StreamClient</code> is available.
+     * method or <code>null</code> if no <code>StreamClient</code> is available.
      */
     public StreamResponseMessage send(StreamRequestMessage msg) throws RouterException {
         lock(readLock);
@@ -388,10 +386,10 @@ public class RouterImpl implements Router {
                     if (log.isLoggable(Level.FINE))
                         log.fine("Init multicast receiver on interface: " + networkInterface.getDisplayName());
                     multicastReceiver.init(
-                        networkInterface,
-                        this,
-                        networkAddressFactory,
-                        getConfiguration().getDatagramProcessor()
+                            networkInterface,
+                            this,
+                            networkAddressFactory,
+                            getConfiguration().getDatagramProcessor()
                     );
 
                     multicastReceivers.put(networkInterface, multicastReceiver);
@@ -495,13 +493,13 @@ public class RouterImpl implements Router {
                 log.finest("Acquired router lock: " + lock.getClass().getSimpleName());
             } else {
                 throw new RouterException(
-                    "Router wasn't available exclusively after waiting " + timeoutMilliseconds + "ms, lock failed: "
-                        + lock.getClass().getSimpleName()
+                        "Router wasn't available exclusively after waiting " + timeoutMilliseconds + "ms, lock failed: "
+                                + lock.getClass().getSimpleName()
                 );
             }
         } catch (InterruptedException ex) {
             throw new RouterException(
-                "Interruption while waiting for exclusive access: " + lock.getClass().getSimpleName(), ex
+                    "Interruption while waiting for exclusive access: " + lock.getClass().getSimpleName(), ex
             );
         }
     }

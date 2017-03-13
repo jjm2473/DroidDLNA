@@ -45,12 +45,13 @@ import org.fourthline.cling.transport.spi.SOAPActionProcessor;
 import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 /**
  * Adapter for CDI environments.
@@ -63,14 +64,10 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     private static Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
 
     // TODO: All of these fields should be injected so users can provide values through CDI
-
-    private int streamListenPort;
-
-    private ExecutorService defaultExecutorService;
-
     @Inject
     protected DatagramProcessor datagramProcessor;
-
+    private int streamListenPort;
+    private ExecutorService defaultExecutorService;
     private SOAPActionProcessor soapActionProcessor;
     private GENAEventProcessor genaEventProcessor;
 
@@ -113,9 +110,9 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     public StreamClient createStreamClient() {
         return new StreamClientImpl(
-            new StreamClientConfigurationImpl(
-                getSyncProtocolExecutorService()
-            )
+                new StreamClientConfigurationImpl(
+                        getSyncProtocolExecutorService()
+                )
         );
     }
 
@@ -167,9 +164,9 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to <code>false</code>.
      */
-	public boolean isReceivedSubscriptionTimeoutIgnored() {
-		return false;
-	}
+    public boolean isReceivedSubscriptionTimeoutIgnored() {
+        return false;
+    }
 
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
         return null;
@@ -190,7 +187,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
      * @return Defaults to zero, disabling ALIVE flooding.
      */
     public int getAliveIntervalMillis() {
-    	return 0;
+        return 0;
     }
 
     public Integer getRemoteDeviceMaxAgeSeconds() {

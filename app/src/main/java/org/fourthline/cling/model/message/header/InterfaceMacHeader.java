@@ -35,16 +35,16 @@ public class InterfaceMacHeader extends UpnpHeader<byte[]> {
         setString(s);
     }
 
+    public String getString() {
+        return HexBin.bytesToString(getValue(), ":");
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         byte[] bytes = HexBin.stringToBytes(s, ":");
         setValue(bytes);
         if (bytes.length != 6) {
             throw new InvalidHeaderException("Invalid MAC address: " + s);
         }
-    }
-
-    public String getString() {
-        return HexBin.bytesToString(getValue(), ":");
     }
 
     @Override

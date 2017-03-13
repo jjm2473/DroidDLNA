@@ -27,13 +27,13 @@ public class EXTHeader extends UpnpHeader<String> {
         setValue(DEFAULT_VALUE);
     }
 
+    public String getString() {
+        return getValue();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         if (s != null && s.length() > 0) {
             throw new InvalidHeaderException("Invalid EXT header, it has no value: " + s);
         }
-    }
-
-    public String getString() {
-        return getValue();
     }
 }

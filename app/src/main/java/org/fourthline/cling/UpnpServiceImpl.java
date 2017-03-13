@@ -27,9 +27,10 @@ import org.fourthline.cling.transport.RouterException;
 import org.fourthline.cling.transport.RouterImpl;
 import org.seamless.util.Exceptions;
 
-import javax.enterprise.inject.Alternative;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.enterprise.inject.Alternative;
 
 /**
  * Default implementation of {@link UpnpService}, starts immediately on construction.

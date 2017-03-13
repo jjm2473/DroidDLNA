@@ -1,9 +1,8 @@
-
 package com.zxt.dlna.dmr;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.logging.Logger;
+import android.util.Log;
+
+import com.zxt.dlna.util.Utils;
 
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
@@ -23,9 +22,9 @@ import org.fourthline.cling.support.model.TransportSettings;
 import org.seamless.http.HttpFetch;
 import org.seamless.util.URIUtil;
 
-import android.util.Log;
-
-import com.zxt.dlna.util.Utils;
+import java.net.URI;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author offbye
@@ -59,7 +58,7 @@ public class AVTransportService extends AbstractAVTransportService {
     public void setAVTransportURI(UnsignedIntegerFourBytes instanceId,
                                   String currentURI,
                                   String currentURIMetaData) throws AVTransportException {
-        Log.d(TAG, currentURI + "---" +currentURIMetaData );
+        Log.d(TAG, currentURI + "---" + currentURIMetaData);
         URI uri;
         try {
             uri = new URI(currentURI);
@@ -97,7 +96,7 @@ public class AVTransportService extends AbstractAVTransportService {
                 currentURIMetaData.indexOf("</dc:title>"));
         Log.d(TAG, name);
 
-        getInstance(instanceId).setURI(uri,type,name,currentURIMetaData);
+        getInstance(instanceId).setURI(uri, type, name, currentURIMetaData);
     }
 
     @Override
@@ -161,7 +160,7 @@ public class AVTransportService extends AbstractAVTransportService {
 
 //            final ClockTime ct = ClockTime.fromSeconds(ModelUtil.fromTimeString(target));
             int pos = (int) (Utils.getRealTime(target) * 1000);
-            Log.i(TAG,"### " + unit + " target: "+ target +"  pos: " + pos);
+            Log.i(TAG, "### " + unit + " target: " + target + "  pos: " + pos);
 
 //            if (getInstance(instanceId).getCurrentTransportInfo().getCurrentTransportState()
 //                    .equals(TransportState.PLAYING)) {
@@ -170,7 +169,7 @@ public class AVTransportService extends AbstractAVTransportService {
 //                getInstance(instanceId).play();
 //            } else if (getInstance(instanceId).getCurrentTransportInfo().getCurrentTransportState()
 //                    .equals(TransportState.PAUSED_PLAYBACK)) {
-                getInstance(instanceId).seek(pos);
+            getInstance(instanceId).seek(pos);
 //            }
 
         } catch (IllegalArgumentException ex) {

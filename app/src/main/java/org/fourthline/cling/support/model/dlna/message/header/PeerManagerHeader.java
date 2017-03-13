@@ -26,11 +26,16 @@ public class PeerManagerHeader extends DLNAHeader<ServiceReference> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 ServiceReference serviceReference = new ServiceReference(s);
-                if (serviceReference.getUdn()!=null && serviceReference.getServiceId()!=null) {
+                if (serviceReference.getUdn() != null && serviceReference.getServiceId() != null) {
                     setValue(serviceReference);
                     return;
                 }
@@ -38,10 +43,5 @@ public class PeerManagerHeader extends DLNAHeader<ServiceReference> {
             }
         }
         throw new InvalidHeaderException("Invalid PeerManager header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

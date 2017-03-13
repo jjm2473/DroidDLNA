@@ -65,6 +65,6 @@ class RegistryItem<K, I> {
 
     @Override
     public String toString() {
-        return "("+getClass().getSimpleName()+") " + getExpirationDetails() + " KEY: " + getKey() + " ITEM: " + getItem();
+        return "(" + getClass().getSimpleName() + ") " + getExpirationDetails() + " KEY: " + getKey() + " ITEM: " + getItem();
     }
 }

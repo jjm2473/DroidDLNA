@@ -29,7 +29,7 @@ public abstract class EventedValue<V> {
         this.value = value;
     }
 
-    public EventedValue(Map.Entry<String,String>[] attributes) {
+    public EventedValue(Map.Entry<String, String>[] attributes) {
         try {
             this.value = valueOf(attributes);
         } catch (InvalidValueException ex) {
@@ -46,12 +46,12 @@ public abstract class EventedValue<V> {
     }
 
     public Map.Entry<String, String>[] getAttributes() {
-        return new Map.Entry[] {
-            new AbstractMap.SimpleEntry<>("val", toString())
+        return new Map.Entry[]{
+                new AbstractMap.SimpleEntry<>("val", toString())
         };
     }
 
-    protected V valueOf(Map.Entry<String,String>[] attributes) throws InvalidValueException {
+    protected V valueOf(Map.Entry<String, String>[] attributes) throws InvalidValueException {
         V v = null;
         for (Map.Entry<String, String> attribute : attributes) {
             if (attribute.getKey().equals("val")) v = valueOf(attribute.getValue());
@@ -60,7 +60,7 @@ public abstract class EventedValue<V> {
     }
 
     protected V valueOf(String s) throws InvalidValueException {
-        return (V)getDatatype().valueOf(s);
+        return (V) getDatatype().valueOf(s);
     }
 
     @Override

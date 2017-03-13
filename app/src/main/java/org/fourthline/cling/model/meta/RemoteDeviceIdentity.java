@@ -59,19 +59,19 @@ public class RemoteDeviceIdentity extends DeviceIdentity {
 
     public RemoteDeviceIdentity(IncomingNotificationRequest notificationRequest) {
         this(notificationRequest.getUDN(),
-             notificationRequest.getMaxAge(),
-             notificationRequest.getLocationURL(),
-             notificationRequest.getInterfaceMacHeader(),
-             notificationRequest.getLocalAddress()
+                notificationRequest.getMaxAge(),
+                notificationRequest.getLocationURL(),
+                notificationRequest.getInterfaceMacHeader(),
+                notificationRequest.getLocalAddress()
         );
     }
 
     public RemoteDeviceIdentity(IncomingSearchResponse searchResponse) {
         this(searchResponse.getRootDeviceUDN(),
-             searchResponse.getMaxAge(),
-             searchResponse.getLocationURL(),
-             searchResponse.getInterfaceMacHeader(),
-             searchResponse.getLocalAddress()
+                searchResponse.getMaxAge(),
+                searchResponse.getLocationURL(),
+                searchResponse.getInterfaceMacHeader(),
+                searchResponse.getLocalAddress()
         );
     }
 
@@ -102,7 +102,7 @@ public class RemoteDeviceIdentity extends DeviceIdentity {
     @Override
     public String toString() {
         // Performance optimization, so we don't have to wrap all log("foo " + device) calls with isLoggable
-		if(ModelUtil.ANDROID_RUNTIME) {
+        if (ModelUtil.ANDROID_RUNTIME) {
             return "(RemoteDeviceIdentity) UDN: " + getUdn() + ", Descriptor: " + getDescriptorURL();
         }
         return "(" + getClass().getSimpleName() + ") UDN: " + getUdn() + ", Descriptor: " + getDescriptorURL();

@@ -15,7 +15,9 @@
 
 package org.fourthline.cling.support.model.dlna.message;
 
+import org.fourthline.cling.model.message.UpnpHeaders;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.support.model.dlna.message.header.DLNAHeader;
 
 import java.io.ByteArrayInputStream;
 import java.util.LinkedHashMap;
@@ -24,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.fourthline.cling.model.message.UpnpHeaders;
-import org.fourthline.cling.support.model.dlna.message.header.DLNAHeader;
 
 /**
  * Provides UPnP header API in addition to plain multi-map HTTP header access.
@@ -49,11 +49,11 @@ public class DLNAHeaders extends UpnpHeaders {
     public DLNAHeaders(ByteArrayInputStream inputStream) {
         super(inputStream);
     }
-    
+
     @Override
     protected void parseHeaders() {
         if (parsedHeaders == null) super.parseHeaders();
-        
+
         // This runs as late as possible and only when necessary (getter called and map is dirty)
         parsedDLNAHeaders = new LinkedHashMap<>();
         log.log(Level.FINE, "Parsing all HTTP headers for known UPnP headers: {0}", size());

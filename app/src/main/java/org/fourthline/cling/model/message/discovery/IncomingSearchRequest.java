@@ -45,7 +45,7 @@ public class IncomingSearchRequest extends IncomingDatagramMessage<UpnpRequest> 
 
     /**
      * @return <code>true</code> if this message has a MAN with
-     *         value {@link org.fourthline.cling.model.types.NotificationSubtype#DISCOVER}.
+     * value {@link org.fourthline.cling.model.types.NotificationSubtype#DISCOVER}.
      */
     public boolean isMANSSDPDiscover() {
         MANHeader header = getHeaders().getFirstHeader(UpnpHeader.Type.MAN, MANHeader.class);

@@ -20,29 +20,29 @@ import org.fourthline.cling.model.message.header.InvalidHeaderException;
  * @author Mario Franco
  */
 public class SupportedHeader extends DLNAHeader<String[]> {
-    
+
     public SupportedHeader() {
         setValue(new String[]{});
+    }
+
+    @Override
+    public String getString() {
+        String[] v = getValue();
+        String r = v.length > 0 ? v[0] : "";
+        for (int i = 1; i < v.length; i++) {
+            r += "," + v[i];
+        }
+        return r;
     }
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             if (s.endsWith(";"))
-                s = s.substring(0, s.length()-1);
+                s = s.substring(0, s.length() - 1);
             setValue(s.split("\\s*,\\s*"));
             return;
         }
         throw new InvalidHeaderException("Invalid Supported header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        String[] v = getValue();
-        String r = v.length>0 ? v[0] : "";
-        for (int i = 1; i < v.length; i++) {
-            r += ","+v[i];
-        }
-        return r;
     }
 }

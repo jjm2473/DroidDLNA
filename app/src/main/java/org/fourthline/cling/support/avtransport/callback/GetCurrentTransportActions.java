@@ -40,7 +40,7 @@ public abstract class GetCurrentTransportActions extends ActionCallback {
     }
 
     public void success(ActionInvocation invocation) {
-        String actionsString = (String)invocation.getOutput("Actions").getValue();
+        String actionsString = (String) invocation.getOutput("Actions").getValue();
         received(invocation, TransportAction.valueOfCommaSeparatedList(actionsString));
     }
 

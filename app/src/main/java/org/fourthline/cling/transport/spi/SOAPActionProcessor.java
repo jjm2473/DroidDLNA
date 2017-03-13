@@ -36,7 +36,7 @@ public interface SOAPActionProcessor {
     /**
      * Converts the given invocation input into SOAP XML content, setting on the given request message.
      *
-     * @param requestMessage The request message on which the SOAP content is set.
+     * @param requestMessage   The request message on which the SOAP content is set.
      * @param actionInvocation The action invocation from which input argument values are read.
      * @throws org.fourthline.cling.model.UnsupportedDataException
      */
@@ -45,7 +45,7 @@ public interface SOAPActionProcessor {
     /**
      * Converts the given invocation output into SOAP XML content, setting on the given response message.
      *
-     * @param responseMessage The response message on which the SOAP content is set.
+     * @param responseMessage  The response message on which the SOAP content is set.
      * @param actionInvocation The action invocation from which output argument values are read.
      * @throws UnsupportedDataException
      */
@@ -54,7 +54,7 @@ public interface SOAPActionProcessor {
     /**
      * Converts SOAP XML content of the request message and sets input argument values on the given invocation.
      *
-     * @param requestMessage The request message from which SOAP content is read.
+     * @param requestMessage   The request message from which SOAP content is read.
      * @param actionInvocation The action invocation on which input argument values are set.
      * @throws UnsupportedDataException
      */
@@ -63,7 +63,7 @@ public interface SOAPActionProcessor {
     /**
      * Converts SOAP XML content of the response message and sets output argument values on the given invocation.
      *
-     * @param responseMsg The response message from which SOAP content is read.
+     * @param responseMsg      The response message from which SOAP content is read.
      * @param actionInvocation The action invocation on which output argument values are set.
      * @throws UnsupportedDataException
      */

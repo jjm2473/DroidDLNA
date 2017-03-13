@@ -24,7 +24,6 @@ import org.fourthline.cling.support.model.DeviceCapabilities;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Christian Bauer
  */
 public abstract class GetDeviceCapabilities extends ActionCallback {

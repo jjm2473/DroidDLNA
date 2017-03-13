@@ -16,13 +16,11 @@
 package org.fourthline.cling.model.meta;
 
 
-
-
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Version of the UPnP Device Architecture (UDA), defaults to 1.0.
@@ -30,7 +28,7 @@ import java.util.ArrayList;
  * @author Christian Bauer
  */
 public class UDAVersion implements Validatable {
-    
+
     private int major = 1;
     private int minor = 0;
 

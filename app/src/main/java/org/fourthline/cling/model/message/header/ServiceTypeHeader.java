@@ -35,15 +35,15 @@ public class ServiceTypeHeader extends UpnpHeader<ServiceType> {
         setValue(value);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(ServiceType.valueOf(s));
         } catch (RuntimeException ex) {
             throw new InvalidHeaderException("Invalid service type header value, " + ex.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }

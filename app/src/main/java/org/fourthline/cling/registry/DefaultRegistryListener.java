@@ -84,7 +84,7 @@ public class DefaultRegistryListener implements RegistryListener {
     }
 
     public void deviceAdded(Registry registry, Device device) {
-        
+
     }
 
     public void deviceRemoved(Registry registry, Device device) {

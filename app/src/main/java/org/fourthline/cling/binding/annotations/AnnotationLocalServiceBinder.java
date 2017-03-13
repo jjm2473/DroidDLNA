@@ -43,9 +43,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -56,6 +56,34 @@ import java.util.logging.Logger;
 public class AnnotationLocalServiceBinder implements LocalServiceBinder {
 
     private static Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
+
+    static String toUpnpStateVariableName(String javaName) {
+        if (javaName.length() < 1) {
+            throw new IllegalArgumentException("Variable name must be at least 1 character long");
+        }
+        return javaName.substring(0, 1).toUpperCase(Locale.ROOT) + javaName.substring(1);
+    }
+
+    static String toJavaStateVariableName(String upnpName) {
+        if (upnpName.length() < 1) {
+            throw new IllegalArgumentException("Variable name must be at least 1 character long");
+        }
+        return upnpName.substring(0, 1).toLowerCase(Locale.ROOT) + upnpName.substring(1);
+    }
+
+    static String toUpnpActionName(String javaName) {
+        if (javaName.length() < 1) {
+            throw new IllegalArgumentException("Action name must be at least 1 character long");
+        }
+        return javaName.substring(0, 1).toUpperCase(Locale.ROOT) + javaName.substring(1);
+    }
+
+    static String toJavaActionName(String upnpName) {
+        if (upnpName.length() < 1) {
+            throw new IllegalArgumentException("Variable name must be at least 1 character long");
+        }
+        return upnpName.substring(0, 1).toLowerCase(Locale.ROOT) + upnpName.substring(1);
+    }
 
     public LocalService read(Class<?> clazz) throws LocalServiceBindingException {
         log.fine("Reading and binding annotations of service implementation class: " + clazz);
@@ -91,7 +119,7 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
     }
 
     public LocalService read(Class<?> clazz, ServiceId id, ServiceType type,
-                                   boolean supportsQueryStateVariables, Set<Class> stringConvertibleTypes)
+                             boolean supportsQueryStateVariables, Set<Class> stringConvertibleTypes)
             throws LocalServiceBindingException {
 
         Map<StateVariable, StateVariableAccessor> stateVariables = readStateVariables(clazz, stringConvertibleTypes);
@@ -113,6 +141,8 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
             throw new LocalServiceBindingException("Validation of model failed, check the log");
         }
     }
+
+    // TODO: I don't like the exceptions much, user has no idea what to do
 
     protected Set<Class> readStringConvertibleTypes(Class[] declaredTypes) throws LocalServiceBindingException {
 
@@ -244,8 +274,8 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
             AnnotationActionBinder actionBinder =
                     new AnnotationActionBinder(method, stateVariables, stringConvertibleTypes);
             Action action = actionBinder.appendAction(map);
-            if(isActionExcluded(action)) {
-            	map.remove(action);
+            if (isActionExcluded(action)) {
+                map.remove(action);
             }
         }
 
@@ -255,39 +285,8 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
     /**
      * Override this method to exclude action/methods after they have been discovered.
      */
-    protected  boolean isActionExcluded(Action action) {
-    	return false;
-    }
-    
-    // TODO: I don't like the exceptions much, user has no idea what to do
-
-    static String toUpnpStateVariableName(String javaName) {
-        if (javaName.length() < 1) {
-            throw new IllegalArgumentException("Variable name must be at least 1 character long");
-        }
-        return javaName.substring(0, 1).toUpperCase(Locale.ROOT) + javaName.substring(1);
-    }
-
-    static String toJavaStateVariableName(String upnpName) {
-        if (upnpName.length() < 1) {
-            throw new IllegalArgumentException("Variable name must be at least 1 character long");
-        }
-        return upnpName.substring(0, 1).toLowerCase(Locale.ROOT) + upnpName.substring(1);
-    }
-
-
-    static String toUpnpActionName(String javaName) {
-        if (javaName.length() < 1) {
-            throw new IllegalArgumentException("Action name must be at least 1 character long");
-        }
-        return javaName.substring(0, 1).toUpperCase(Locale.ROOT) + javaName.substring(1);
-    }
-
-    static String toJavaActionName(String upnpName) {
-        if (upnpName.length() < 1) {
-            throw new IllegalArgumentException("Variable name must be at least 1 character long");
-        }
-        return upnpName.substring(0, 1).toLowerCase(Locale.ROOT) + upnpName.substring(1);
+    protected boolean isActionExcluded(Action action) {
+        return false;
     }
 
 }

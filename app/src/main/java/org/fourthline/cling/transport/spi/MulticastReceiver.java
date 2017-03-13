@@ -36,9 +36,8 @@ import java.net.NetworkInterface;
  * <p>
  * An implementation has to be thread-safe.
  * </p>
- * 
- * @param <C> The type of the service's configuration.
  *
+ * @param <C> The type of the service's configuration.
  * @author Christian Bauer
  */
 public interface MulticastReceiver<C extends MulticastReceiverConfiguration> extends Runnable {
@@ -46,10 +45,10 @@ public interface MulticastReceiver<C extends MulticastReceiverConfiguration> ext
     /**
      * Configures the service and starts any listening sockets.
      *
-     * @param networkInterface The network interface on which to join the multicast group on.
-     * @param router The router which handles received {@link org.fourthline.cling.model.message.IncomingDatagramMessage}s.
+     * @param networkInterface      The network interface on which to join the multicast group on.
+     * @param router                The router which handles received {@link org.fourthline.cling.model.message.IncomingDatagramMessage}s.
      * @param networkAddressFactory The network address factory to use for local address lookup given a local interface and a remote address.
-     * @param datagramProcessor Reads and writes datagrams.
+     * @param datagramProcessor     Reads and writes datagrams.
      * @throws InitializationException If the service could not be initialized or started.
      */
     public void init(NetworkInterface networkInterface,

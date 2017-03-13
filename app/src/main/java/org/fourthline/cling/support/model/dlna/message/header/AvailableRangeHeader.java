@@ -26,18 +26,19 @@ public class AvailableRangeHeader extends DLNAHeader<NormalPlayTimeRange> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 setValue(NormalPlayTimeRange.valueOf(s, true));
                 return;
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+            }
         }
         throw new InvalidHeaderException("Invalid AvailableRange header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

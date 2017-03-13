@@ -28,8 +28,10 @@ import java.lang.annotation.Target;
 public @interface UpnpService {
 
     UpnpServiceId serviceId();
+
     UpnpServiceType serviceType();
 
     boolean supportsQueryStateVariables() default true;
+
     Class[] stringConvertibleTypes() default {};
 }

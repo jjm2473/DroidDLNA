@@ -17,8 +17,8 @@ package org.fourthline.cling.model.message.header;
 
 import org.fourthline.cling.model.UserConstants;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Christian Bauer
@@ -45,6 +45,10 @@ public class TimeoutHeader extends UpnpHeader<Integer> {
         setValue(timeoutSeconds);
     }
 
+    public String getString() {
+        return "Second-" + (getValue().equals(INFINITE_VALUE) ? "infinite" : getValue());
+    }
+
     public void setString(String s) throws InvalidHeaderException {
 
         Matcher matcher = PATTERN.matcher(s);
@@ -58,9 +62,5 @@ public class TimeoutHeader extends UpnpHeader<Integer> {
             setValue(INFINITE_VALUE);
         }
 
-    }
-
-    public String getString() {
-        return "Second-" + (getValue().equals(INFINITE_VALUE) ? "infinite" : getValue());
     }
 }

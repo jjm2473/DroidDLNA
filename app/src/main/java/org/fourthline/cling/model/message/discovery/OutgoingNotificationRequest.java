@@ -17,16 +17,16 @@ package org.fourthline.cling.model.message.discovery;
 
 import org.fourthline.cling.model.Constants;
 import org.fourthline.cling.model.Location;
-import org.fourthline.cling.model.message.header.LocationHeader;
-import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.message.OutgoingDatagramMessage;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.model.message.header.HostHeader;
+import org.fourthline.cling.model.message.header.LocationHeader;
+import org.fourthline.cling.model.message.header.MaxAgeHeader;
 import org.fourthline.cling.model.message.header.NTSHeader;
 import org.fourthline.cling.model.message.header.ServerHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
-import org.fourthline.cling.model.message.header.MaxAgeHeader;
+import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.types.NotificationSubtype;
 
 /**

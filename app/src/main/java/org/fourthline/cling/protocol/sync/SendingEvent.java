@@ -15,7 +15,6 @@
 
 package org.fourthline.cling.protocol.sync;
 
-import java.util.logging.Logger;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.gena.LocalGENASubscription;
 import org.fourthline.cling.model.message.StreamResponseMessage;
@@ -25,6 +24,7 @@ import org.fourthline.cling.protocol.SendingSync;
 import org.fourthline.cling.transport.RouterException;
 
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Sending GENA event messages to remote subscribers.
@@ -79,7 +79,7 @@ public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, Strea
             if (currentSequence.getValue() == 0) {
                 log.fine("Sending initial event message to callback URL: " + requestMessage.getUri());
             } else {
-                log.fine("Sending event message '"+currentSequence+"' to callback URL: " + requestMessage.getUri());
+                log.fine("Sending event message '" + currentSequence + "' to callback URL: " + requestMessage.getUri());
             }
 
 

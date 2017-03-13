@@ -19,14 +19,13 @@ import org.fourthline.cling.model.types.BytesRange;
 import org.fourthline.cling.model.types.InvalidValueException;
 
 /**
- *
  * @author Christian Bauer
  * @author Mario Franco
  */
 public class ContentRangeHeader extends UpnpHeader<BytesRange> {
 
     public static final String PREFIX = "bytes ";
-    
+
     public ContentRangeHeader() {
     }
 
@@ -38,15 +37,15 @@ public class ContentRangeHeader extends UpnpHeader<BytesRange> {
         setString(s);
     }
 
+    public String getString() {
+        return getValue().getString(true, PREFIX);
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
-            setValue(BytesRange.valueOf(s,PREFIX));
+            setValue(BytesRange.valueOf(s, PREFIX));
         } catch (InvalidValueException invalidValueException) {
             throw new InvalidHeaderException("Invalid Range Header: " + invalidValueException.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().getString(true,PREFIX);
     }
 }

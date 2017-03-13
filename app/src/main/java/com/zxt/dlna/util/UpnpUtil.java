@@ -1,5 +1,12 @@
-
 package com.zxt.dlna.util;
+
+import android.util.Log;
+
+import com.zxt.dlna.application.BaseApplication;
+
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.types.UDN;
+import org.fourthline.cling.support.model.item.Item;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -9,16 +16,12 @@ import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.UUID;
 
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.types.UDN;
-import org.fourthline.cling.support.model.item.Item;
-
-import com.zxt.dlna.application.BaseApplication;
-
-
-import android.util.Log;
-
 public class UpnpUtil {
+
+    public final static String DLNA_OBJECTCLASS_MUSICID = "object.item.audioItem";
+    public final static String DLNA_OBJECTCLASS_VIDEOID = "object.item.videoItem";
+    public final static String DLNA_OBJECTCLASS_PHOTOID = "object.item.imageItem";
+    private static final String TAG = "UpnpUtil";
 
     public static boolean isValidDevice(Device device) {
         // if (UpnpUtil.isMediaRenderDevice(device)){
@@ -48,14 +51,6 @@ public class UpnpUtil {
         }
         return false;
     }
-
-    public final static String DLNA_OBJECTCLASS_MUSICID = "object.item.audioItem";
-
-    public final static String DLNA_OBJECTCLASS_VIDEOID = "object.item.videoItem";
-
-    public final static String DLNA_OBJECTCLASS_PHOTOID = "object.item.imageItem";
-
-    private static final String TAG = "UpnpUtil";
 
     public static boolean isAudioItem(Item item) {
         // TODO zxt need check?
@@ -105,10 +100,10 @@ public class UpnpUtil {
         if (checkip != null) {
             try {
                 for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
-                        .hasMoreElements();) {
+                        .hasMoreElements(); ) {
                     NetworkInterface intf = en.nextElement();
                     for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
-                            .hasMoreElements();) {
+                            .hasMoreElements(); ) {
                         InetAddress inetAddress = enumIpAddr.nextElement();
                         if (!inetAddress.isLoopbackAddress()) {
                             String ip = inetAddress.getHostAddress().toString();
@@ -132,7 +127,7 @@ public class UpnpUtil {
 
     public static UDN uniqueSystemIdentifier(String salt) {
         StringBuilder systemSalt = new StringBuilder();
-        Log.d(TAG,  "host:" + BaseApplication.getHostName() + " ip:" +   BaseApplication.getHostAddress());
+        Log.d(TAG, "host:" + BaseApplication.getHostName() + " ip:" + BaseApplication.getHostAddress());
         if (null != BaseApplication.getHostName()
                 && null != BaseApplication.getHostAddress()) {
             systemSalt.append(BaseApplication.getHostName()).append(
@@ -152,12 +147,12 @@ public class UpnpUtil {
     public static String getIP() throws SocketException {
         String ipaddress = "";
         for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
-                .hasMoreElements();) {
+                .hasMoreElements(); ) {
             NetworkInterface intf = en.nextElement();
             if (intf.getName().toLowerCase().equals("eth0")
                     || intf.getName().toLowerCase().equals("wlan0")) {
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
-                        .hasMoreElements();) {
+                        .hasMoreElements(); ) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
                     if (!inetAddress.isLoopbackAddress()) {
                         ipaddress = inetAddress.getHostAddress().toString();

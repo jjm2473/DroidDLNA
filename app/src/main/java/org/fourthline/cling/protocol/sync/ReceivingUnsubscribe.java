@@ -46,7 +46,7 @@ public class ReceivingUnsubscribe extends ReceivingSync<StreamRequestMessage, St
                 getUpnpService().getRegistry().getResource(
                         ServiceEventSubscriptionResource.class,
                         getInputMessage().getUri()
-        );
+                );
 
         if (resource == null) {
             log.fine("No local resource found: " + getInputMessage());

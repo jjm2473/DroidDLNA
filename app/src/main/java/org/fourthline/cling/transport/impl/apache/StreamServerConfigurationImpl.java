@@ -102,6 +102,7 @@ public class StreamServerConfigurationImpl implements StreamServerConfiguration 
     /**
      * This is the maximum number of queued incoming connections to allow on the listening socket.
      * Queued TCP connections exceeding this limit may be rejected by the TCP implementation.
+     *
      * @return The number of queued connections, defaults to system default.
      */
     public int getTcpConnectionBacklog() {
@@ -111,7 +112,6 @@ public class StreamServerConfigurationImpl implements StreamServerConfiguration 
     public void setTcpConnectionBacklog(int tcpConnectionBacklog) {
         this.tcpConnectionBacklog = tcpConnectionBacklog;
     }
-
 
 
 }

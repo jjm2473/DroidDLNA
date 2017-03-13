@@ -25,34 +25,12 @@ import org.fourthline.cling.model.ServiceReference;
  */
 public class ConnectionInfo {
 
-    public enum Status {
-        OK,
-        ContentFormatMismatch,
-        InsufficientBandwidth,
-        UnreliableChannel,
-        Unknown
-    }
-
-    public enum Direction {
-        Output,
-        Input;
-
-        public Direction getOpposite() {
-            return this.equals(Output) ? Input : Output;
-        }
-
-    }
-
     final protected int connectionID;
-
     final protected int rcsID;
     final protected int avTransportID;
-
     final protected ProtocolInfo protocolInfo;
-
     final protected ServiceReference peerConnectionManager;
     final protected int peerConnectionID;
-
     final protected Direction direction;
     protected Status connectionStatus = Status.Unknown;
 
@@ -70,7 +48,7 @@ public class ConnectionInfo {
      * <li>RcsID should be 0 or -1</li>
      * <li>AVTransportID should be 0 or -1</li>
      * <li>ProtocolInfo should contain accurate information if it is known, otherwhise
-     *     it should be NULL (empty string)</li>
+     * it should be NULL (empty string)</li>
      * <li>PeerConnectionManager should be NULL (empty string)</li>
      * <li>PeerConnectionID should be -1</li>
      * <li>Direction should be Input or Output</li>
@@ -80,8 +58,6 @@ public class ConnectionInfo {
     public ConnectionInfo() {
         this(0, 0, 0, null, null, -1, Direction.Input, Status.Unknown);
     }
-
-
     public ConnectionInfo(int connectionID,
                           int rcsID, int avTransportID,
                           ProtocolInfo protocolInfo,
@@ -148,7 +124,8 @@ public class ConnectionInfo {
         if (direction != that.direction) return false;
         if (peerConnectionManager != null ? !peerConnectionManager.equals(that.peerConnectionManager) : that.peerConnectionManager != null)
             return false;
-        if (protocolInfo != null ? !protocolInfo.equals(that.protocolInfo) : that.protocolInfo != null) return false;
+        if (protocolInfo != null ? !protocolInfo.equals(that.protocolInfo) : that.protocolInfo != null)
+            return false;
 
         return true;
     }
@@ -169,5 +146,23 @@ public class ConnectionInfo {
     @Override
     public String toString() {
         return "(" + getClass().getSimpleName() + ") ID: " + getConnectionID() + ", Status: " + getConnectionStatus();
+    }
+
+    public enum Status {
+        OK,
+        ContentFormatMismatch,
+        InsufficientBandwidth,
+        UnreliableChannel,
+        Unknown
+    }
+
+    public enum Direction {
+        Output,
+        Input;
+
+        public Direction getOpposite() {
+            return this.equals(Output) ? Input : Output;
+        }
+
     }
 }

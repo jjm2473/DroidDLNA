@@ -26,6 +26,11 @@ public class MaxPrateHeader extends DLNAHeader<Long> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(Long.parseLong(s));
@@ -33,10 +38,5 @@ public class MaxPrateHeader extends DLNAHeader<Long> {
         } catch (NumberFormatException numberFormatException) {
         }
         throw new InvalidHeaderException("Invalid SCID header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

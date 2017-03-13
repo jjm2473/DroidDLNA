@@ -1,12 +1,11 @@
-
 package com.zxt.dlna.dmc;
+
+import android.os.Handler;
 
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.avtransport.callback.SetAVTransportURI;
-
-import android.os.Handler;
 
 public class SetAVTransportURIActionCallback extends SetAVTransportURI {
 
@@ -15,7 +14,7 @@ public class SetAVTransportURIActionCallback extends SetAVTransportURI {
     private int type;
 
     public SetAVTransportURIActionCallback(Service paramService, String paramString1,
-            String paramString2, Handler paramHandler, int paramInt) {
+                                           String paramString2, Handler paramHandler, int paramInt) {
         super(paramService, paramString1, paramString2);
         this.handler = paramHandler;
     }

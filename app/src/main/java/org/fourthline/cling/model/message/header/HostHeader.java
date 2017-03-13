@@ -38,12 +38,16 @@ public class HostHeader extends UpnpHeader<HostPort> {
         setValue(new HostPort(host, port));
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         // UDA 1.1/1.0 section 1.2.2
         if (s.contains(":")) {
             // We have a port in the header, so we have to use that instead of the UDA default
             try {
-                this.port = Integer.valueOf(s.substring(s.indexOf(":")+1));
+                this.port = Integer.valueOf(s.substring(s.indexOf(":") + 1));
                 this.group = s.substring(0, s.indexOf(":"));
                 setValue(new HostPort(group, port));
             } catch (NumberFormatException ex) {
@@ -53,9 +57,5 @@ public class HostHeader extends UpnpHeader<HostPort> {
             this.group = s;
             setValue(new HostPort(group, port));
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }

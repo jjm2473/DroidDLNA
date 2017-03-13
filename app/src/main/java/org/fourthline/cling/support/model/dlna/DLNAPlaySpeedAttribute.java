@@ -21,17 +21,17 @@ import org.fourthline.cling.support.avtransport.lastchange.AVTransportVariable.T
  * @author Mario Franco
  */
 public class DLNAPlaySpeedAttribute extends DLNAAttribute<TransportPlaySpeed[]> {
-    
+
     public DLNAPlaySpeedAttribute() {
-        setValue(new TransportPlaySpeed[] {});
+        setValue(new TransportPlaySpeed[]{});
     }
 
     public DLNAPlaySpeedAttribute(TransportPlaySpeed[] speeds) {
         setValue(speeds);
     }
-    
+
     public DLNAPlaySpeedAttribute(String[] speeds) {
-        TransportPlaySpeed[] sp = new TransportPlaySpeed[speeds.length]; 
+        TransportPlaySpeed[] sp = new TransportPlaySpeed[speeds.length];
         try {
             for (int i = 0; i < speeds.length; i++) {
                 sp[i] = new TransportPlaySpeed(speeds[i]);
@@ -47,7 +47,7 @@ public class DLNAPlaySpeedAttribute extends DLNAAttribute<TransportPlaySpeed[]> 
         if (s != null && s.length() != 0) {
             String[] speeds = s.split(",");
             try {
-                value = new TransportPlaySpeed[speeds.length]; 
+                value = new TransportPlaySpeed[speeds.length];
                 for (int i = 0; i < speeds.length; i++) {
                     value[i] = new TransportPlaySpeed(speeds[i]);
                 }
@@ -70,5 +70,5 @@ public class DLNAPlaySpeedAttribute extends DLNAAttribute<TransportPlaySpeed[]> 
         }
         return s;
     }
-    
+
 }

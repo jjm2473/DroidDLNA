@@ -14,24 +14,35 @@
  */
 package org.fourthline.cling.support.model.dlna.message.header;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.fourthline.cling.model.message.header.InvalidHeaderException;
 import org.fourthline.cling.model.types.PragmaType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * DLNA Pragma tokens:
- *  - getIfoFileURI.dlna.org
- *  - ifoFileURI.dlna.org
- * 
+ * - getIfoFileURI.dlna.org
+ * - ifoFileURI.dlna.org
+ *
  * @author Mario Franco
  */
 public class PragmaHeader extends DLNAHeader<List<PragmaType>> {
-    
+
     public PragmaHeader() {
         setValue(new ArrayList<PragmaType>());
     }
-    
+
+    @Override
+    public String getString() {
+        List<PragmaType> v = getValue();
+        String r = "";
+        for (PragmaType pragma : v) {
+            r += (r.length() == 0 ? "" : ",") + pragma.getString();
+        }
+        return r;
+    }
+
     @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
@@ -46,15 +57,5 @@ public class PragmaHeader extends DLNAHeader<List<PragmaType>> {
             return;
         }
         throw new InvalidHeaderException("Invalid Pragma header value: " + s);
-    }
-    
-    @Override
-    public String getString() {
-        List<PragmaType> v = getValue();
-        String r = "";
-        for (PragmaType pragma : v) {
-            r += (r.length() == 0 ? "": "," )+  pragma.getString();
-        }
-        return r;
     }
 }

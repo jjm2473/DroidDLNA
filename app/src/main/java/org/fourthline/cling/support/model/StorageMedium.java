@@ -75,11 +75,6 @@ public enum StorageMedium {
         this.protocolString = protocolString == null ? this.name() : protocolString;
     }
 
-    @Override
-    public String toString() {
-        return protocolString;
-    }
-
     public static StorageMedium valueOrExceptionOf(String s) {
         StorageMedium sm = byProtocolString.get(s);
         if (sm != null) return sm;
@@ -99,6 +94,11 @@ public enum StorageMedium {
             result[i] = valueOrVendorSpecificOf(strings[i]);
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return protocolString;
     }
 
 }

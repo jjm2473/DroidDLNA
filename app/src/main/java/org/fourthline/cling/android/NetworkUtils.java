@@ -18,6 +18,7 @@ package org.fourthline.cling.android;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import org.fourthline.cling.model.ModelUtil;
 
 import java.util.logging.Logger;
@@ -41,16 +42,20 @@ public class NetworkUtils {
         }
 
         networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) return networkInfo;
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
+            return networkInfo;
 
         networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) return networkInfo;
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
+            return networkInfo;
 
         networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIMAX);
-        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) return networkInfo;
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
+            return networkInfo;
 
         networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
-        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) return networkInfo;
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
+            return networkInfo;
 
         log.info("Could not find any connected network...");
 

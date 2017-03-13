@@ -27,6 +27,11 @@ public class BufferBytesHeader extends DLNAHeader<UnsignedIntegerFourBytes> {
     }
 
     @Override
+    public String getString() {
+        return getValue().getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(new UnsignedIntegerFourBytes(s));
@@ -34,10 +39,5 @@ public class BufferBytesHeader extends DLNAHeader<UnsignedIntegerFourBytes> {
         } catch (NumberFormatException numberFormatException) {
         }
         throw new InvalidHeaderException("Invalid header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().getValue().toString();
     }
 }

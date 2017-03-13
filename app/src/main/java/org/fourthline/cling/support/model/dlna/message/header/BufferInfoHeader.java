@@ -26,18 +26,19 @@ public class BufferInfoHeader extends DLNAHeader<BufferInfoType> {
     }
 
     @Override
+    public String getString() {
+        return getValue().getString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 setValue(BufferInfoType.valueOf(s));
                 return;
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+            }
         }
         throw new InvalidHeaderException("Invalid BufferInfo header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().getString();
     }
 }

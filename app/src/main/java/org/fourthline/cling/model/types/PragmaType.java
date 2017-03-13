@@ -15,7 +15,6 @@
 package org.fourthline.cling.model.types;
 
 /**
- *
  * @author Mario Franco
  */
 public class PragmaType {
@@ -29,7 +28,7 @@ public class PragmaType {
         this.value = value;
         this.quote = quote;
     }
-    
+
     public PragmaType(String token, String value) {
         this.token = token;
         this.value = value;
@@ -40,7 +39,26 @@ public class PragmaType {
         this.value = value;
     }
 
-    
+    public static PragmaType valueOf(String s) throws InvalidValueException {
+        if (s.length() != 0) {
+            String token = null, value = null;
+            boolean quote = false;
+            String[] params = s.split("=");
+            if (params.length > 1) {
+                token = params[0];
+                value = params[1];
+                if (value.startsWith("\"") && value.endsWith("\"")) {
+                    quote = true;
+                    value = value.substring(1, value.length() - 1);
+                }
+            } else {
+                value = s;
+            }
+            return new PragmaType(token, value, quote);
+        }
+        throw new InvalidValueException("Can't parse Bytes Range: " + s);
+    }
+
     /**
      * @return the token
      */
@@ -54,39 +72,17 @@ public class PragmaType {
     public String getValue() {
         return value;
     }
-    
+
     /**
-     * 
-     * @return String format of Bytes Range for response message header 
+     * @return String format of Bytes Range for response message header
      */
     public String getString() {
-        String s ="";
-        if (token!=null)
+        String s = "";
+        if (token != null)
             s += token + "=";
 
-        s += quote? "\""+value+"\"" : value;
+        s += quote ? "\"" + value + "\"" : value;
         return s;
-    }
-
-    public static PragmaType valueOf(String s) throws InvalidValueException {
-        if (s.length() != 0) {
-            String token=null, value = null;
-            boolean quote = false;
-            String[] params = s.split("=");
-            if (params.length > 1) {
-                token = params[0];
-                value = params[1];
-                if (value.startsWith("\"") && value.endsWith("\"")) {
-                    quote = true;
-                    value = value.substring(1, value.length()-1);
-                }
-            }
-            else {
-                value = s;
-            }
-            return new PragmaType(token, value, quote);
-        }
-        throw new InvalidValueException("Can't parse Bytes Range: " + s);
     }
 
 }

@@ -47,7 +47,6 @@ import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
 import org.seamless.util.Exceptions;
 
-import javax.enterprise.inject.Alternative;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -57,6 +56,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
+
+import javax.enterprise.inject.Alternative;
 
 /**
  * Default configuration data of a typical UPnP stack.
@@ -149,9 +150,9 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     public StreamClient createStreamClient() {
         return new StreamClientImpl(
-            new StreamClientConfigurationImpl(
-                getSyncProtocolExecutorService()
-            )
+                new StreamClientConfigurationImpl(
+                        getSyncProtocolExecutorService()
+                )
         );
     }
 
@@ -203,9 +204,9 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to <code>false</code>.
      */
-	public boolean isReceivedSubscriptionTimeoutIgnored() {
-		return false;
-	}
+    public boolean isReceivedSubscriptionTimeoutIgnored() {
+        return false;
+    }
 
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
         return null;
@@ -226,7 +227,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
      * @return Defaults to zero, disabling ALIVE flooding.
      */
     public int getAliveIntervalMillis() {
-    	return 0;
+        return 0;
     }
 
     public Integer getRemoteDeviceMaxAgeSeconds() {
@@ -302,27 +303,27 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
         public ClingExecutor() {
             this(new ClingThreadFactory(),
-                 new ThreadPoolExecutor.DiscardPolicy() {
-                     // The pool is unbounded but rejections will happen during shutdown
-                     @Override
-                     public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
-                         // Log and discard
-                         log.info("Thread pool rejected execution of " + runnable.getClass());
-                         super.rejectedExecution(runnable, threadPoolExecutor);
-                     }
-                 }
+                    new ThreadPoolExecutor.DiscardPolicy() {
+                        // The pool is unbounded but rejections will happen during shutdown
+                        @Override
+                        public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
+                            // Log and discard
+                            log.info("Thread pool rejected execution of " + runnable.getClass());
+                            super.rejectedExecution(runnable, threadPoolExecutor);
+                        }
+                    }
             );
         }
 
         public ClingExecutor(ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
             // This is the same as Executors.newCachedThreadPool
             super(0,
-                  Integer.MAX_VALUE,
-                  60L,
-                  TimeUnit.SECONDS,
-                  new SynchronousQueue<Runnable>(),
-                  threadFactory,
-                  rejectedHandler
+                    Integer.MAX_VALUE,
+                    60L,
+                    TimeUnit.SECONDS,
+                    new SynchronousQueue<Runnable>(),
+                    threadFactory,
+                    rejectedHandler
             );
         }
 

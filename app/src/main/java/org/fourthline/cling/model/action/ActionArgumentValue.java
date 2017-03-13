@@ -16,8 +16,8 @@
 package org.fourthline.cling.model.action;
 
 import org.fourthline.cling.model.VariableValue;
-import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.meta.ActionArgument;
+import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.InvalidValueException;
 
 /**

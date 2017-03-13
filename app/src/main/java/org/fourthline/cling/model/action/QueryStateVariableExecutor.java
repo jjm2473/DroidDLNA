@@ -23,11 +23,11 @@ import org.fourthline.cling.model.types.ErrorCode;
 
 /**
  * Special executor for one action, the deprecated "query the value of the any state variable" action.
- * 
+ *
  * @author Christian Bauer
  */
 public class QueryStateVariableExecutor extends AbstractActionExecutor {
-    
+
     @Override
     protected void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception {
 

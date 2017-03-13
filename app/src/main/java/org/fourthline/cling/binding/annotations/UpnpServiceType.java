@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 public @interface UpnpServiceType {
 
     String namespace() default UDAServiceType.DEFAULT_NAMESPACE;
+
     String value();
+
     int version() default 1;
 }

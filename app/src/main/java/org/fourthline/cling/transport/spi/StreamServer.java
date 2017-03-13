@@ -66,7 +66,6 @@ import java.net.InetAddress;
  * </p>
  *
  * @param <C> The type of the service's configuration.
- *
  * @author Christian Bauer
  */
 public interface StreamServer<C extends StreamServerConfiguration> extends Runnable {
@@ -75,7 +74,7 @@ public interface StreamServer<C extends StreamServerConfiguration> extends Runna
      * Configures the service and starts any listening sockets.
      *
      * @param bindAddress The address to bind any sockets on.
-     * @param router The router which handles the incoming {@link org.fourthline.cling.transport.spi.UpnpStream}.
+     * @param router      The router which handles the incoming {@link org.fourthline.cling.transport.spi.UpnpStream}.
      * @throws InitializationException If the service could not be initialized or started.
      */
     public void init(InetAddress bindAddress, Router router) throws InitializationException;

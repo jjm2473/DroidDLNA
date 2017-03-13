@@ -17,9 +17,9 @@ package org.fourthline.cling.model.meta;
 
 
 import org.fourthline.cling.model.Namespace;
-import org.fourthline.cling.model.resource.ServiceEventCallbackResource;
-import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.ValidationException;
+import org.fourthline.cling.model.resource.Resource;
+import org.fourthline.cling.model.resource.ServiceEventCallbackResource;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.ServiceId;
 import org.fourthline.cling.model.types.ServiceType;
@@ -45,67 +45,67 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       RemoteService service) throws ValidationException {
+                        RemoteService service) throws ValidationException {
         super(identity, type, details, null, new RemoteService[]{service});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
+                        RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
         super(identity, type, details, null, new RemoteService[]{service}, new RemoteDevice[]{embeddedDevice});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       RemoteService[] services) throws ValidationException {
+                        RemoteService[] services) throws ValidationException {
         super(identity, type, details, null, services);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
+                        RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
         super(identity, type, details, null, services, embeddedDevices);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon icon, RemoteService service) throws ValidationException {
+                        Icon icon, RemoteService service) throws ValidationException {
         super(identity, type, details, new Icon[]{icon}, new RemoteService[]{service});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon icon, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
+                        Icon icon, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
         super(identity, type, details, new Icon[]{icon}, new RemoteService[]{service}, new RemoteDevice[]{embeddedDevice});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon icon, RemoteService[] services) throws ValidationException {
+                        Icon icon, RemoteService[] services) throws ValidationException {
         super(identity, type, details, new Icon[]{icon}, services);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon icon, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
+                        Icon icon, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
         super(identity, type, details, new Icon[]{icon}, services, embeddedDevices);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon[] icons, RemoteService service) throws ValidationException {
+                        Icon[] icons, RemoteService service) throws ValidationException {
         super(identity, type, details, icons, new RemoteService[]{service});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon[] icons, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
+                        Icon[] icons, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
         super(identity, type, details, icons, new RemoteService[]{service}, new RemoteDevice[]{embeddedDevice});
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon[] icons, RemoteService[] services) throws ValidationException {
+                        Icon[] icons, RemoteService[] services) throws ValidationException {
         super(identity, type, details, icons, services);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon[] icons, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
+                        Icon[] icons, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
         super(identity, type, details, icons, services, embeddedDevices);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, UDAVersion version, DeviceType type, DeviceDetails details,
-                       Icon[] icons, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
+                        Icon[] icons, RemoteService[] services, RemoteDevice[] embeddedDevices) throws ValidationException {
         super(identity, version, type, details, icons, services, embeddedDevices);
     }
 
@@ -179,14 +179,14 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
 
         // Services
         for (RemoteService service : getServices()) {
-        	if(service == null) continue;
+            if (service == null) continue;
             discovered.add(new ServiceEventCallbackResource(namespace.getEventCallbackPath(service), service));
         }
 
         // Embedded devices
         if (hasEmbeddedDevices()) {
             for (Device embeddedDevice : getEmbeddedDevices()) {
-				if(embeddedDevice == null) continue;
+                if (embeddedDevice == null) continue;
                 discovered.addAll(Arrays.asList(embeddedDevice.discoverResources(namespace)));
             }
         }

@@ -17,19 +17,18 @@ package org.fourthline.cling.support.model.dlna.types;
 import org.fourthline.cling.model.types.BytesRange;
 
 /**
- *
  * @author Mario Franco
  */
 public class TimeSeekRangeType {
 
     private NormalPlayTimeRange normalPlayTimeRange;
     private BytesRange bytesRange;
-    
+
 
     public TimeSeekRangeType(NormalPlayTimeRange nptRange) {
         this.normalPlayTimeRange = nptRange;
     }
-    
+
     public TimeSeekRangeType(NormalPlayTimeRange nptRange, BytesRange byteRange) {
         this.normalPlayTimeRange = nptRange;
         this.bytesRange = byteRange;

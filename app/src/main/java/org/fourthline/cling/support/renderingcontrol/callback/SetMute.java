@@ -24,7 +24,6 @@ import org.fourthline.cling.support.model.Channel;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Christian Bauer
  */
 public abstract class SetMute extends ActionCallback {

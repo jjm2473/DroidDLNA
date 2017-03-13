@@ -16,7 +16,6 @@
 package org.fourthline.cling.model;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.URL;
 
 /**
@@ -41,6 +40,15 @@ public class Location {
         this.networkAddress = networkAddress;
         this.path = path;
         this.url = createAbsoluteURL(networkAddress.getAddress(), networkAddress.getPort(), path);
+    }
+
+    // Performance optimization on Android
+    private static URL createAbsoluteURL(InetAddress address, int localStreamPort, String path) {
+        try {
+            return new URL("http", address.getHostAddress(), localStreamPort, path);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Address, port, and URI can not be converted to URL", ex);
+        }
     }
 
     public NetworkAddress getNetworkAddress() {
@@ -76,14 +84,5 @@ public class Location {
      */
     public URL getURL() {
         return url;
-    }
-
-    // Performance optimization on Android
-    private static URL createAbsoluteURL(InetAddress address, int localStreamPort, String path) {
-        try {
-            return new URL("http", address.getHostAddress(), localStreamPort, path);
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("Address, port, and URI can not be converted to URL", ex);
-        }
     }
 }

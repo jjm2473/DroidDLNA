@@ -15,16 +15,16 @@
 
 package org.fourthline.cling.transport.impl;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.message.gena.IncomingEventRequestMessage;
 import org.fourthline.cling.model.meta.StateVariable;
 import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.transport.spi.GENAEventProcessor;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.seamless.xml.XmlPullParserUtils;
 import org.xmlpull.v1.XmlPullParser;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.Alternative;
 
@@ -43,9 +43,9 @@ import javax.enterprise.inject.Alternative;
 @Alternative
 public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
-	private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
+    private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
-	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
+    public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
         log.fine("Reading body of: " + requestMessage);
         if (log.isLoggable(Level.FINER)) {
             log.finer("===================================== GENA BODY BEGIN ============================================");
@@ -54,43 +54,44 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
         }
 
         String body = getMessageBody(requestMessage);
-		try {
-			XmlPullParser xpp = XmlPullParserUtils.createParser(body);
-			readProperties(xpp, requestMessage);
-		} catch (Exception ex) {
-			throw new UnsupportedDataException("Can't transform message payload: " + ex.getMessage(), ex, body);	
-		}
-	}
+        try {
+            XmlPullParser xpp = XmlPullParserUtils.createParser(body);
+            readProperties(xpp, requestMessage);
+        } catch (Exception ex) {
+            throw new UnsupportedDataException("Can't transform message payload: " + ex.getMessage(), ex, body);
+        }
+    }
 
-	protected void readProperties(XmlPullParser xpp, IncomingEventRequestMessage message) throws Exception {
-		// We're inside the propertyset tag
-		StateVariable[] stateVariables = message.getService().getStateVariables();
-		int event;
-		while((event = xpp.next()) != XmlPullParser.END_DOCUMENT) {
-			if(event != XmlPullParser.START_TAG) continue;
-			if(xpp.getName().equals("property")) {
-				readProperty(xpp, message, stateVariables);
-			} 
-		}
-	}
+    protected void readProperties(XmlPullParser xpp, IncomingEventRequestMessage message) throws Exception {
+        // We're inside the propertyset tag
+        StateVariable[] stateVariables = message.getService().getStateVariables();
+        int event;
+        while ((event = xpp.next()) != XmlPullParser.END_DOCUMENT) {
+            if (event != XmlPullParser.START_TAG) continue;
+            if (xpp.getName().equals("property")) {
+                readProperty(xpp, message, stateVariables);
+            }
+        }
+    }
 
-	protected void readProperty(XmlPullParser xpp, IncomingEventRequestMessage message, StateVariable[] stateVariables) throws Exception  {
-		// We're inside the property tag
-		int event ;
-		do {
-			event = xpp.next();
-			if(event == XmlPullParser.START_TAG) {
+    protected void readProperty(XmlPullParser xpp, IncomingEventRequestMessage message, StateVariable[] stateVariables) throws Exception {
+        // We're inside the property tag
+        int event;
+        do {
+            event = xpp.next();
+            if (event == XmlPullParser.START_TAG) {
 
-				String stateVariableName = xpp.getName();
-				for (StateVariable stateVariable : stateVariables) {
-					if (stateVariable.getName().equals(stateVariableName)) {
-						log.fine("Reading state variable value: " + stateVariableName);
-						String value = xpp.nextText();
-						message.getStateVariableValues().add(new StateVariableValue(stateVariable, value));
-						break;
-					}
-				} 
-			}
-		} while(event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals("property")));
-	}
+                String stateVariableName = xpp.getName();
+                for (StateVariable stateVariable : stateVariables) {
+                    if (stateVariable.getName().equals(stateVariableName)) {
+                        log.fine("Reading state variable value: " + stateVariableName);
+                        String value = xpp.nextText();
+                        message.getStateVariableValues().add(new StateVariableValue(stateVariable, value));
+                        break;
+                    }
+                }
+            }
+        }
+        while (event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals("property")));
+    }
 }

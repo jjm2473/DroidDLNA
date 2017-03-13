@@ -15,10 +15,10 @@
 
 package org.fourthline.cling.model.meta;
 
+import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.types.Datatype;
-import org.fourthline.cling.model.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +35,11 @@ import java.util.logging.Logger;
 public class ActionArgument<S extends Service> implements Validatable {
 
     final private static Logger log = Logger.getLogger(ActionArgument.class.getName());
-
-    public enum Direction {
-        IN, OUT
-    }
-
     final private String name;
     final private String[] aliases;
     final private String relatedStateVariableName;
     final private Direction direction;
     final private boolean returnValue;     // TODO: What is this stuff good for anyway?
-
     // Package mutable state
     private Action<S> action;
 
@@ -56,7 +50,7 @@ public class ActionArgument<S extends Service> implements Validatable {
     public ActionArgument(String name, String[] aliases, String relatedStateVariableName, Direction direction) {
         this(name, aliases, relatedStateVariableName, direction, false);
     }
-    
+
     public ActionArgument(String name, String relatedStateVariableName, Direction direction, boolean returnValue) {
         this(name, new String[0], relatedStateVariableName, direction, returnValue);
     }
@@ -132,7 +126,7 @@ public class ActionArgument<S extends Service> implements Validatable {
             errors.add(new ValidationError(
                     getClass(),
                     "direction",
-                    "Argument '"+getName()+"' requires a direction, either IN or OUT"
+                    "Argument '" + getName() + "' requires a direction, either IN or OUT"
             ));
         }
 
@@ -160,5 +154,9 @@ public class ActionArgument<S extends Service> implements Validatable {
     @Override
     public String toString() {
         return "(" + getClass().getSimpleName() + ", " + getDirection() + ") " + getName();
+    }
+
+    public enum Direction {
+        IN, OUT
     }
 }

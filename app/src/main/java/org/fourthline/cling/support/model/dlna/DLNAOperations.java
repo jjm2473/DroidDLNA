@@ -16,7 +16,7 @@ package org.fourthline.cling.support.model.dlna;
 
 /**
  * DLNA.ORG_OP: operations parameter (string)
- *
+ * <p>
  * <pre>
  *     "00" (or "0") neither time seek range nor range supported
  *     "01" range supported
@@ -38,10 +38,6 @@ public enum DLNAOperations {
         this.code = code;
     }
 
-    public int getCode() {
-        return code;
-    }
-
     public static DLNAOperations valueOf(int code) {
         for (DLNAOperations errorCode : values()) {
             if (errorCode.getCode() == code) {
@@ -49,5 +45,9 @@ public enum DLNAOperations {
             }
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

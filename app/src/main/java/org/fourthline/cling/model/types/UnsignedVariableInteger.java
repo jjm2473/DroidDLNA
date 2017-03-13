@@ -25,24 +25,6 @@ import java.util.logging.Logger;
 public abstract class UnsignedVariableInteger {
 
     final private static Logger log = Logger.getLogger(UnsignedVariableInteger.class.getName());
-
-    public enum Bits {
-        EIGHT(0xffL),
-        SIXTEEN(0xffffL),
-        TWENTYFOUR(0xffffffL),
-        THIRTYTWO(0xffffffffL);
-
-        private long maxValue;
-
-        Bits(long maxValue) {
-            this.maxValue = maxValue;
-        }
-
-        public long getMaxValue() {
-            return maxValue;
-        }
-    }
-
     protected long value;
 
     protected UnsignedVariableInteger() {
@@ -62,14 +44,14 @@ public abstract class UnsignedVariableInteger {
         setValue(Long.parseLong(s.trim()));
     }
 
+    public Long getValue() {
+        return value;
+    }
+
     protected UnsignedVariableInteger setValue(long value) {
         isInRange(value);
         this.value = value;
         return this;
-    }
-
-    public Long getValue() {
-        return value;
     }
 
     public void isInRange(long value) throws NumberFormatException {
@@ -113,6 +95,23 @@ public abstract class UnsignedVariableInteger {
     @Override
     public String toString() {
         return Long.toString(value);
+    }
+
+    public enum Bits {
+        EIGHT(0xffL),
+        SIXTEEN(0xffffL),
+        TWENTYFOUR(0xffffffL),
+        THIRTYTWO(0xffffffffL);
+
+        private long maxValue;
+
+        Bits(long maxValue) {
+            this.maxValue = maxValue;
+        }
+
+        public long getMaxValue() {
+            return maxValue;
+        }
     }
 
 }

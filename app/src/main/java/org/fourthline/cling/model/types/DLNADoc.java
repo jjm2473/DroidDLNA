@@ -30,27 +30,8 @@ import java.util.regex.Pattern;
 public class DLNADoc {
 
     public static final Pattern PATTERN = Pattern.compile("(.+?)[ -]([0-9].[0-9]{2})");
-
-    public enum Version {
-        V1_0("1.00"),
-        V1_5("1.50");
-
-        String s;
-
-        Version(String s) {
-            this.s = s;
-        }
-
-
-        @Override
-        public String toString() {
-            return s;
-        }
-    }
-
     final private String devClass;
     final private String version;
-
     public DLNADoc(String devClass, String version) {
         this.devClass = devClass;
         this.version = version;
@@ -61,14 +42,6 @@ public class DLNADoc {
         this.version = version.s;
     }
 
-    public String getDevClass() {
-        return devClass;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
     public static DLNADoc valueOf(String s) throws InvalidValueException {
         Matcher matcher = PATTERN.matcher(s);
         if (matcher.matches()) {
@@ -76,6 +49,14 @@ public class DLNADoc {
         } else {
             throw new InvalidValueException("Can't parse DLNADoc: " + s);
         }
+    }
+
+    public String getDevClass() {
+        return devClass;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     @Override
@@ -101,5 +82,22 @@ public class DLNADoc {
     @Override
     public String toString() {
         return getDevClass() + "-" + getVersion();
+    }
+
+    public enum Version {
+        V1_0("1.00"),
+        V1_5("1.50");
+
+        String s;
+
+        Version(String s) {
+            this.s = s;
+        }
+
+
+        @Override
+        public String toString() {
+            return s;
+        }
     }
 }

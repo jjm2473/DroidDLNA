@@ -32,13 +32,10 @@ import java.util.regex.Pattern;
  */
 public class DeviceType {
 
-    final private static Logger log = Logger.getLogger(DeviceType.class.getName());
-
     public static final String UNKNOWN = "UNKNOWN";
-
     public static final Pattern PATTERN =
             Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
-
+    final private static Logger log = Logger.getLogger(DeviceType.class.getName());
     private String namespace;
     private String type;
     private int version = 1;
@@ -59,18 +56,6 @@ public class DeviceType {
         this.type = type;
 
         this.version = version;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public int getVersion() {
-        return version;
     }
 
     /**
@@ -114,20 +99,32 @@ public class DeviceType {
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
                 log.warning(
-                    "UPnP specification violation, replacing invalid device type token '"
-                        + matcher.group(2)
-                        + "' with: "
-                        + cleanToken
+                        "UPnP specification violation, replacing invalid device type token '"
+                                + matcher.group(2)
+                                + "' with: "
+                                + cleanToken
                 );
                 return new DeviceType(matcher.group(1), cleanToken, Integer.valueOf(matcher.group(3)));
             }
         } catch (RuntimeException e) {
             throw new InvalidValueException(String.format(
-                "Can't parse device type string (namespace/type/version) '%s': %s", s, e.toString()
+                    "Can't parse device type string (namespace/type/version) '%s': %s", s, e.toString()
             ));
         }
 
         throw new InvalidValueException("Can't parse device type string (namespace/type/version): " + s);
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getVersion() {
+        return version;
     }
 
     public boolean implementsVersion(DeviceType that) {
@@ -143,7 +140,7 @@ public class DeviceType {
 
     @Override
     public String toString() {
-        return "urn:" + getNamespace() + ":device:" + getType()+ ":" + getVersion();
+        return "urn:" + getNamespace() + ":device:" + getType() + ":" + getVersion();
     }
 
     @Override

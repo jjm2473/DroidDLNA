@@ -15,9 +15,10 @@
 
 package org.fourthline.cling.transport.spi;
 
-import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
+
+import javax.servlet.Servlet;
 
 /**
  * Implement this to provide your own servlet container (instance),
@@ -61,7 +62,7 @@ public interface ServletContainerAdapter {
     int addConnector(String host, int port) throws IOException;
 
     /**
-     * Removes a previously added connector. Implementation should close the corresponding 
+     * Removes a previously added connector. Implementation should close the corresponding
      * listening server socket. It may stop the server when the last connector is removed.
      *
      * @param host The host address of the socket.
@@ -74,7 +75,7 @@ public interface ServletContainerAdapter {
      * requests, should only register it once.
      *
      * @param contextPath The context path prefix for all UPnP requests.
-     * @param servlet The servlet handling all UPnP requests.
+     * @param servlet     The servlet handling all UPnP requests.
      */
     void registerServlet(String contextPath, Servlet servlet);
 

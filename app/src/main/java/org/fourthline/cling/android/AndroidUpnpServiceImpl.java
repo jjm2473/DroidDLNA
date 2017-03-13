@@ -19,6 +19,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceConfiguration;
 import org.fourthline.cling.UpnpServiceImpl;
@@ -56,9 +57,9 @@ public class AndroidUpnpServiceImpl extends Service {
             @Override
             protected Router createRouter(ProtocolFactory protocolFactory, Registry registry) {
                 return AndroidUpnpServiceImpl.this.createRouter(
-                    getConfiguration(),
-                    protocolFactory,
-                    AndroidUpnpServiceImpl.this
+                        getConfiguration(),
+                        protocolFactory,
+                        AndroidUpnpServiceImpl.this
                 );
             }
 
@@ -66,7 +67,7 @@ public class AndroidUpnpServiceImpl extends Service {
             public synchronized void shutdown() {
                 // First have to remove the receiver, so Android won't complain about it leaking
                 // when the main UI thread exits.
-                ((AndroidRouter)getRouter()).unregisterBroadcastReceiver();
+                ((AndroidRouter) getRouter()).unregisterBroadcastReceiver();
 
                 // Now we can concurrently run the Cling shutdown code, without occupying the
                 // Android main UI thread. This will complete probably after the main UI thread
@@ -81,8 +82,8 @@ public class AndroidUpnpServiceImpl extends Service {
     }
 
     protected AndroidRouter createRouter(UpnpServiceConfiguration configuration,
-                                                   ProtocolFactory protocolFactory,
-                                                   Context context) {
+                                         ProtocolFactory protocolFactory,
+                                         Context context) {
         return new AndroidRouter(configuration, protocolFactory, context);
     }
 

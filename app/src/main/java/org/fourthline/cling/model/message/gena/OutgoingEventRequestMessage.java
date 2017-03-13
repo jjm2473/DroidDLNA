@@ -15,7 +15,7 @@
 
 package org.fourthline.cling.model.message.gena;
 
-import org.fourthline.cling.model.state.StateVariableValue;
+import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.model.message.header.ContentTypeHeader;
@@ -24,9 +24,9 @@ import org.fourthline.cling.model.message.header.NTEventHeader;
 import org.fourthline.cling.model.message.header.NTSHeader;
 import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.model.types.NotificationSubtype;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
-import org.fourthline.cling.model.gena.GENASubscription;
 
 import java.net.URL;
 import java.util.Collection;

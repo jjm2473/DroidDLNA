@@ -25,11 +25,11 @@ import java.net.InetAddress;
  * </p>
  * <ul>
  * <li>When an M-SEARCH is received, we send a LOCATION header back with a
- *     reachable (by the remote control point) local address.</li>
+ * reachable (by the remote control point) local address.</li>
  * <li>When a NOTIFY discovery message (can be a search response) is received we
-       need to memorize on which local address it was received, so that the we can
-       later give the remote device a reachable (from its point of view) local
-       GENA callback address.</li>
+ * need to memorize on which local address it was received, so that the we can
+ * later give the remote device a reachable (from its point of view) local
+ * GENA callback address.</li>
  * </ul>
  *
  * @author Christian Bauer

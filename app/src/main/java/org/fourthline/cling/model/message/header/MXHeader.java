@@ -34,6 +34,10 @@ public class MXHeader extends UpnpHeader<Integer> {
         setValue(delayInSeconds);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         Integer value;
         try {
@@ -49,9 +53,5 @@ public class MXHeader extends UpnpHeader<Integer> {
         } else {
             setValue(value);
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }

@@ -17,7 +17,7 @@ package org.fourthline.cling.model.message.header;
 
 /**
  * Thrown if the value of a header was invalid for the given header.
- * 
+ *
  * @author Christian Bauer
  */
 public class InvalidHeaderException extends RuntimeException {

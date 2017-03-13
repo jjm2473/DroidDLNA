@@ -15,9 +15,7 @@
 
 package org.fourthline.cling.transport.impl;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.message.IncomingDatagramMessage;
 import org.fourthline.cling.model.message.OutgoingDatagramMessage;
 import org.fourthline.cling.model.message.UpnpHeaders;
@@ -25,7 +23,6 @@ import org.fourthline.cling.model.message.UpnpOperation;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.transport.spi.DatagramProcessor;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.seamless.http.Headers;
 
 import java.io.ByteArrayInputStream;
@@ -33,10 +30,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Default implementation.
- * 
+ *
  * @author Christian Bauer
  */
 public class DatagramProcessorImpl implements DatagramProcessor {
@@ -113,7 +112,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedDataException(
-                "Can't convert message content to US-ASCII: " + ex.getMessage(), ex, messageData
+                    "Can't convert message content to US-ASCII: " + ex.getMessage(), ex, messageData
             );
         }
     }

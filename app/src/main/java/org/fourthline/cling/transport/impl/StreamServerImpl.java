@@ -18,6 +18,7 @@ package org.fourthline.cling.transport.impl;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 import org.fourthline.cling.model.message.Connection;
 import org.fourthline.cling.transport.Router;
 import org.fourthline.cling.transport.spi.InitializationException;
@@ -89,6 +90,17 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         if (server != null) server.stop(1);
     }
 
+    /**
+     * Logs a warning and returns <code>true</code>, we can't access the socket using the awful JDK webserver API.
+     * <p>
+     * Override this method if you know how to do it.
+     * </p>
+     */
+    protected boolean isConnectionOpen(HttpExchange exchange) {
+        log.warning("Can't check client connection, socket access impossible on JDK webserver!");
+        return true;
+    }
+
     protected class RequestHttpHandler implements HttpHandler {
 
         private final Router router;
@@ -103,25 +115,14 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
             // continue the receiving thread ASAP
             log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
             router.received(
-                new HttpExchangeUpnpStream(router.getProtocolFactory(), httpExchange) {
-                    @Override
-                    protected Connection createConnection() {
-                        return new HttpServerConnection(httpExchange);
+                    new HttpExchangeUpnpStream(router.getProtocolFactory(), httpExchange) {
+                        @Override
+                        protected Connection createConnection() {
+                            return new HttpServerConnection(httpExchange);
+                        }
                     }
-                }
             );
         }
-    }
-
-    /**
-     * Logs a warning and returns <code>true</code>, we can't access the socket using the awful JDK webserver API.
-     * <p>
-     * Override this method if you know how to do it.
-     * </p>
-     */
-    protected boolean isConnectionOpen(HttpExchange exchange) {
-        log.warning("Can't check client connection, socket access impossible on JDK webserver!");
-        return true;
     }
 
     protected class HttpServerConnection implements Connection {
@@ -140,15 +141,15 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         @Override
         public InetAddress getRemoteAddress() {
             return exchange.getRemoteAddress() != null
-                ? exchange.getRemoteAddress().getAddress()
-                : null;
+                    ? exchange.getRemoteAddress().getAddress()
+                    : null;
         }
 
         @Override
         public InetAddress getLocalAddress() {
             return exchange.getLocalAddress() != null
-                ? exchange.getLocalAddress().getAddress()
-                : null;
+                    ? exchange.getLocalAddress().getAddress()
+                    : null;
         }
     }
 }

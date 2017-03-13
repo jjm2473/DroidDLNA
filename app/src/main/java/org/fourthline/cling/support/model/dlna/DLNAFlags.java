@@ -14,8 +14,9 @@
  */
 package org.fourthline.cling.support.model.dlna;
 
-/** DLNA.ORG_FLAGS, padded with 24 trailing 0s
- *
+/**
+ * DLNA.ORG_FLAGS, padded with 24 trailing 0s
+ * <p>
  * <pre>
  *     80000000  31  senderPaced
  *     40000000  30  lsopTimeBasedSeekSupported
@@ -57,10 +58,6 @@ public enum DLNAFlags {
         this.code = code;
     }
 
-    public int getCode() {
-        return code;
-    }
-
     public static DLNAFlags valueOf(int code) {
         for (DLNAFlags errorCode : values()) {
             if (errorCode.getCode() == code) {
@@ -68,5 +65,9 @@ public enum DLNAFlags {
             }
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

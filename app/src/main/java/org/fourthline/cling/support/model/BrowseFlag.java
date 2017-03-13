@@ -20,27 +20,27 @@ package org.fourthline.cling.support.model;
  * @author Christian Bauer
  */
 public enum BrowseFlag {
-	
-	METADATA("BrowseMetadata"),
-	DIRECT_CHILDREN("BrowseDirectChildren");
-	
-	private String protocolString;
-	
-	BrowseFlag(String protocolString) {
-		this.protocolString = protocolString;
-	}
 
-	@Override
-	public String toString() {
-		return protocolString;
-	}
-	
-	public static BrowseFlag valueOrNullOf(String s) {
-		for (BrowseFlag browseFlag : values()) {
-			if (browseFlag.toString().equals(s))
-				return browseFlag;
-		}
-		return null;
-	}
+    METADATA("BrowseMetadata"),
+    DIRECT_CHILDREN("BrowseDirectChildren");
+
+    private String protocolString;
+
+    BrowseFlag(String protocolString) {
+        this.protocolString = protocolString;
+    }
+
+    public static BrowseFlag valueOrNullOf(String s) {
+        for (BrowseFlag browseFlag : values()) {
+            if (browseFlag.toString().equals(s))
+                return browseFlag;
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return protocolString;
+    }
 
 }

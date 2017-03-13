@@ -26,8 +26,8 @@ import java.util.Map;
 public class DeviceCapabilities {
 
     private StorageMedium[] playMedia;
-    private StorageMedium[] recMedia = new StorageMedium[] {StorageMedium.NOT_IMPLEMENTED};
-    private RecordQualityMode[] recQualityModes = new RecordQualityMode[] {RecordQualityMode.NOT_IMPLEMENTED};
+    private StorageMedium[] recMedia = new StorageMedium[]{StorageMedium.NOT_IMPLEMENTED};
+    private RecordQualityMode[] recQualityModes = new RecordQualityMode[]{RecordQualityMode.NOT_IMPLEMENTED};
 
     public DeviceCapabilities(Map<String, ActionArgumentValue> args) {
         this(

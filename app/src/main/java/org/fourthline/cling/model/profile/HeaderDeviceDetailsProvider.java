@@ -37,35 +37,8 @@ import java.util.regex.Pattern;
  */
 public class HeaderDeviceDetailsProvider implements DeviceDetailsProvider {
 
-    public static class Key {
-
-        final String headerName;
-        final String valuePattern;
-        final Pattern pattern;
-
-        public Key(String headerName, String valuePattern) {
-            this.headerName = headerName;
-            this.valuePattern = valuePattern;
-            this.pattern = Pattern.compile(valuePattern, Pattern.CASE_INSENSITIVE);
-        }
-
-        public String getHeaderName() {
-            return headerName;
-        }
-
-        public String getValuePattern() {
-            return valuePattern;
-        }
-
-        public boolean isValuePatternMatch(String value) {
-            return pattern.matcher(value).matches();
-        }
-    }
-
-
     final private DeviceDetails defaultDeviceDetails;
     final private Map<Key, DeviceDetails> headerDetails;
-
     public HeaderDeviceDetailsProvider(DeviceDetails defaultDeviceDetails) {
         this(defaultDeviceDetails, null);
     }
@@ -89,13 +62,39 @@ public class HeaderDeviceDetailsProvider implements DeviceDetailsProvider {
 
         for (Key key : getHeaderDetails().keySet()) {
             List<String> headerValues;
-            if ((headerValues = info.getRequestHeaders().get(key.getHeaderName())) == null) continue;
+            if ((headerValues = info.getRequestHeaders().get(key.getHeaderName())) == null)
+                continue;
             for (String headerValue : headerValues) {
                 if (key.isValuePatternMatch(headerValue))
                     return getHeaderDetails().get(key);
             }
         }
         return getDefaultDeviceDetails();
+    }
+
+    public static class Key {
+
+        final String headerName;
+        final String valuePattern;
+        final Pattern pattern;
+
+        public Key(String headerName, String valuePattern) {
+            this.headerName = headerName;
+            this.valuePattern = valuePattern;
+            this.pattern = Pattern.compile(valuePattern, Pattern.CASE_INSENSITIVE);
+        }
+
+        public String getHeaderName() {
+            return headerName;
+        }
+
+        public String getValuePattern() {
+            return valuePattern;
+        }
+
+        public boolean isValuePatternMatch(String value) {
+            return pattern.matcher(value).matches();
+        }
     }
 
 }

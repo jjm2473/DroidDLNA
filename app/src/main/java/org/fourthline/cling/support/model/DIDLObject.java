@@ -29,15 +29,266 @@ import java.util.Locale;
  */
 public abstract class DIDLObject {
 
+    protected String id;
+    protected String parentID;
+    protected String title; // DC
+    protected String creator; // DC
+    protected boolean restricted = true; // Let's just assume read-only is default
+    protected WriteStatus writeStatus; // UPNP
+    protected Class clazz; // UPNP
+    protected List<Res> resources = new ArrayList<>();
+    protected List<Property> properties = new ArrayList<>();
+    protected List<DescMeta> descMetadata = new ArrayList<>();
+    protected DIDLObject() {
+    }
+
+    protected DIDLObject(DIDLObject other) {
+        this(other.getId(),
+                other.getParentID(),
+                other.getTitle(),
+                other.getCreator(),
+                other.isRestricted(),
+                other.getWriteStatus(),
+                other.getClazz(),
+                other.getResources(),
+                other.getProperties(),
+                other.getDescMetadata()
+        );
+    }
+
+    protected DIDLObject(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata) {
+        this.id = id;
+        this.parentID = parentID;
+        this.title = title;
+        this.creator = creator;
+        this.restricted = restricted;
+        this.writeStatus = writeStatus;
+        this.clazz = clazz;
+        this.resources = resources;
+        this.properties = properties;
+        this.descMetadata = descMetadata;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public DIDLObject setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getParentID() {
+        return parentID;
+    }
+
+    public DIDLObject setParentID(String parentID) {
+        this.parentID = parentID;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public DIDLObject setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public DIDLObject setCreator(String creator) {
+        this.creator = creator;
+        return this;
+    }
+
+    public boolean isRestricted() {
+        return restricted;
+    }
+
+    public DIDLObject setRestricted(boolean restricted) {
+        this.restricted = restricted;
+        return this;
+    }
+
+    public WriteStatus getWriteStatus() {
+        return writeStatus;
+    }
+
+    public DIDLObject setWriteStatus(WriteStatus writeStatus) {
+        this.writeStatus = writeStatus;
+        return this;
+    }
+
+    public Res getFirstResource() {
+        return getResources().size() > 0 ? getResources().get(0) : null;
+    }
+
+    public List<Res> getResources() {
+        return resources;
+    }
+
+    public DIDLObject setResources(List<Res> resources) {
+        this.resources = resources;
+        return this;
+    }
+
+    public DIDLObject addResource(Res resource) {
+        getResources().add(resource);
+        return this;
+    }
+
+    public Class getClazz() {
+        return clazz;
+    }
+
+    public DIDLObject setClazz(Class clazz) {
+        this.clazz = clazz;
+        return this;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
+    }
+
+    public DIDLObject setProperties(List<Property> properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    public DIDLObject addProperty(Property property) {
+        if (property == null) return this;
+        getProperties().add(property);
+        return this;
+    }
+
+    public DIDLObject replaceFirstProperty(Property property) {
+        if (property == null) return this;
+        Iterator<Property> it = getProperties().iterator();
+        while (it.hasNext()) {
+            Property p = it.next();
+            if (p.getClass().isAssignableFrom(property.getClass()))
+                it.remove();
+        }
+        addProperty(property);
+        return this;
+    }
+
+    public DIDLObject replaceProperties(java.lang.Class<? extends Property> propertyClass, Property[] properties) {
+        if (properties.length == 0) return this;
+        removeProperties(propertyClass);
+        return addProperties(properties);
+    }
+
+    public DIDLObject addProperties(Property[] properties) {
+        if (properties == null) return this;
+        for (Property property : properties) {
+            addProperty(property);
+        }
+        return this;
+    }
+
+    public DIDLObject removeProperties(java.lang.Class<? extends Property> propertyClass) {
+        Iterator<Property> it = getProperties().iterator();
+        while (it.hasNext()) {
+            Property property = it.next();
+            if (propertyClass.isInstance(property))
+                it.remove();
+        }
+        return this;
+    }
+
+    public boolean hasProperty(java.lang.Class<? extends Property> propertyClass) {
+        for (Property property : getProperties()) {
+            if (propertyClass.isInstance(property)) return true;
+        }
+        return false;
+    }
+
+    public <V> Property<V> getFirstProperty(java.lang.Class<? extends Property<V>> propertyClass) {
+        for (Property property : getProperties()) {
+            if (propertyClass.isInstance(property)) return property;
+        }
+        return null;
+    }
+
+    public <V> Property<V> getLastProperty(java.lang.Class<? extends Property<V>> propertyClass) {
+        Property found = null;
+        for (Property property : getProperties()) {
+            if (propertyClass.isInstance(property)) found = property;
+        }
+        return found;
+    }
+
+    public <V> Property<V>[] getProperties(java.lang.Class<? extends Property<V>> propertyClass) {
+        List<Property<V>> list = new ArrayList<>();
+        for (Property property : getProperties()) {
+            if (propertyClass.isInstance(property))
+                list.add(property);
+        }
+        return list.toArray(new Property[list.size()]);
+    }
+
+    public <V> Property<V>[] getPropertiesByNamespace(java.lang.Class<? extends Property.NAMESPACE> namespace) {
+        List<Property<V>> list = new ArrayList<>();
+        for (Property property : getProperties()) {
+            if (namespace.isInstance(property))
+                list.add(property);
+        }
+        return list.toArray(new Property[list.size()]);
+    }
+
+    public <V> V getFirstPropertyValue(java.lang.Class<? extends Property<V>> propertyClass) {
+        Property<V> prop = getFirstProperty(propertyClass);
+        return prop == null ? null : prop.getValue();
+    }
+
+    public <V> List<V> getPropertyValues(java.lang.Class<? extends Property<V>> propertyClass) {
+        List<V> list = new ArrayList<>();
+        for (Property property : getProperties(propertyClass)) {
+            list.add((V) property.getValue());
+        }
+        return list;
+    }
+
+    public List<DescMeta> getDescMetadata() {
+        return descMetadata;
+    }
+
+    public void setDescMetadata(List<DescMeta> descMetadata) {
+        this.descMetadata = descMetadata;
+    }
+
+    public DIDLObject addDescMetadata(DescMeta descMetadata) {
+        getDescMetadata().add(descMetadata);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DIDLObject that = (DIDLObject) o;
+
+        if (!id.equals(that.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     static public abstract class Property<V> {
 
-        public interface NAMESPACE {
-        }
-
-        private V value;
         final private String descriptorName;
         final private List<Property<DIDLAttribute>> attributes = new ArrayList<>();
-
+        private V value;
         protected Property() {
             this(null, null);
         }
@@ -50,16 +301,16 @@ public abstract class DIDLObject {
             this.value = value;
             // TODO Not sure this is a good fix for https://github.com/4thline/cling/issues/62
             this.descriptorName = descriptorName == null
-                ? getClass().getSimpleName().toLowerCase(Locale.ROOT).replace("didlobject$property$upnp$", "")
-                : descriptorName;
+                    ? getClass().getSimpleName().toLowerCase(Locale.ROOT).replace("didlobject$property$upnp$", "")
+                    : descriptorName;
         }
 
         protected Property(V value, String descriptorName, List<Property<DIDLAttribute>> attributes) {
             this.value = value;
             // TODO Not sure this is a good fix for https://github.com/4thline/cling/issues/62
             this.descriptorName = descriptorName == null
-                ? getClass().getSimpleName().toLowerCase(Locale.ROOT).replace("didlobject$property$upnp$", "")
-                : descriptorName;
+                    ? getClass().getSimpleName().toLowerCase(Locale.ROOT).replace("didlobject$property$upnp$", "")
+                    : descriptorName;
             this.attributes.addAll(attributes);
         }
 
@@ -114,6 +365,9 @@ public abstract class DIDLObject {
         @Override
         public String toString() {
             return getValue() != null ? getValue().toString() : "";
+        }
+
+        public interface NAMESPACE {
         }
 
         static public class PropertyPersonWithRole extends Property<PersonWithRole> {
@@ -205,18 +459,18 @@ public abstract class DIDLObject {
                 }
             }
         }
-        
+
         static public abstract class SEC {
 
             public interface NAMESPACE extends Property.NAMESPACE {
                 public static final String URI = "http://www.sec.co.kr/";
             }
-            
+
             static public class CAPTIONINFOEX extends Property<URI> implements NAMESPACE {
                 public CAPTIONINFOEX() {
                     this(null);
                 }
-                
+
                 public CAPTIONINFOEX(URI value) {
                     super(value, "CaptionInfoEx");
                 }
@@ -225,12 +479,12 @@ public abstract class DIDLObject {
                     super(value, "CaptionInfoEx", attributes);
                 }
             }
-            
+
             static public class CAPTIONINFO extends Property<URI> implements NAMESPACE {
                 public CAPTIONINFO() {
                     this(null);
                 }
-                
+
                 public CAPTIONINFO(URI value) {
                     super(value, "CaptionInfo");
                 }
@@ -239,7 +493,7 @@ public abstract class DIDLObject {
                     super(value, "CaptionInfo", attributes);
                 }
             }
-            
+
             static public class TYPE extends Property<DIDLAttribute> implements NAMESPACE {
                 public TYPE() {
                     this(null);
@@ -249,8 +503,8 @@ public abstract class DIDLObject {
                     super(value, "type");
                 }
             }
-            
-            
+
+
         }
 
         static public abstract class UPNP {
@@ -634,265 +888,5 @@ public abstract class DIDLObject {
             return getValue().equals(instance.getClazz().getValue());
 
         }
-    }
-
-    protected String id;
-    protected String parentID;
-
-    protected String title; // DC
-    protected String creator; // DC
-
-    protected boolean restricted = true; // Let's just assume read-only is default
-    protected WriteStatus writeStatus; // UPNP
-    protected Class clazz; // UPNP
-
-    protected List<Res> resources = new ArrayList<>();
-    protected List<Property> properties = new ArrayList<>();
-
-    protected List<DescMeta> descMetadata = new ArrayList<>();
-
-    protected DIDLObject() {
-    }
-
-    protected DIDLObject(DIDLObject other) {
-        this(other.getId(),
-             other.getParentID(),
-             other.getTitle(),
-             other.getCreator(),
-             other.isRestricted(),
-             other.getWriteStatus(),
-             other.getClazz(),
-             other.getResources(),
-             other.getProperties(),
-             other.getDescMetadata()
-        );
-    }
-
-    protected DIDLObject(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata) {
-        this.id = id;
-        this.parentID = parentID;
-        this.title = title;
-        this.creator = creator;
-        this.restricted = restricted;
-        this.writeStatus = writeStatus;
-        this.clazz = clazz;
-        this.resources = resources;
-        this.properties = properties;
-        this.descMetadata = descMetadata;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public DIDLObject setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getParentID() {
-        return parentID;
-    }
-
-    public DIDLObject setParentID(String parentID) {
-        this.parentID = parentID;
-        return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public DIDLObject setTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public DIDLObject setCreator(String creator) {
-        this.creator = creator;
-        return this;
-    }
-
-    public boolean isRestricted() {
-        return restricted;
-    }
-
-    public DIDLObject setRestricted(boolean restricted) {
-        this.restricted = restricted;
-        return this;
-    }
-
-    public WriteStatus getWriteStatus() {
-        return writeStatus;
-    }
-
-    public DIDLObject setWriteStatus(WriteStatus writeStatus) {
-        this.writeStatus = writeStatus;
-        return this;
-    }
-
-    public Res getFirstResource() {
-        return getResources().size() > 0 ? getResources().get(0) : null;
-    }
-
-    public List<Res> getResources() {
-        return resources;
-    }
-
-    public DIDLObject setResources(List<Res> resources) {
-        this.resources = resources;
-        return this;
-    }
-
-    public DIDLObject addResource(Res resource) {
-        getResources().add(resource);
-        return this;
-    }
-
-    public Class getClazz() {
-        return clazz;
-    }
-
-    public DIDLObject setClazz(Class clazz) {
-        this.clazz = clazz;
-        return this;
-    }
-
-    public List<Property> getProperties() {
-        return properties;
-    }
-
-    public DIDLObject setProperties(List<Property> properties) {
-        this.properties = properties;
-        return this;
-    }
-
-    public DIDLObject addProperty(Property property) {
-        if (property == null) return this;
-        getProperties().add(property);
-        return this;
-    }
-
-    public DIDLObject replaceFirstProperty(Property property) {
-        if (property == null) return this;
-        Iterator<Property> it = getProperties().iterator();
-        while (it.hasNext()) {
-            Property p = it.next();
-            if (p.getClass().isAssignableFrom(property.getClass()))
-                it.remove();
-        }
-        addProperty(property);
-        return this;
-    }
-
-    public DIDLObject replaceProperties(java.lang.Class<? extends Property> propertyClass, Property[] properties) {
-        if (properties.length == 0) return this;
-        removeProperties(propertyClass);
-        return addProperties(properties);
-    }
-
-    public DIDLObject addProperties(Property[] properties) {
-        if (properties == null) return this;
-        for (Property property : properties) {
-            addProperty(property);
-        }
-        return this;
-    }
-
-    public DIDLObject removeProperties(java.lang.Class<? extends Property> propertyClass) {
-        Iterator<Property> it = getProperties().iterator();
-        while (it.hasNext()) {
-            Property property = it.next();
-            if (propertyClass.isInstance(property))
-                it.remove();
-        }
-        return this;
-    }
-
-    public boolean hasProperty(java.lang.Class<? extends Property> propertyClass) {
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property)) return true;
-        }
-        return false;
-    }
-
-    public <V> Property<V> getFirstProperty(java.lang.Class<? extends Property<V>> propertyClass) {
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property)) return property;
-        }
-        return null;
-    }
-
-    public <V> Property<V> getLastProperty(java.lang.Class<? extends Property<V>> propertyClass) {
-        Property found = null;
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property)) found = property;
-        }
-        return found;
-    }
-
-    public <V> Property<V>[] getProperties(java.lang.Class<? extends Property<V>> propertyClass) {
-        List<Property<V>> list = new ArrayList<>();
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property))
-                list.add(property);
-        }
-        return list.toArray(new Property[list.size()]);
-    }
-
-    public <V> Property<V>[] getPropertiesByNamespace(java.lang.Class<? extends Property.NAMESPACE> namespace) {
-        List<Property<V>> list = new ArrayList<>();
-        for (Property property : getProperties()) {
-            if (namespace.isInstance(property))
-                list.add(property);
-        }
-        return list.toArray(new Property[list.size()]);
-    }
-
-    public <V> V getFirstPropertyValue(java.lang.Class<? extends Property<V>> propertyClass) {
-        Property<V> prop = getFirstProperty(propertyClass);
-        return prop == null ? null : prop.getValue();
-    }
-
-    public <V> List<V> getPropertyValues(java.lang.Class<? extends Property<V>> propertyClass) {
-        List<V> list = new ArrayList<>();
-        for (Property property : getProperties(propertyClass)) {
-            list.add((V) property.getValue());
-        }
-        return list;
-    }
-
-    public List<DescMeta> getDescMetadata() {
-        return descMetadata;
-    }
-
-    public void setDescMetadata(List<DescMeta> descMetadata) {
-        this.descMetadata = descMetadata;
-    }
-
-    public DIDLObject addDescMetadata(DescMeta descMetadata) {
-        getDescMetadata().add(descMetadata);
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DIDLObject that = (DIDLObject) o;
-
-        if (!id.equals(that.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 }

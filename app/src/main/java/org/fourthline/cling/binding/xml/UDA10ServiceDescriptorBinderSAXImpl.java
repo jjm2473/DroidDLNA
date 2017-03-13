@@ -75,7 +75,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
             );
 
             // Build the immutable descriptor graph
-            return (S)descriptor.build(undescribedService.getDevice());
+            return (S) descriptor.build(undescribedService.getDevice());
 
         } catch (ValidationException ex) {
             throw ex;

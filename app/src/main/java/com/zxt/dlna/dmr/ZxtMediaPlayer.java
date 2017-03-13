@@ -1,8 +1,14 @@
-
 package com.zxt.dlna.dmr;
 
-import java.net.URI;
-import java.util.logging.Logger;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.util.Log;
+
+import com.zxt.dlna.dmp.GPlayer;
+import com.zxt.dlna.dmp.GPlayer.MediaListener;
+import com.zxt.dlna.util.Action;
 
 import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
@@ -19,15 +25,8 @@ import org.fourthline.cling.support.renderingcontrol.lastchange.ChannelMute;
 import org.fourthline.cling.support.renderingcontrol.lastchange.ChannelVolume;
 import org.fourthline.cling.support.renderingcontrol.lastchange.RenderingControlVariable;
 
-import com.zxt.dlna.dmp.GPlayer;
-import com.zxt.dlna.dmp.GPlayer.MediaListener;
-import com.zxt.dlna.util.Action;
-
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.media.AudioManager;
-import android.util.Log;
+import java.net.URI;
+import java.util.logging.Logger;
 
 /**
  * @author offbye
@@ -49,10 +48,10 @@ public class ZxtMediaPlayer {
     private PositionInfo currentPositionInfo = new PositionInfo();
     private MediaInfo currentMediaInfo = new MediaInfo();
     private double storedVolume;
-    
+
     private Context mContext;
 
-    public ZxtMediaPlayer(UnsignedIntegerFourBytes instanceId,Context context,
+    public ZxtMediaPlayer(UnsignedIntegerFourBytes instanceId, Context context,
                           LastChange avTransportLastChange,
                           LastChange renderingControlLastChange) {
         super();
@@ -132,11 +131,11 @@ public class ZxtMediaPlayer {
         return currentMediaInfo;
     }
 
-   // @Override
+    // @Override
     synchronized public void setURI(URI uri, String type, String name, String currentURIMetaData) {
         Log.i(TAG, "setURI " + uri);
 
-        currentMediaInfo = new MediaInfo(uri.toString(),currentURIMetaData);
+        currentMediaInfo = new MediaInfo(uri.toString(), currentURIMetaData);
         currentPositionInfo = new PositionInfo(1, "", uri.toString());
 
         getAvTransportLastChange().setEventedValue(getInstanceId(),
@@ -144,43 +143,15 @@ public class ZxtMediaPlayer {
                 new AVTransportVariable.CurrentTrackURI(uri));
 
         transportStateChanged(TransportState.STOPPED);
-        
+
         GPlayer.setMediaListener(new GstMediaListener());
-        
+
         Intent intent = new Intent();
         intent.setClass(mContext, RenderPlayerService.class);
         intent.putExtra("type", type);
         intent.putExtra("name", name);
         intent.putExtra("playURI", uri.toString());
         mContext.startService(intent);
-    }
-
-//    @Override
-    synchronized public void setVolume(double volume) {
-        Log.i(TAG,"setVolume " + volume);
-        storedVolume = getVolume();
-        
-        Intent intent = new Intent();
-        intent.setAction(Action.DMR);
-        intent.putExtra("helpAction", Action.SET_VOLUME);
-        intent.putExtra("volume", volume);
-
-        mContext.sendBroadcast(intent);        
-        
-        ChannelMute switchedMute =
-                (storedVolume == 0 && volume > 0) || (storedVolume > 0 && volume == 0)
-                        ? new ChannelMute(Channel.Master, storedVolume > 0 && volume == 0)
-                        : null;
-
-        getRenderingControlLastChange().setEventedValue(
-                getInstanceId(),
-                new RenderingControlVariable.Volume(
-                        new ChannelVolume(Channel.Master, (int) (volume * 100))
-                ),
-                switchedMute != null
-                        ? new RenderingControlVariable.Mute(switchedMute)
-                        : null
-        );
     }
 
     synchronized public void setMute(boolean desiredMute) {
@@ -192,8 +163,6 @@ public class ZxtMediaPlayer {
             setVolume(storedVolume);
         }
     }
-
-    // Because we don't have an automated state machine, we need to calculate the possible transitions here
 
     synchronized public TransportAction[] getCurrentTransportActions() {
         TransportState state = currentTransportInfo.getCurrentTransportState();
@@ -225,6 +194,8 @@ public class ZxtMediaPlayer {
         }
         return actions;
     }
+
+    // Because we don't have an automated state machine, we need to calculate the possible transitions here
 
     // Can't disconnect the broken bus listener, these funny methods disable it
 /*
@@ -291,6 +262,73 @@ public class ZxtMediaPlayer {
         );
     }
 
+    public double getVolume() {
+        AudioManager audioManager = (AudioManager) mContext.getSystemService(Service.AUDIO_SERVICE);
+        double v = (double) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        Log.i(TAG, "getVolume " + v);
+        return v;
+    }
+
+    //    @Override
+    synchronized public void setVolume(double volume) {
+        Log.i(TAG, "setVolume " + volume);
+        storedVolume = getVolume();
+
+        Intent intent = new Intent();
+        intent.setAction(Action.DMR);
+        intent.putExtra("helpAction", Action.SET_VOLUME);
+        intent.putExtra("volume", volume);
+
+        mContext.sendBroadcast(intent);
+
+        ChannelMute switchedMute =
+                (storedVolume == 0 && volume > 0) || (storedVolume > 0 && volume == 0)
+                        ? new ChannelMute(Channel.Master, storedVolume > 0 && volume == 0)
+                        : null;
+
+        getRenderingControlLastChange().setEventedValue(
+                getInstanceId(),
+                new RenderingControlVariable.Volume(
+                        new ChannelVolume(Channel.Master, (int) (volume * 100))
+                ),
+                switchedMute != null
+                        ? new RenderingControlVariable.Mute(switchedMute)
+                        : null
+        );
+    }
+
+    public void play() {
+        Log.i(TAG, "play");
+        sendBroadcastAction(Action.PLAY);
+    }
+
+    public void pause() {
+        Log.i(TAG, "pause");
+        sendBroadcastAction(Action.PAUSE);
+    }
+
+    public void stop() {
+        Log.i(TAG, "stop");
+        sendBroadcastAction(Action.STOP);
+    }
+
+    public void seek(int position) {
+        Log.i(TAG, "seek " + position);
+        Intent intent = new Intent();
+        intent.setAction(Action.DMR);
+        intent.putExtra("helpAction", Action.SEEK);
+        intent.putExtra("position", position);
+        mContext.sendBroadcast(intent);
+    }
+
+    public void sendBroadcastAction(String action) {
+        Intent intent = new Intent();
+        intent.setAction(Action.DMR);
+        intent.putExtra("helpAction", action);
+        mContext.sendBroadcast(intent);
+    }
+
     protected class GstMediaListener implements MediaListener {
         public void pause() {
             transportStateChanged(TransportState.PAUSED_PLAYBACK);
@@ -314,15 +352,15 @@ public class ZxtMediaPlayer {
             log.fine("Position Changed event received: " + position);
             synchronized (ZxtMediaPlayer.this) {
                 currentPositionInfo = new PositionInfo(1, currentMediaInfo.getMediaDuration(),
-                        currentMediaInfo.getCurrentURI(), ModelUtil.toTimeString(position/1000),
-                        ModelUtil.toTimeString(position/1000));
+                        currentMediaInfo.getCurrentURI(), ModelUtil.toTimeString(position / 1000),
+                        ModelUtil.toTimeString(position / 1000));
             }
         }
 
         public void durationChanged(int duration) {
             log.fine("Duration Changed event received: " + duration);
             synchronized (ZxtMediaPlayer.this) {
-                String newValue = ModelUtil.toTimeString(duration/1000);
+                String newValue = ModelUtil.toTimeString(duration / 1000);
                 currentMediaInfo = new MediaInfo(currentMediaInfo.getCurrentURI(), "",
                         new UnsignedIntegerFourBytes(1), newValue, StorageMedium.NETWORK);
 
@@ -331,45 +369,6 @@ public class ZxtMediaPlayer {
                         new AVTransportVariable.CurrentMediaDuration(newValue));
             }
         }
-    } 
-    
-    public double getVolume() {
-        AudioManager audioManager = (AudioManager) mContext.getSystemService(Service.AUDIO_SERVICE);
-        double v =  (double)audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        Log.i(TAG, "getVolume " + v);
-        return v;
-    }
-    
-    public void play() {
-        Log.i(TAG,"play");
-        sendBroadcastAction(Action.PLAY);
-    }
-
-    public void pause() {
-        Log.i(TAG,"pause");
-        sendBroadcastAction(Action.PAUSE);
-    }
-
-    public void stop() {
-        Log.i(TAG,"stop");
-        sendBroadcastAction(Action.STOP);
-    }
-    
-    public void seek(int position) {
-        Log.i(TAG,"seek " +  position);
-        Intent intent = new Intent();
-        intent.setAction(Action.DMR);
-        intent.putExtra("helpAction", Action.SEEK);
-        intent.putExtra("position", position);
-        mContext.sendBroadcast(intent);
-    }
-    
-    public void sendBroadcastAction(String action) {
-        Intent intent = new Intent();
-        intent.setAction(Action.DMR);
-        intent.putExtra("helpAction", action);
-        mContext.sendBroadcast(intent);
     }
 }
 

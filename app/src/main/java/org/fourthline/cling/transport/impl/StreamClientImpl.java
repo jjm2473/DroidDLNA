@@ -90,8 +90,8 @@ public class StreamClientImpl implements StreamClient {
             factory stuff is the worst Java API ever created.
             */
             throw new InitializationException(
-                "This client does not work on Android. The design of HttpURLConnection is broken, we "
-                    + "can not add additional 'permitted' HTTP methods. Read the Cling manual."
+                    "This client does not work on Android. The design of HttpURLConnection is broken, we "
+                            + "can not add additional 'permitted' HTTP methods. Read the Cling manual."
             );
         }
 
@@ -105,14 +105,14 @@ public class StreamClientImpl implements StreamClient {
                 // Use reflection to avoid dependency on sun.net package so this class at least
                 // loads on Android, even if it doesn't work...
                 URL.setURLStreamHandlerFactory(
-                    (URLStreamHandlerFactory) Class.forName(
-                        "org.fourthline.cling.transport.impl.FixedSunURLStreamHandler"
-                    ).newInstance()
+                        (URLStreamHandlerFactory) Class.forName(
+                                "org.fourthline.cling.transport.impl.FixedSunURLStreamHandler"
+                        ).newInstance()
                 );
             } catch (Throwable t) {
                 throw new InitializationException(
-                    "Failed to set modified URLStreamHandlerFactory in this environment."
-                        + " Can't use bundled default client based on HTTPURLConnection, see manual."
+                        "Failed to set modified URLStreamHandlerFactory in this environment."
+                                + " Can't use bundled default client based on HTTPURLConnection, see manual."
                 );
             }
             System.setProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY, "alreadyWorkedAroundTheEvilJDK");
@@ -163,8 +163,8 @@ public class StreamClientImpl implements StreamClient {
 
             if (ex instanceof SocketTimeoutException) {
                 log.info(
-                    "Timeout of " + getConfiguration().getTimeoutSeconds()
-                        + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
+                        "Timeout of " + getConfiguration().getTimeoutSeconds()
+                                + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
                 );
                 return null;
             }
@@ -208,8 +208,8 @@ public class StreamClientImpl implements StreamClient {
         // Add the default user agent if not already set on the message
         if (!requestMessage.getHeaders().containsKey(UpnpHeader.Type.USER_AGENT)) {
             urlConnection.setRequestProperty(
-                UpnpHeader.Type.USER_AGENT.getHttpName(),
-                getConfiguration().getUserAgentValue(requestMessage.getUdaMajorVersion(), requestMessage.getUdaMinorVersion())
+                    UpnpHeader.Type.USER_AGENT.getHttpName(),
+                    getConfiguration().getUserAgentValue(requestMessage.getUdaMajorVersion(), requestMessage.getUdaMinorVersion())
             );
         }
 
@@ -250,8 +250,8 @@ public class StreamClientImpl implements StreamClient {
         if (urlConnection.getResponseCode() == -1) {
             log.warning("Received an invalid HTTP response: " + urlConnection.getURL());
             log.warning("Is your Cling-based server sending connection heartbeats with " +
-                "RemoteClientInfo#isRequestCancelled? This client can't handle " +
-                "heartbeats, read the manual.");
+                    "RemoteClientInfo#isRequestCancelled? This client can't handle " +
+                    "heartbeats, read the manual.");
             return null;
         }
 

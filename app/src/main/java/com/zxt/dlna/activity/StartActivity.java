@@ -1,23 +1,6 @@
-
 package com.zxt.dlna.activity;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.zxt.dlna.application.BaseApplication;
-import com.zxt.dlna.dms.ContentTree;
-import com.zxt.dlna.util.FileUtil;
-import com.zxt.dlna.util.ImageUtil;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,7 +12,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.widget.Toast;
+
 import com.zxt.dlna.R;
+import com.zxt.dlna.application.BaseApplication;
+import com.zxt.dlna.dms.ContentTree;
+import com.zxt.dlna.util.FileUtil;
+import com.zxt.dlna.util.ImageUtil;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class StartActivity extends Activity {
 

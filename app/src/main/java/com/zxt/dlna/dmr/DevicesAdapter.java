@@ -1,9 +1,4 @@
-
 package com.zxt.dlna.dmr;
-
-import java.util.ArrayList;
-
-import com.zxt.dlna.dmp.DeviceItem;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,18 +9,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.zxt.dlna.R;
+import com.zxt.dlna.dmp.DeviceItem;
+
+import java.util.ArrayList;
 
 public class DevicesAdapter extends BaseAdapter {
     private static final String TAG = "DevicesAdapter";
-
+    public int dmrPosition = 0;
     // private AsyncImageLoader asyncImageLoader;
     private Context context;
-
     private ArrayList<DeviceItem> deviceItems;
-
-    public int dmrPosition = 0;
-
     private ListView listView;
 
     private LayoutInflater mInflater;
@@ -33,7 +28,7 @@ public class DevicesAdapter extends BaseAdapter {
     private DeviceItem selectDeviceItem = null;
 
     public DevicesAdapter(Context paramContext, ArrayList<DeviceItem> paramArrayList,
-            ListView paramListView) {
+                          ListView paramListView) {
         this.deviceItems = paramArrayList;
         this.context = paramContext;
         this.listView = paramListView;

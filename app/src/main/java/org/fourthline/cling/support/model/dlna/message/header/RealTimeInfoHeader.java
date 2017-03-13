@@ -23,27 +23,28 @@ import org.fourthline.cling.support.model.dlna.types.NormalPlayTime;
 public class RealTimeInfoHeader extends DLNAHeader<NormalPlayTime> {
 
     public static final String PREFIX = "DLNA.ORG_TLAG=";
-    
-    public RealTimeInfoHeader() {
-    }
 
-    @Override
-    public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0 && s.startsWith(PREFIX) ) {
-            try {
-                s = s.substring(PREFIX.length());
-                setValue(s.equals("*") ? null : NormalPlayTime.valueOf(s) );
-                return;
-            } catch (Exception ex) {}
-        }
-        throw new InvalidHeaderException("Invalid RealTimeInfo header value: " + s);
+    public RealTimeInfoHeader() {
     }
 
     @Override
     public String getString() {
         NormalPlayTime v = getValue();
         if (v == null)
-            return PREFIX+"*";
-        return PREFIX+v.getString();
+            return PREFIX + "*";
+        return PREFIX + v.getString();
+    }
+
+    @Override
+    public void setString(String s) throws InvalidHeaderException {
+        if (s.length() != 0 && s.startsWith(PREFIX)) {
+            try {
+                s = s.substring(PREFIX.length());
+                setValue(s.equals("*") ? null : NormalPlayTime.valueOf(s));
+                return;
+            } catch (Exception ex) {
+            }
+        }
+        throw new InvalidHeaderException("Invalid RealTimeInfo header value: " + s);
     }
 }

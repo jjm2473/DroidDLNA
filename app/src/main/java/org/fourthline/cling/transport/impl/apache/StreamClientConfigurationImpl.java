@@ -76,24 +76,25 @@ public class StreamClientConfigurationImpl extends AbstractStreamClientConfigura
      * Returning <code>-1</code> will also avoid OOM on the HTC Thunderbolt where default size is 2MB (!):
      * http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
      * </p>
+     *
      * @return By default <code>-1</code>, enabling HttpClient's default (8192 bytes in version 4.1)
      */
     public int getSocketBufferSize() {
-    	return -1; 
+        return -1;
     }
 
     /**
      * @return Whether we should (expensively) check for stale connections, defaults to <code>false</code>.
      */
-	public boolean getStaleCheckingEnabled() {
-		return false;
-	}
+    public boolean getStaleCheckingEnabled() {
+        return false;
+    }
 
     /**
      * @return By default <code>0</code>, use <code>-1</code> to enable HttpClient's default (3 retries in version 4.1)
      */
-	public int getRequestRetryCount() {
-		return 0;
-	}
+    public int getRequestRetryCount() {
+        return 0;
+    }
 
 }

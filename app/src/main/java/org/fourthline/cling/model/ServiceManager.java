@@ -66,7 +66,6 @@ import java.util.Collection;
  * @param <T> The interface expected by the
  *            bound {@link org.fourthline.cling.model.action.ActionExecutor}s
  *            and {@link org.fourthline.cling.model.state.StateVariableAccessor}s.
- *
  * @author Christian Bauer
  */
 public interface ServiceManager<T> {
@@ -84,8 +83,8 @@ public interface ServiceManager<T> {
 
     /**
      * @return An instance with the interface expected by the
-     *         bound {@link org.fourthline.cling.model.action.ActionExecutor}s
-    *          and {@link org.fourthline.cling.model.state.StateVariableAccessor}s.
+     * bound {@link org.fourthline.cling.model.action.ActionExecutor}s
+     * and {@link org.fourthline.cling.model.state.StateVariableAccessor}s.
      */
     public T getImplementation();
 
@@ -96,6 +95,7 @@ public interface ServiceManager<T> {
      * might decorate the execution, for example, by locking/unlocking access to a shared service
      * implementation before and after the execution.
      * </p>
+     *
      * @param cmd The command to execute.
      * @throws Exception Any exception, without wrapping, as thrown by {@link org.fourthline.cling.model.Command#execute(ServiceManager)}
      */
@@ -112,7 +112,7 @@ public interface ServiceManager<T> {
      * <li>The property name is the constant {@link #EVENTED_STATE_VARIABLES}.</li>
      * <li>The "old value" can be <code>null</code>, only the current state has to be included.</li>
      * <li>The "new value" is a <code>Collection</code> of {@link org.fourthline.cling.model.state.StateVariableValue},
-     *     representing the current state of the service after the change.</li>
+     * representing the current state of the service after the change.</li>
      * </ul>
      * <p>
      * The collection has to include values for <em>all</em> state variables, no
@@ -128,7 +128,7 @@ public interface ServiceManager<T> {
      * Reading the state of a service manually.
      *
      * @return A <code>Collection</code> of {@link org.fourthline.cling.model.state.StateVariableValue}, representing
-     *         the current state of the service, that is, all evented state variable values.
+     * the current state of the service, that is, all evented state variable values.
      * @throws Exception Any error that occurred when the service's state was accessed.
      */
     public Collection<StateVariableValue> getCurrentState() throws Exception;

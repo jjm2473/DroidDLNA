@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 /**
  * Implements the timeout/callback processing and unifies exception handling.
-
+ *
  * @author Christian Bauer
  */
 public abstract class AbstractStreamClient<C extends StreamClientConfiguration, REQUEST> implements StreamClient<C> {
@@ -52,24 +52,24 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
 
         // Execute the request on a new thread
         Future<StreamResponseMessage> future =
-            getConfiguration().getRequestExecutorService().submit(callable);
+                getConfiguration().getRequestExecutorService().submit(callable);
 
         // Wait on the current thread for completion
         try {
             if (log.isLoggable(Level.FINE))
                 log.fine(
-                    "Waiting " + getConfiguration().getTimeoutSeconds()
-                    + " seconds for HTTP request to complete: " + requestMessage
+                        "Waiting " + getConfiguration().getTimeoutSeconds()
+                                + " seconds for HTTP request to complete: " + requestMessage
                 );
             StreamResponseMessage response =
-                future.get(getConfiguration().getTimeoutSeconds(), TimeUnit.SECONDS);
+                    future.get(getConfiguration().getTimeoutSeconds(), TimeUnit.SECONDS);
 
             // Log a warning if it took too long
             long elapsed = System.currentTimeMillis() - start;
             if (log.isLoggable(Level.FINEST))
                 log.finest("Got HTTP response in " + elapsed + "ms: " + requestMessage);
             if (getConfiguration().getLogWarningSeconds() > 0
-                && elapsed > getConfiguration().getLogWarningSeconds()*1000) {
+                    && elapsed > getConfiguration().getLogWarningSeconds() * 1000) {
                 log.warning("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
             }
 
@@ -85,8 +85,8 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
         } catch (TimeoutException ex) {
 
             log.info(
-                "Timeout of " + getConfiguration().getTimeoutSeconds()
-                + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
+                    "Timeout of " + getConfiguration().getTimeoutSeconds()
+                            + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
             );
             abort(request);
             return null;

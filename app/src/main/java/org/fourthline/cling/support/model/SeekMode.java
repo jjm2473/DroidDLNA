@@ -37,11 +37,6 @@ public enum SeekMode {
         this.protocolString = protocolString;
     }
 
-    @Override
-    public String toString() {
-        return protocolString;
-    }
-
     public static SeekMode valueOrExceptionOf(String s) throws IllegalArgumentException {
         for (SeekMode seekMode : values()) {
             if (seekMode.protocolString.equals(s)) {
@@ -49,6 +44,11 @@ public enum SeekMode {
             }
         }
         throw new IllegalArgumentException("Invalid seek mode string: " + s);
+    }
+
+    @Override
+    public String toString() {
+        return protocolString;
     }
 }
 

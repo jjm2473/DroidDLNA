@@ -53,33 +53,33 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
             // http://4thline.org/projects/mailinglists.html#nabble-td3011461
             String hostName = address.getHostAddress();
 
-	    Field field0 = null;
-	    Object target = null;
+            Field field0 = null;
+            Object target = null;
 
-	    try {
+            try {
 
-		    try {
-			field0 = InetAddress.class.getDeclaredField("holder");
-			field0.setAccessible(true);
-			target = field0.get(address);
-			field0 = target.getClass().getDeclaredField("hostName");
-		    } catch( NoSuchFieldException e ) {
-			// Let's try the non-OpenJDK variant
-			field0 = InetAddress.class.getDeclaredField("hostName");
-			target = address;
-		    }                
+                try {
+                    field0 = InetAddress.class.getDeclaredField("holder");
+                    field0.setAccessible(true);
+                    target = field0.get(address);
+                    field0 = target.getClass().getDeclaredField("hostName");
+                } catch (NoSuchFieldException e) {
+                    // Let's try the non-OpenJDK variant
+                    field0 = InetAddress.class.getDeclaredField("hostName");
+                    target = address;
+                }
 
-		    if (field0 != null && target != null && hostName != null) {
-			field0.setAccessible(true);
-			field0.set(target, hostName);
-		    } else {
-			return false;
-		    }
+                if (field0 != null && target != null && hostName != null) {
+                    field0.setAccessible(true);
+                    field0.set(target, hostName);
+                } else {
+                    return false;
+                }
 
-	    } catch (Exception ex) {
+            } catch (Exception ex) {
                 log.log(Level.SEVERE,
-                    "Failed injecting hostName to work around Android InetAddress DNS bug: " + address,
-                    ex
+                        "Failed injecting hostName to work around Android InetAddress DNS bug: " + address,
+                        ex
                 );
                 return false;
             }

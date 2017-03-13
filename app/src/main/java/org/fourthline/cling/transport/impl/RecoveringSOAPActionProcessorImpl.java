@@ -15,14 +15,14 @@
 
 package org.fourthline.cling.transport.impl;
 
-import java.util.logging.Logger;
-
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.control.ActionRequestMessage;
 import org.fourthline.cling.model.message.control.ActionResponseMessage;
 import org.fourthline.cling.transport.spi.SOAPActionProcessor;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.seamless.xml.XmlPullParserUtils;
+
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.Alternative;
 
@@ -113,7 +113,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
 
     /**
      * Handle processing errors while reading of XML messages.
-     *
+     * <p>
      * <p>
      * Typically you want to log this problem or create an error report, and in any
      * case, throw an {@link UnsupportedDataException} to notify the caller of the

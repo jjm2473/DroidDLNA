@@ -35,6 +35,14 @@ public enum TransportState {
         this.value = name();
     }
 
+    public static TransportState valueOrCustomOf(String s) {
+        try {
+            return TransportState.valueOf(s);
+        } catch (IllegalArgumentException ex) {
+            return TransportState.CUSTOM.setValue(s);
+        }
+    }
+
     public String getValue() {
         return value;
     }
@@ -42,13 +50,5 @@ public enum TransportState {
     public TransportState setValue(String value) {
         this.value = value;
         return this;
-    }
-
-    public static TransportState valueOrCustomOf(String s) {
-        try {
-            return TransportState.valueOf(s);
-        } catch (IllegalArgumentException ex) {
-            return TransportState.CUSTOM.setValue(s);
-        }
     }
 }

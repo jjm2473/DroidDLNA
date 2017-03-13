@@ -99,6 +99,13 @@ public class ActionInvocation<S extends Service> {
         return input.values().toArray(new ActionArgumentValue[input.size()]);
     }
 
+    public void setInput(ActionArgumentValue<S>[] input) {
+        if (input == null) return;
+        for (ActionArgumentValue<S> argumentValue : input) {
+            this.input.put(argumentValue.getArgument().getName(), argumentValue);
+        }
+    }
+
     public ActionArgumentValue<S> getInput(String argumentName) {
         return getInput(getInputArgument(argumentName));
     }
@@ -113,6 +120,13 @@ public class ActionInvocation<S extends Service> {
 
     public ActionArgumentValue<S>[] getOutput() {
         return output.values().toArray(new ActionArgumentValue[output.size()]);
+    }
+
+    public void setOutput(ActionArgumentValue<S>[] output) {
+        if (output == null) return;
+        for (ActionArgumentValue<S> argumentValue : output) {
+            this.output.put(argumentValue.getArgument().getName(), argumentValue);
+        }
     }
 
     public ActionArgumentValue<S> getOutput(String argumentName) {
@@ -135,26 +149,12 @@ public class ActionInvocation<S extends Service> {
         input.put(value.getArgument().getName(), value);
     }
 
-    public void setInput(ActionArgumentValue<S>[] input) {
-        if (input == null) return;
-        for (ActionArgumentValue<S> argumentValue : input) {
-            this.input.put(argumentValue.getArgument().getName(), argumentValue);
-        }
-    }
-
     public void setOutput(String argumentName, Object value) throws InvalidValueException {
         setOutput(new ActionArgumentValue(getOutputArgument(argumentName), value));
     }
 
-    public void setOutput(ActionArgumentValue<S> value){
+    public void setOutput(ActionArgumentValue<S> value) {
         output.put(value.getArgument().getName(), value);
-    }
-
-    public void setOutput(ActionArgumentValue<S>[] output) {
-        if (output == null) return;
-        for (ActionArgumentValue<S> argumentValue : output) {
-            this.output.put(argumentValue.getArgument().getName(), argumentValue);
-        }
     }
 
     protected ActionArgument<S> getInputArgument(String name) {

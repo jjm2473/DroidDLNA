@@ -36,23 +36,6 @@ import java.util.logging.Logger;
 public abstract class Search extends ActionCallback {
 
     public static final String CAPS_WILDCARD = "*";
-
-    public enum Status {
-        NO_CONTENT("No Content"),
-        LOADING("Loading..."),
-        OK("OK");
-
-        private String defaultMessage;
-
-        Status(String defaultMessage) {
-            this.defaultMessage = defaultMessage;
-        }
-
-        public String getDefaultMessage() {
-            return this.defaultMessage;
-        }
-    }
-
     private static Logger log = Logger.getLogger(Search.class.getName());
 
     /**
@@ -134,4 +117,20 @@ public abstract class Search extends ActionCallback {
     public abstract void received(ActionInvocation actionInvocation, DIDLContent didl);
 
     public abstract void updateStatus(Status status);
+
+    public enum Status {
+        NO_CONTENT("No Content"),
+        LOADING("Loading..."),
+        OK("OK");
+
+        private String defaultMessage;
+
+        Status(String defaultMessage) {
+            this.defaultMessage = defaultMessage;
+        }
+
+        public String getDefaultMessage() {
+            return this.defaultMessage;
+        }
+    }
 }

@@ -37,6 +37,16 @@ public class DateTime implements ElementAppender {
         this.time = time;
     }
 
+    public static String getCurrentDate() {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        return fmt.format(new Date());
+    }
+
+    public static String getCurrentTime() {
+        SimpleDateFormat fmt = new SimpleDateFormat("HH:mm:ss");
+        return fmt.format(new Date());
+    }
+
     public String getDate() {
         return date;
     }
@@ -48,16 +58,6 @@ public class DateTime implements ElementAppender {
     public void appendMessageElements(MessageElement parent) {
         parent.createChild("Date").setContent(getDate());
         parent.createChild("Time").setContent(getTime());
-    }
-
-    public static String getCurrentDate() {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        return fmt.format(new Date());
-    }
-
-    public static String getCurrentTime() {
-        SimpleDateFormat fmt = new SimpleDateFormat("HH:mm:ss");
-        return fmt.format(new Date());
     }
 
 }

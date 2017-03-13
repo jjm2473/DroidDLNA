@@ -23,7 +23,6 @@ import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Christian Bauer
  */
 public abstract class Stop extends ActionCallback {

@@ -37,14 +37,6 @@ public class SortCriterion {
             throw new IllegalArgumentException("Missing sort prefix +/- on criterion: " + criterion);
     }
 
-    public boolean isAscending() {
-        return ascending;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
     public static SortCriterion[] valueOf(String s) {
         if (s == null || s.length() == 0) return new SortCriterion[0];
         List<SortCriterion> list = new ArrayList<>();
@@ -61,8 +53,16 @@ public class SortCriterion {
         for (SortCriterion sortCriterion : criteria) {
             sb.append(sortCriterion.toString()).append(",");
         }
-        if (sb.toString().endsWith(",")) sb.deleteCharAt(sb.length()-1);
+        if (sb.toString().endsWith(",")) sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
+    }
+
+    public boolean isAscending() {
+        return ascending;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 
     @Override

@@ -109,6 +109,10 @@ public class PositionInfo {
         return trackDuration;
     }
 
+    public void setTrackDuration(String trackDuration) {
+        this.trackDuration = trackDuration;
+    }
+
     public String getTrackMetaData() {
         return trackMetaData;
     }
@@ -119,6 +123,10 @@ public class PositionInfo {
 
     public String getRelTime() {
         return relTime;
+    }
+
+    public void setRelTime(String relTime) {
+        this.relTime = relTime;
     }
 
     public String getAbsTime() {
@@ -132,15 +140,7 @@ public class PositionInfo {
     public int getAbsCount() {
         return absCount;
     }
-    
-    public void setTrackDuration(String trackDuration) {
-       this.trackDuration = trackDuration;
-    }
 
-    public void setRelTime(String relTime) {
-       this.relTime = relTime;
-    }
-       
     public long getTrackDurationSeconds() {
         return getTrackDuration() == null ? 0 : ModelUtil.fromTimeString(getTrackDuration());
     }
@@ -157,7 +157,7 @@ public class PositionInfo {
         long elapsed = getTrackElapsedSeconds();
         long total = getTrackDurationSeconds();
         if (elapsed == 0 || total == 0) return 0;
-        return new Double(elapsed/((double)total/100)).intValue();
+        return new Double(elapsed / ((double) total / 100)).intValue();
     }
 
 

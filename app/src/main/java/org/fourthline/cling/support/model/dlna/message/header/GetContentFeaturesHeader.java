@@ -26,19 +26,20 @@ public class GetContentFeaturesHeader extends DLNAHeader<Integer> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 int t = Integer.parseInt(s);
-                if (t==1)
+                if (t == 1)
                     return;
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+            }
         }
         throw new InvalidHeaderException("Invalid GetContentFeatures header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

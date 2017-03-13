@@ -14,12 +14,13 @@
  */
 package org.fourthline.cling.support.model.dlna;
 
-/** DLNA.ORG_CI: conversion indicator parameter (integer)
+/**
+ * DLNA.ORG_CI: conversion indicator parameter (integer)
  * <pre>
  *     0 not transcoded
  *     1 transcoded
  * </pre>
- * 
+ *
  * @author Mario Franco
  */
 public enum DLNAConversionIndicator {
@@ -33,10 +34,6 @@ public enum DLNAConversionIndicator {
         this.code = code;
     }
 
-    public int getCode() {
-        return code;
-    }
-
     public static DLNAConversionIndicator valueOf(int code) {
         for (DLNAConversionIndicator errorCode : values()) {
             if (errorCode.getCode() == code) {
@@ -44,5 +41,9 @@ public enum DLNAConversionIndicator {
             }
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

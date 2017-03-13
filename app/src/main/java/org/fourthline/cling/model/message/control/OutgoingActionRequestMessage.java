@@ -15,20 +15,20 @@
 
 package org.fourthline.cling.model.message.control;
 
-import java.util.logging.Logger;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.action.RemoteActionInvocation;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.QueryStateVariableAction;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.model.message.header.ContentTypeHeader;
 import org.fourthline.cling.model.message.header.SoapActionHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.model.message.header.UserAgentHeader;
+import org.fourthline.cling.model.meta.Action;
+import org.fourthline.cling.model.meta.QueryStateVariableAction;
 import org.fourthline.cling.model.types.SoapActionType;
 
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * @author Christian Bauer
@@ -46,10 +46,10 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
         if (actionInvocation instanceof RemoteActionInvocation) {
             RemoteActionInvocation remoteActionInvocation = (RemoteActionInvocation) actionInvocation;
             if (remoteActionInvocation.getRemoteClientInfo() != null
-                && remoteActionInvocation.getRemoteClientInfo().getRequestUserAgent() != null) {
+                    && remoteActionInvocation.getRemoteClientInfo().getRequestUserAgent() != null) {
                 getHeaders().add(
-                    UpnpHeader.Type.USER_AGENT,
-                    new UserAgentHeader(remoteActionInvocation.getRemoteClientInfo().getRequestUserAgent())
+                        UpnpHeader.Type.USER_AGENT,
+                        new UserAgentHeader(remoteActionInvocation.getRemoteClientInfo().getRequestUserAgent())
                 );
             }
         } else if (actionInvocation.getClientInfo() != null) {

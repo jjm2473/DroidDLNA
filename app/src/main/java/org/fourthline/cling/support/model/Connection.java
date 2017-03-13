@@ -22,66 +22,6 @@ import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
  */
 public class Connection {
 
-    static public class StatusInfo {
-
-        private Status status;
-        private long uptimeSeconds;
-        private Error lastError;
-
-        public StatusInfo(Status status, UnsignedIntegerFourBytes uptime, Error lastError) {
-            this(status, uptime.getValue(), lastError);
-        }
-
-        public StatusInfo(Status status, long uptimeSeconds, Error lastError) {
-            this.status = status;
-            this.uptimeSeconds = uptimeSeconds;
-            this.lastError = lastError;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        public long getUptimeSeconds() {
-            return uptimeSeconds;
-        }
-
-        public UnsignedIntegerFourBytes getUptime() {
-            return new UnsignedIntegerFourBytes(getUptimeSeconds());
-        }
-
-        public Error getLastError() {
-            return lastError;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            StatusInfo that = (StatusInfo) o;
-
-            if (uptimeSeconds != that.uptimeSeconds) return false;
-            if (lastError != that.lastError) return false;
-            if (status != that.status) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = status.hashCode();
-            result = 31 * result + (int) (uptimeSeconds ^ (uptimeSeconds >>> 32));
-            result = 31 * result + lastError.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + getClass().getSimpleName() + ") " + getStatus();
-        }
-    }
-
     public enum Type {
         /**
          * Valid connection types cannot be identified.
@@ -148,5 +88,65 @@ public class Connection {
         ERROR_NO_CARRIER,
         ERROR_IP_CONFIGURATION,
         ERROR_UNKNOWN
+    }
+
+    static public class StatusInfo {
+
+        private Status status;
+        private long uptimeSeconds;
+        private Error lastError;
+
+        public StatusInfo(Status status, UnsignedIntegerFourBytes uptime, Error lastError) {
+            this(status, uptime.getValue(), lastError);
+        }
+
+        public StatusInfo(Status status, long uptimeSeconds, Error lastError) {
+            this.status = status;
+            this.uptimeSeconds = uptimeSeconds;
+            this.lastError = lastError;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public long getUptimeSeconds() {
+            return uptimeSeconds;
+        }
+
+        public UnsignedIntegerFourBytes getUptime() {
+            return new UnsignedIntegerFourBytes(getUptimeSeconds());
+        }
+
+        public Error getLastError() {
+            return lastError;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            StatusInfo that = (StatusInfo) o;
+
+            if (uptimeSeconds != that.uptimeSeconds) return false;
+            if (lastError != that.lastError) return false;
+            if (status != that.status) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = status.hashCode();
+            result = 31 * result + (int) (uptimeSeconds ^ (uptimeSeconds >>> 32));
+            result = 31 * result + lastError.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + getClass().getSimpleName() + ") " + getStatus();
+        }
     }
 }

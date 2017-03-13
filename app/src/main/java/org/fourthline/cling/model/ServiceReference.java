@@ -30,7 +30,7 @@ import org.fourthline.cling.model.types.UDN;
  * <p>
  * This simplifies implementing disconnect/reconnect behavior in a control point.
  * </p>
- * 
+ *
  * @author Christian Bauer
  */
 public class ServiceReference {
@@ -43,7 +43,7 @@ public class ServiceReference {
     public ServiceReference(String s) {
         String[] split = s.split("/");
         if (split.length == 2) {
-            this.udn =  UDN.valueOf(split[0]);
+            this.udn = UDN.valueOf(split[0]);
             this.serviceId = ServiceId.valueOf(split[1]);
         } else {
             this.udn = null;

@@ -19,8 +19,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Set;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Shared trivial procedures.
@@ -33,6 +33,11 @@ public class ModelUtil {
      * True if this class is executing on an Android runtime
      */
     final public static boolean ANDROID_RUNTIME;
+    /**
+     * True if this class is executing on an Android emulator runtime.
+     */
+    final public static boolean ANDROID_EMULATOR;
+
     static {
         boolean foundAndroid = false;
         try {
@@ -44,15 +49,11 @@ public class ModelUtil {
         ANDROID_RUNTIME = foundAndroid;
     }
 
-    /**
-     * True if this class is executing on an Android emulator runtime.
-     */
-    final public static boolean ANDROID_EMULATOR;
     static {
         boolean foundEmulator = false;
         try {
             Class androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
-            String product = (String)androidBuild.getField("PRODUCT").get(null);
+            String product = (String) androidBuild.getField("PRODUCT").get(null);
             if ("google_sdk".equals(product) || ("sdk".equals(product)))
                 foundEmulator = true;
         } catch (Exception ex) {
@@ -63,7 +64,7 @@ public class ModelUtil {
 
     /**
      * @param stringConvertibleTypes A collection of interfaces.
-     * @param clazz An interface to test.
+     * @param clazz                  An interface to test.
      * @return <code>true</code> if the given interface is an Enum, or if the collection contains a super-interface.
      */
     public static boolean isStringConvertibleType(Set<Class> stringConvertibleTypes, Class clazz) {
@@ -79,7 +80,7 @@ public class ModelUtil {
     /**
      * @param name A UPnP device architecture "name" string.
      * @return <code>true</code> if the name is not empty, doesn't start with "xml", and
-     *         matches {@link org.fourthline.cling.model.Constants#REGEX_UDA_NAME}.
+     * matches {@link org.fourthline.cling.model.Constants#REGEX_UDA_NAME}.
      */
     public static boolean isValidUDAName(String name) {
         if (ANDROID_RUNTIME) {

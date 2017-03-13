@@ -33,16 +33,16 @@ public class ContentTypeHeader extends UpnpHeader<MimeType> {
         setValue(contentType);
     }
 
-    public ContentTypeHeader(String s) throws InvalidHeaderException{
+    public ContentTypeHeader(String s) throws InvalidHeaderException {
         setString(s);
-    }
-
-    public void setString(String s) throws InvalidHeaderException {
-        setValue(MimeType.valueOf(s));
     }
 
     public String getString() {
         return getValue().toString();
+    }
+
+    public void setString(String s) throws InvalidHeaderException {
+        setValue(MimeType.valueOf(s));
     }
 
     public boolean isUDACompliantXML() {

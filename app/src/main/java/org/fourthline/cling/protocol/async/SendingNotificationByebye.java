@@ -46,7 +46,7 @@ public class SendingNotificationByebye extends SendingNotification {
 
     @Override
     protected void execute() throws RouterException {
-        log.fine("Sending byebye messages ("+getBulkRepeat()+" times) for: " + getDevice());
+        log.fine("Sending byebye messages (" + getBulkRepeat() + " times) for: " + getDevice());
         super.execute();
     }
 

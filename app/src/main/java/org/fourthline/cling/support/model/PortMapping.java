@@ -27,11 +27,6 @@ import java.util.Map;
  */
 public class PortMapping {
 
-    public enum Protocol {
-        UDP,
-        TCP
-    }
-
     private boolean enabled;
     private UnsignedIntegerFourBytes leaseDurationSeconds;
     private String remoteHost;
@@ -40,10 +35,8 @@ public class PortMapping {
     private String internalClient;
     private Protocol protocol;
     private String description;
-
     public PortMapping() {
     }
-
 
     public PortMapping(Map<String, ActionArgumentValue<Service>> map) {
         this(
@@ -57,6 +50,7 @@ public class PortMapping {
                 (String) map.get("NewPortMappingDescription").getValue()
         );
     }
+
 
     public PortMapping(int port, String internalClient, Protocol protocol) {
         this(
@@ -184,5 +178,10 @@ public class PortMapping {
     @Override
     public String toString() {
         return "(" + getClass().getSimpleName() + ") Protocol: " + getProtocol() + ", " + getExternalPort() + " => " + getInternalClient();
+    }
+
+    public enum Protocol {
+        UDP,
+        TCP
     }
 }

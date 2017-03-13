@@ -150,7 +150,7 @@ public class AnnotationActionBinder {
         // A method can't have any parameters that are not annotated with @UpnpInputArgument - we wouldn't know what
         // value to pass when we invoke it later on... unless the last parameter is of type RemoteClientInfo
         if (annotatedParams < getMethod().getParameterTypes().length
-            && !RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length-1])) {
+                && !RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length - 1])) {
             throw new LocalServiceBindingException("Method has parameters that are not input arguments: " + getMethod().getName());
         }
 
@@ -318,7 +318,7 @@ public class AnnotationActionBinder {
 
         } else if (expectedDefaultMapping == null && stateVariable.getTypeDetails().getDatatype().getBuiltin() != null) {
             throw new LocalServiceBindingException(
-                    "State variable '" + stateVariable  + "' should be custom datatype " +
+                    "State variable '" + stateVariable + "' should be custom datatype " +
                             "(action argument type is unknown Java type): " + type.getSimpleName()
             );
         }

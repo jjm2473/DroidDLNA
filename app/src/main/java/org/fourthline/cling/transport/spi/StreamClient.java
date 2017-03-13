@@ -20,21 +20,20 @@ import org.fourthline.cling.model.message.StreamResponseMessage;
 
 /**
  * Service for sending TCP (HTTP) stream request messages.
- * 
+ * <p>
  * <p>
  * An implementation has to be thread-safe.
  * Its constructor may throw {@link org.fourthline.cling.transport.spi.InitializationException}.
  * </p>
  *
  * @param <C> The type of the service's configuration.
- *
  * @author Christian Bauer
  */
 public interface StreamClient<C extends StreamClientConfiguration> {
 
     /**
      * Sends the given request via TCP (HTTP) and returns the response.
-     *
+     * <p>
      * <p>
      * This method must implement expiration of timed out requests using the
      * {@link StreamClientConfiguration} settings. When a request expires, a
@@ -48,9 +47,9 @@ public interface StreamClient<C extends StreamClientConfiguration> {
      * The rules for logging are:
      * </p>
      * <ul>
-     *     <li>If the caller interrupts the calling thread, log at <code>FINE</code>.</li>
-     *     <li>If the request expires because the timeout has been reached, log at <code>INFO</code> level.</li>
-     *     <li>If another error occurs, log at <code>WARNING</code> level</li>
+     * <li>If the caller interrupts the calling thread, log at <code>FINE</code>.</li>
+     * <li>If the request expires because the timeout has been reached, log at <code>INFO</code> level.</li>
+     * <li>If another error occurs, log at <code>WARNING</code> level</li>
      * </ul>
      * <p>
      * This method <strong>is required</strong> to add a <code>Host</code> HTTP header to the

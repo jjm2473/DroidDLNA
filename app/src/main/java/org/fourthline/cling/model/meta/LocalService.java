@@ -73,18 +73,18 @@ public class LocalService<T> extends Service<LocalDevice, LocalService> {
         this.actionExecutors = actionExecutors;
     }
 
-    synchronized public void setManager(ServiceManager<T> manager) {
-        if (this.manager != null) {
-            throw new IllegalStateException("Manager is final");
-        }
-        this.manager = manager;
-    }
-
     synchronized public ServiceManager<T> getManager() {
         if (manager == null) {
             throw new IllegalStateException("Unmanaged service, no implementation instance available");
         }
         return manager;
+    }
+
+    synchronized public void setManager(ServiceManager<T> manager) {
+        if (this.manager != null) {
+            throw new IllegalStateException("Manager is final");
+        }
+        this.manager = manager;
     }
 
     public boolean isSupportsQueryStateVariables() {
@@ -128,6 +128,6 @@ public class LocalService<T> extends Service<LocalDevice, LocalService> {
 
     @Override
     public String toString() {
-        return super.toString()  + ", Manager: " + manager;
+        return super.toString() + ", Manager: " + manager;
     }
 }

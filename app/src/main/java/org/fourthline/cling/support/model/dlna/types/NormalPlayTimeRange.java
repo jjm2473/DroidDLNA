@@ -17,13 +17,12 @@ package org.fourthline.cling.support.model.dlna.types;
 import org.fourthline.cling.model.types.InvalidValueException;
 
 /**
- *
  * @author Mario Franco
  */
 public class NormalPlayTimeRange {
 
     public static final String PREFIX = "npt=";
-    
+
     private NormalPlayTime timeStart;
     private NormalPlayTime timeEnd;
     private NormalPlayTime timeDuration;
@@ -42,6 +41,35 @@ public class NormalPlayTimeRange {
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.timeDuration = timeDuration;
+    }
+
+    public static NormalPlayTimeRange valueOf(String s) throws InvalidValueException {
+        return valueOf(s, false);
+    }
+
+    public static NormalPlayTimeRange valueOf(String s, boolean mandatoryTimeEnd) throws InvalidValueException {
+        if (s.startsWith(PREFIX)) {
+            NormalPlayTime timeStart, timeEnd = null, timeDuration = null;
+            String[] params = s.substring(PREFIX.length()).split("[-/]");
+            switch (params.length) {
+                case 3:
+                    if (params[2].length() != 0 && !params[2].equals("*")) {
+                        timeDuration = NormalPlayTime.valueOf(params[2]);
+                    }
+                case 2:
+                    if (params[1].length() != 0) {
+                        timeEnd = NormalPlayTime.valueOf(params[1]);
+                    }
+                case 1:
+                    if (params[0].length() != 0 && (!mandatoryTimeEnd || (mandatoryTimeEnd && params.length > 1))) {
+                        timeStart = NormalPlayTime.valueOf(params[0]);
+                        return new NormalPlayTimeRange(timeStart, timeEnd, timeDuration);
+                    }
+                default:
+                    break;
+            }
+        }
+        throw new InvalidValueException("Can't parse NormalPlayTimeRange: " + s);
     }
 
     /**
@@ -66,16 +94,14 @@ public class NormalPlayTimeRange {
     }
 
     /**
-     * 
-     * @return String format of Normal Play Time Range for response message header 
+     * @return String format of Normal Play Time Range for response message header
      */
     public String getString() {
         return getString(true);
     }
 
     /**
-     * 
-     * @return String format of Normal Play Time Range for response message header 
+     * @return String format of Normal Play Time Range for response message header
      */
     public String getString(boolean includeDuration) {
         String s = PREFIX;
@@ -89,34 +115,5 @@ public class NormalPlayTimeRange {
         }
 
         return s;
-    }
-
-    public static NormalPlayTimeRange valueOf(String s) throws InvalidValueException {
-        return valueOf(s, false);
-    }
-    
-    public static NormalPlayTimeRange valueOf(String s, boolean mandatoryTimeEnd) throws InvalidValueException {
-        if (s.startsWith(PREFIX)) {
-            NormalPlayTime timeStart, timeEnd = null, timeDuration = null;
-            String[] params = s.substring(PREFIX.length()).split("[-/]");
-            switch (params.length) {
-                case 3:
-                    if (params[2].length() != 0 && !params[2].equals("*")) {
-                        timeDuration = NormalPlayTime.valueOf(params[2]);
-                    }
-                case 2:
-                    if (params[1].length() != 0) {
-                        timeEnd = NormalPlayTime.valueOf(params[1]);
-                    }
-                case 1:
-                    if (params[0].length() != 0 && (!mandatoryTimeEnd || ( mandatoryTimeEnd && params.length>1))) {
-                        timeStart = NormalPlayTime.valueOf(params[0]);
-                        return new NormalPlayTimeRange(timeStart, timeEnd, timeDuration);
-                    }
-                default:
-                    break;
-            }
-        }
-        throw new InvalidValueException("Can't parse NormalPlayTimeRange: " + s);
     }
 }

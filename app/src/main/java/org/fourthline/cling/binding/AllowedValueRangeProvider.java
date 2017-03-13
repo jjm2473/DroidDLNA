@@ -21,7 +21,9 @@ package org.fourthline.cling.binding;
 public interface AllowedValueRangeProvider {
 
     public long getMinimum();
+
     public long getMaximum();
+
     public long getStep();
 
 }

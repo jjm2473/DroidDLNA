@@ -38,11 +38,6 @@ public enum Protocol {
         this.protocolString = protocolString;
     }
 
-    @Override
-    public String toString() {
-        return protocolString;
-    }
-
     public static Protocol value(String s) {
         for (Protocol protocol : values()) {
             if (protocol.toString().equals(s)) {
@@ -51,6 +46,11 @@ public enum Protocol {
         }
         LOG.info("Unsupported OTHER protocol string: " + s);
         return OTHER;
+    }
+
+    @Override
+    public String toString() {
+        return protocolString;
     }
 
 }

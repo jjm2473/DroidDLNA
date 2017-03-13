@@ -16,16 +16,16 @@
 package org.fourthline.cling.model.meta;
 
 import org.fourthline.cling.model.Namespace;
-import org.fourthline.cling.model.profile.RemoteClientInfo;
+import org.fourthline.cling.model.ValidationError;
+import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.profile.DeviceDetailsProvider;
+import org.fourthline.cling.model.profile.RemoteClientInfo;
 import org.fourthline.cling.model.resource.DeviceDescriptorResource;
 import org.fourthline.cling.model.resource.IconResource;
+import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.resource.ServiceControlResource;
 import org.fourthline.cling.model.resource.ServiceDescriptorResource;
 import org.fourthline.cling.model.resource.ServiceEventSubscriptionResource;
-import org.fourthline.cling.model.resource.Resource;
-import org.fourthline.cling.model.ValidationError;
-import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.ServiceId;
 import org.fourthline.cling.model.types.ServiceType;

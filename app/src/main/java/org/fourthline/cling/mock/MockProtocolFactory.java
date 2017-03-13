@@ -35,8 +35,9 @@ import org.fourthline.cling.protocol.sync.SendingRenewal;
 import org.fourthline.cling.protocol.sync.SendingSubscribe;
 import org.fourthline.cling.protocol.sync.SendingUnsubscribe;
 
-import javax.enterprise.inject.Alternative;
 import java.net.URL;
+
+import javax.enterprise.inject.Alternative;
 
 /**
  * @author Christian Bauer

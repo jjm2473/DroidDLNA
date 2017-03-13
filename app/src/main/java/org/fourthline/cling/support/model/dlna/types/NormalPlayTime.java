@@ -14,25 +14,20 @@
  */
 package org.fourthline.cling.support.model.dlna.types;
 
+import org.fourthline.cling.model.types.InvalidValueException;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.fourthline.cling.model.types.InvalidValueException;
 
 /**
  * @author Mario Franco
  */
 public class NormalPlayTime {
 
-    public enum Format {
-
-        SECONDS,
-        TIME
-    }
     final static Pattern pattern = Pattern.compile("^(\\d+):(\\d{1,2}):(\\d{1,2})(\\.(\\d{1,3}))?|(\\d+)(\\.(\\d{1,3}))?$", Pattern.CASE_INSENSITIVE);
     private long milliseconds;
-
     public NormalPlayTime(long milliseconds) {
         if (milliseconds < 0) {
             throw new InvalidValueException("Invalid parameter milliseconds: " + milliseconds);
@@ -60,6 +55,29 @@ public class NormalPlayTime {
         this.milliseconds = (hours * 60 * 60 + minutes * 60 + seconds) * 1000 + milliseconds;
     }
 
+    public static NormalPlayTime valueOf(String s) throws InvalidValueException {
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.matches()) {
+            int msMultiplier = 0;
+            try {
+                if (matcher.group(1) != null) {
+                    msMultiplier = (int) Math.pow(10, 3 - matcher.group(5).length());
+                    return new NormalPlayTime(
+                            Long.parseLong(matcher.group(1)),
+                            Long.parseLong(matcher.group(2)),
+                            Long.parseLong(matcher.group(3)),
+                            Long.parseLong(matcher.group(5)) * msMultiplier);
+                } else {
+                    msMultiplier = (int) Math.pow(10, 3 - matcher.group(8).length());
+                    return new NormalPlayTime(
+                            Long.parseLong(matcher.group(6)) * 1000 + Long.parseLong(matcher.group(8)) * msMultiplier);
+                }
+            } catch (NumberFormatException ex1) {
+            }
+        }
+        throw new InvalidValueException("Can't parse NormalPlayTime: " + s);
+    }
+
     /**
      * @return the milliseconds
      */
@@ -83,10 +101,11 @@ public class NormalPlayTime {
     }
 
     /**
-     * We don't ignore the right zeros in milliseconds, a small compromise 
+     * We don't ignore the right zeros in milliseconds, a small compromise
+     *
      * @param format
      */
-    public String getString(Format format) {        
+    public String getString(Format format) {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         long ms = milliseconds % 1000;
         switch (format) {
@@ -100,26 +119,9 @@ public class NormalPlayTime {
         }
     }
 
-    public static NormalPlayTime valueOf(String s) throws InvalidValueException {
-        Matcher matcher = pattern.matcher(s);
-        if (matcher.matches()) {
-            int msMultiplier = 0;
-            try {
-                if (matcher.group(1) != null) {
-                    msMultiplier = (int) Math.pow(10, 3 - matcher.group(5).length());
-                    return new NormalPlayTime(
-                            Long.parseLong(matcher.group(1)),
-                            Long.parseLong(matcher.group(2)),
-                            Long.parseLong(matcher.group(3)),
-                            Long.parseLong(matcher.group(5))*msMultiplier);
-                } else {
-                    msMultiplier = (int) Math.pow(10, 3 - matcher.group(8).length());
-                    return new NormalPlayTime(
-                            Long.parseLong(matcher.group(6)) * 1000 + Long.parseLong(matcher.group(8))*msMultiplier);
-                }
-            } catch (NumberFormatException ex1) {
-            }
-        }
-        throw new InvalidValueException("Can't parse NormalPlayTime: " + s);
+    public enum Format {
+
+        SECONDS,
+        TIME
     }
 }

@@ -1,4 +1,3 @@
-
 package com.zxt.dlna.dmp;
 
 import android.app.Activity;
@@ -48,48 +47,27 @@ import java.io.IOException;
 public class GPlayer extends Activity implements OnCompletionListener, OnErrorListener,
         OnInfoListener, OnPreparedListener, OnSeekCompleteListener, OnVideoSizeChangedListener,
         SurfaceHolder.Callback, MediaController.MediaPlayerControl, OnClickListener {
-    private static final int MEDIA_PLAYER_BUFFERING_UPDATE = 4001;
-
-    private static final int MEDIA_PLAYER_COMPLETION = 4002;
-
-    private static final int MEDIA_PLAYER_ERROR = 4003;
-
-    private static final int MEDIA_PLAYER_INFO = 4004;
-
-    private static final int MEDIA_PLAYER_PREPARED = 4005;
-
-    private static final int MEDIA_PLAYER_PROGRESS_UPDATE = 4006;
-
-    private static final int MEDIA_PLAYER_VIDEO_SIZE_CHANGED = 4007;
-
-    private static final int MEDIA_PLAYER_VOLUME_CHANGED = 4008;
-
-    private static final int MEDIA_PLAYER_HIDDEN_CONTROL = 4009;
-
-    Display currentDisplay;
-
-    SurfaceView surfaceView;
-
-    SurfaceHolder surfaceHolder;
-
-    MediaPlayer mMediaPlayer;
-
-    MediaController mediaController;
-
-    public static MediaListener mMediaListener;
-
-    int videoWidth = 0;
-
-    int videoHeight = 0;
-
-    boolean readyToPlay = false;
-
-    String playURI;
-
-    private AudioManager mAudioManager;
-
     public final static String LOGTAG = "GPlayer";
-
+    private static final int MEDIA_PLAYER_BUFFERING_UPDATE = 4001;
+    private static final int MEDIA_PLAYER_COMPLETION = 4002;
+    private static final int MEDIA_PLAYER_ERROR = 4003;
+    private static final int MEDIA_PLAYER_INFO = 4004;
+    private static final int MEDIA_PLAYER_PREPARED = 4005;
+    private static final int MEDIA_PLAYER_PROGRESS_UPDATE = 4006;
+    private static final int MEDIA_PLAYER_VIDEO_SIZE_CHANGED = 4007;
+    private static final int MEDIA_PLAYER_VOLUME_CHANGED = 4008;
+    private static final int MEDIA_PLAYER_HIDDEN_CONTROL = 4009;
+    public static MediaListener mMediaListener;
+    Display currentDisplay;
+    SurfaceView surfaceView;
+    SurfaceHolder surfaceHolder;
+    MediaPlayer mMediaPlayer;
+    MediaController mediaController;
+    int videoWidth = 0;
+    int videoHeight = 0;
+    boolean readyToPlay = false;
+    String playURI;
+    private AudioManager mAudioManager;
     private TextView mTextViewTime;
 
     private SeekBar mSeekBarProgress;
@@ -125,6 +103,70 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
     private boolean isMute;
 
     private int mBackCount;
+    private Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            Log.d(LOGTAG, "msg=" + msg.what);
+            switch (msg.what) {
+                case MEDIA_PLAYER_BUFFERING_UPDATE: {
+
+                    break;
+                }
+                case MEDIA_PLAYER_COMPLETION: {
+
+                    break;
+                }
+                case MEDIA_PLAYER_ERROR: {
+
+                    break;
+                }
+                case MEDIA_PLAYER_INFO: {
+
+                    break;
+                }
+                case MEDIA_PLAYER_PREPARED: {
+                    mBufferLayout.setVisibility(View.GONE);
+                    break;
+                }
+                case MEDIA_PLAYER_PROGRESS_UPDATE: {
+                    if (null == mMediaPlayer || !mMediaPlayer.isPlaying()) {
+                        break;
+                    }
+
+                    int position = mMediaPlayer.getCurrentPosition();
+                    int duration = mMediaPlayer.getDuration();
+                    if (null != mMediaListener) {
+                        mMediaListener.positionChanged(position);
+                        mMediaListener.durationChanged(duration);
+                    }
+
+                    mTextViewLength.setText(Utils.secToTime(duration / 1000));
+                    mSeekBarProgress.setMax(duration);
+                    mTextViewTime.setText(Utils.secToTime(position / 1000));
+                    mSeekBarProgress.setProgress(position);
+                    mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_PROGRESS_UPDATE, 500);
+
+                    break;
+                }
+                case MEDIA_PLAYER_VIDEO_SIZE_CHANGED: {
+
+                    break;
+                }
+                case MEDIA_PLAYER_VOLUME_CHANGED: {
+                    mSeekBarSound.setProgress(mAudioManager
+                            .getStreamVolume(AudioManager.STREAM_MUSIC));
+                    break;
+                }
+                case MEDIA_PLAYER_HIDDEN_CONTROL: {
+                    mLayoutTop.setVisibility(View.GONE);
+                    mLayoutBottom.setVisibility(View.GONE);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
+    private PlayBrocastReceiver playRecevieBrocast = new PlayBrocastReceiver();
 
     public static void setMediaListener(MediaListener mediaListener) {
         mMediaListener = mediaListener;
@@ -389,7 +431,7 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
         return false;
     }
 
-    public  int getAudioSessionId() {
+    public int getAudioSessionId() {
         return 1;
     }
 
@@ -597,72 +639,6 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
 
     }
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            Log.d(LOGTAG, "msg=" + msg.what);
-            switch (msg.what) {
-                case MEDIA_PLAYER_BUFFERING_UPDATE: {
-
-                    break;
-                }
-                case MEDIA_PLAYER_COMPLETION: {
-
-                    break;
-                }
-                case MEDIA_PLAYER_ERROR: {
-
-                    break;
-                }
-                case MEDIA_PLAYER_INFO: {
-
-                    break;
-                }
-                case MEDIA_PLAYER_PREPARED: {
-                    mBufferLayout.setVisibility(View.GONE);
-                    break;
-                }
-                case MEDIA_PLAYER_PROGRESS_UPDATE: {
-                    if (null == mMediaPlayer || !mMediaPlayer.isPlaying()) {
-                        break;
-                    }
-
-                    int position = mMediaPlayer.getCurrentPosition();
-                    int duration = mMediaPlayer.getDuration();
-                    if (null != mMediaListener) {
-                        mMediaListener.positionChanged(position);
-                        mMediaListener.durationChanged(duration);
-                    }
-
-                    mTextViewLength.setText(Utils.secToTime(duration / 1000));
-                    mSeekBarProgress.setMax(duration);
-                    mTextViewTime.setText(Utils.secToTime(position / 1000));
-                    mSeekBarProgress.setProgress(position);
-                    mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_PROGRESS_UPDATE, 500);
-
-                    break;
-                }
-                case MEDIA_PLAYER_VIDEO_SIZE_CHANGED: {
-
-                    break;
-                }
-                case MEDIA_PLAYER_VOLUME_CHANGED: {
-                    mSeekBarSound.setProgress(mAudioManager
-                            .getStreamVolume(AudioManager.STREAM_MUSIC));
-                    break;
-                }
-                case MEDIA_PLAYER_HIDDEN_CONTROL: {
-                    mLayoutTop.setVisibility(View.GONE);
-                    mLayoutBottom.setVisibility(View.GONE);
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    };
-
-    private PlayBrocastReceiver playRecevieBrocast = new PlayBrocastReceiver();
-
     public void registerBrocast() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Action.DMR);
@@ -672,6 +648,20 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
 
     public void unregisterBrocast() {
         unregisterReceiver(this.playRecevieBrocast);
+    }
+
+    public interface MediaListener {
+        void pause();
+
+        void start();
+
+        void stop();
+
+        void endOfMedia();
+
+        void positionChanged(int position);
+
+        void durationChanged(int duration);
     }
 
     class PlayBrocastReceiver extends BroadcastReceiver {
@@ -699,7 +689,7 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
                 }
 
             } else if (str1.equals(Action.SET_VOLUME)) {
-                int volume = (int) (intent.getDoubleExtra("volume", 0) * mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) ;
+                int volume = (int) (intent.getDoubleExtra("volume", 0) * mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
                 mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_VOLUME_CHANGED, 100);
             } else if (str1.equals(Action.STOP)) {
@@ -707,20 +697,6 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
             }
 
         }
-    }
-
-    public interface MediaListener {
-        void pause();
-
-        void start();
-
-        void stop();
-
-        void endOfMedia();
-
-        void positionChanged(int position);
-
-        void durationChanged(int duration);
     }
 
 }

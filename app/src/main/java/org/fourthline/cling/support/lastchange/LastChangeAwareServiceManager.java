@@ -69,12 +69,12 @@ public class LastChangeAwareServiceManager<T extends LastChangeDelegator> extend
         // 1. The lock() of the DefaultServiceManager
         // 2. The monitor/synchronized of the LastChange.fire() method
 
-    	lock();
-    	try {
+        lock();
+        try {
             getImplementation().getLastChange().fire(getPropertyChangeSupport());
-    	} finally {
-    		unlock();
-    	}
+        } finally {
+            unlock();
+        }
     }
 
     @Override

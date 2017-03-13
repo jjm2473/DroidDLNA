@@ -25,7 +25,6 @@ import java.util.List;
  * An addressable object, stored, managed, and accessible through the {@link org.fourthline.cling.registry.Registry}.
  *
  * @param <M> The type of the model object.
- *
  * @author Christian Bauer
  */
 public class Resource<M> {
@@ -35,7 +34,7 @@ public class Resource<M> {
 
     /**
      * @param pathQuery The path and (optional) query URI parts of this resource.
-     * @param model The model object.
+     * @param model     The model object.
      */
     public Resource(URI pathQuery, M model) {
         try {

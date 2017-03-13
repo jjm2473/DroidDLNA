@@ -33,6 +33,19 @@ public class AvailableSeekRangeHeader extends DLNAHeader<AvailableSeekRangeType>
     }
 
     @Override
+    public String getString() {
+        AvailableSeekRangeType t = getValue();
+        String s = Integer.toString(t.getModeFlag().ordinal());
+        if (t.getNormalPlayTimeRange() != null) {
+            s += " " + t.getNormalPlayTimeRange().getString(false);
+        }
+        if (t.getBytesRange() != null) {
+            s += " " + t.getBytesRange().getString(false);
+        }
+        return s;
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             String[] params = s.split(" ");
@@ -52,7 +65,7 @@ public class AvailableSeekRangeHeader extends DLNAHeader<AvailableSeekRangeType>
                     boolean useTime = true;
                     //Parse Second Token
                     try {
-                        timeRange = NormalPlayTimeRange.valueOf(params[1],true);
+                        timeRange = NormalPlayTimeRange.valueOf(params[1], true);
                     } catch (InvalidValueException timeInvalidValueException) {
                         try {
                             byteRange = BytesRange.valueOf(params[1]);
@@ -66,8 +79,7 @@ public class AvailableSeekRangeHeader extends DLNAHeader<AvailableSeekRangeType>
                             //Parse Third Token
                             byteRange = BytesRange.valueOf(params[2]);
                             setValue(new AvailableSeekRangeType(mode, timeRange, byteRange));
-                        }
-                        else {
+                        } else {
                             setValue(new AvailableSeekRangeType(mode, timeRange));
                         }
                     } else {
@@ -80,18 +92,5 @@ public class AvailableSeekRangeHeader extends DLNAHeader<AvailableSeekRangeType>
             }
         }
         throw new InvalidHeaderException("Invalid AvailableSeekRange header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        AvailableSeekRangeType t = getValue();
-        String s = Integer.toString(t.getModeFlag().ordinal());
-        if (t.getNormalPlayTimeRange() != null) {
-            s += " " + t.getNormalPlayTimeRange().getString(false);
-        }
-        if (t.getBytesRange() != null) {
-            s += " " + t.getBytesRange().getString(false);
-        }
-        return s;
     }
 }

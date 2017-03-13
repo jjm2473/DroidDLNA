@@ -194,9 +194,9 @@ import java.net.URI;
 })
 public abstract class AbstractAVTransportService implements LastChangeDelegator {
 
+    final protected PropertyChangeSupport propertyChangeSupport;
     @UpnpStateVariable(eventMaximumRateMilliseconds = 200)
     final private LastChange lastChange;
-    final protected PropertyChangeSupport propertyChangeSupport;
 
     protected AbstractAVTransportService() {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -216,6 +216,10 @@ public abstract class AbstractAVTransportService implements LastChangeDelegator 
     protected AbstractAVTransportService(PropertyChangeSupport propertyChangeSupport, LastChange lastChange) {
         this.propertyChangeSupport = propertyChangeSupport;
         this.lastChange = lastChange;
+    }
+
+    public static UnsignedIntegerFourBytes getDefaultInstanceID() {
+        return new UnsignedIntegerFourBytes(0);
     }
 
     @Override
@@ -260,10 +264,6 @@ public abstract class AbstractAVTransportService implements LastChangeDelegator 
 
     public PropertyChangeSupport getPropertyChangeSupport() {
         return propertyChangeSupport;
-    }
-
-    public static UnsignedIntegerFourBytes getDefaultInstanceID() {
-        return new UnsignedIntegerFourBytes(0);
     }
 
     @UpnpAction

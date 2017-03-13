@@ -21,7 +21,6 @@ import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.types.ErrorCode;
 
 /**
- *
  * @author Christian Bauer
  */
 public abstract class GetSystemUpdateID extends ActionCallback {

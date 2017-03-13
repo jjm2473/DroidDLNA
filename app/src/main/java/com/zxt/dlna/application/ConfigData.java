@@ -1,9 +1,8 @@
-
 package com.zxt.dlna.application;
 
-import java.util.ArrayList;
-
 import com.zxt.dlna.dmp.ContentItem;
+
+import java.util.ArrayList;
 
 
 public class ConfigData {

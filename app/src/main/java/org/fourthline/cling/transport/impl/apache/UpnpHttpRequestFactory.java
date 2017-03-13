@@ -26,7 +26,8 @@ import org.apache.http.message.BasicHttpRequest;
  * This is how you add new HTTP methods to Apache HTTP Components.
  * <p>
  * Yes, Oleg dude, make stuff private! Good idea!
- *</p>
+ * </p>
+ *
  * @author Christian Bauer
  */
 public class UpnpHttpRequestFactory extends DefaultHttpRequestFactory {

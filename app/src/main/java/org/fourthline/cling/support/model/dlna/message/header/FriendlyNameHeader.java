@@ -24,9 +24,14 @@ public class FriendlyNameHeader extends DLNAHeader<String> {
     public FriendlyNameHeader() {
         setValue("");
     }
-    
+
     public FriendlyNameHeader(String name) {
         setValue(name);
+    }
+
+    @Override
+    public String getString() {
+        return getValue();
     }
 
     @Override
@@ -36,10 +41,5 @@ public class FriendlyNameHeader extends DLNAHeader<String> {
             return;
         }
         throw new InvalidHeaderException("Invalid GetAvailableSeekRange header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue();
     }
 }

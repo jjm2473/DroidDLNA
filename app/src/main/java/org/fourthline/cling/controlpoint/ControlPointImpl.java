@@ -24,12 +24,13 @@ import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.protocol.ProtocolFactory;
 import org.fourthline.cling.registry.Registry;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 /**
  * Default implementation.
@@ -55,7 +56,7 @@ public class ControlPointImpl implements ControlPoint {
     @Inject
     public ControlPointImpl(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory, Registry registry) {
         log.fine("Creating ControlPoint: " + getClass().getName());
-        
+
         this.configuration = configuration;
         this.protocolFactory = protocolFactory;
         this.registry = registry;

@@ -33,8 +33,6 @@ import org.fourthline.cling.model.types.ServiceType;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.protocol.ProtocolFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +44,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 /**
  * Default implementation of {@link Registry}.
  *
@@ -55,13 +56,19 @@ import java.util.logging.Logger;
 public class RegistryImpl implements Registry {
 
     private static Logger log = Logger.getLogger(Registry.class.getName());
-
+    protected final Set<RemoteGENASubscription> pendingSubscriptionsLock = new HashSet<>();
+    protected final Set<RegistryListener> registryListeners = new HashSet<>();
+    protected final Set<RegistryItem<URI, Resource>> resourceItems = new HashSet<>();
+    protected final List<Runnable> pendingExecutions = new ArrayList<>();
+    protected final RemoteItems remoteItems = new RemoteItems(this);
+    protected final LocalItems localItems = new LocalItems(this);
     protected UpnpService upnpService;
     protected RegistryMaintainer registryMaintainer;
-    protected final Set<RemoteGENASubscription> pendingSubscriptionsLock = new HashSet<>();
 
     public RegistryImpl() {
     }
+
+    // #################################################################################################
 
     /**
      * Starts background maintenance immediately.
@@ -97,15 +104,6 @@ public class RegistryImpl implements Registry {
                 getConfiguration().getRegistryMaintenanceIntervalMillis()
         );
     }
-
-    // #################################################################################################
-
-    protected final Set<RegistryListener> registryListeners = new HashSet<>();
-    protected final Set<RegistryItem<URI, Resource>> resourceItems = new HashSet<>();
-    protected final List<Runnable> pendingExecutions = new ArrayList<>();
-
-    protected final RemoteItems remoteItems = new RemoteItems(this);
-    protected final LocalItems localItems = new LocalItems(this);
 
     // #################################################################################################
 
@@ -267,9 +265,9 @@ public class RegistryImpl implements Registry {
 
         // Note: Uses field access on resourceItems for performance reasons
 
-		for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
-        	Resource resource = resourceItem.getItem();
-        	if (resource.matches(pathQuery)) {
+        for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+            Resource resource = resourceItem.getItem();
+            if (resource.matches(pathQuery)) {
                 return resource;
             }
         }
@@ -279,9 +277,9 @@ public class RegistryImpl implements Registry {
         if (pathQuery.getPath().endsWith("/")) {
             URI pathQueryWithoutSlash = URI.create(pathQuery.toString().substring(0, pathQuery.toString().length() - 1));
 
- 			for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
-            	Resource resource = resourceItem.getItem();
-            	if (resource.matches(pathQueryWithoutSlash)) {
+            for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+                Resource resource = resourceItem.getItem();
+                if (resource.matches(pathQueryWithoutSlash)) {
                     return resource;
                 }
             }
@@ -365,9 +363,9 @@ public class RegistryImpl implements Registry {
 
     /* ############################################################################################################ */
 
-   	synchronized public void advertiseLocalDevices() {
-   		localItems.advertiseLocalDevices();
-   	}
+    synchronized public void advertiseLocalDevices() {
+        localItems.advertiseLocalDevices();
+    }
 
     /* ############################################################################################################ */
 
@@ -377,7 +375,7 @@ public class RegistryImpl implements Registry {
 
         if (registryMaintainer != null)
             registryMaintainer.stop();
-        
+
         // Final cleanup run to flush out pending executions which might
         // not have been caught by the maintainer before it stopped
         log.finest("Executing final pending operations on shutdown: " + pendingExecutions.size());
@@ -504,21 +502,21 @@ public class RegistryImpl implements Registry {
 
     }
 
- 	@Override
-	public void registerPendingRemoteSubscription(RemoteGENASubscription subscription) {
-		synchronized (pendingSubscriptionsLock) {
+    @Override
+    public void registerPendingRemoteSubscription(RemoteGENASubscription subscription) {
+        synchronized (pendingSubscriptionsLock) {
             pendingSubscriptionsLock.add(subscription);
         }
-	}
-	
-	@Override
-	public void unregisterPendingRemoteSubscription(RemoteGENASubscription subscription) {
+    }
+
+    @Override
+    public void unregisterPendingRemoteSubscription(RemoteGENASubscription subscription) {
         synchronized (pendingSubscriptionsLock) {
-            if(pendingSubscriptionsLock.remove(subscription)) {
+            if (pendingSubscriptionsLock.remove(subscription)) {
                 pendingSubscriptionsLock.notifyAll();
             }
         }
-	}
+    }
 
     @Override
     public RemoteGENASubscription getWaitRemoteSubscription(String subscriptionId) {

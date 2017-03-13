@@ -35,7 +35,7 @@ public interface Constants {
     public static final String IPV6_UPNP_GLOBAL_ADDRESS = "FF0E::C";
 
     public static final int MIN_ADVERTISEMENT_AGE_SECONDS = 1800;
-    
+
     // Parsing rules for: deviceType, serviceType, serviceId (UDA 1.0, section 2.5)
 
     // TODO: UPNP VIOLATION: Microsoft Windows Media Player Sharing 4.0, X_MS_MediaReceiverRegistrar service has type with periods instead of hyphens in the namespace!

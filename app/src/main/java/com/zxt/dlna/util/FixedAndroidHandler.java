@@ -56,6 +56,25 @@ public class FixedAndroidHandler extends Handler {
         setFormatter(THE_FORMATTER);
     }
 
+    /**
+     * Converts a {@link java.util.logging.Logger} logging level into an Android one.
+     *
+     * @param level The {@link java.util.logging.Logger} logging level.
+     * @return The resulting Android logging level.
+     */
+    static int getAndroidLevel(Level level) {
+        int value = level.intValue();
+        if (value >= 1000) { // SEVERE
+            return Log.ERROR;
+        } else if (value >= 900) { // WARNING
+            return Log.WARN;
+        } else if (value >= 800) { // INFO
+            return Log.INFO;
+        } else {
+            return Log.DEBUG;
+        }
+    }
+
     @Override
     public void close() {
         // No need to close, but must implement abstract method.
@@ -119,26 +138,6 @@ public class FixedAndroidHandler extends Handler {
             Log.println(level, tag, message);
         } catch (RuntimeException e) {
             Log.e("AndroidHandler", "Error logging message.", e);
-        }
-    }
-
-    /**
-     * Converts a {@link java.util.logging.Logger} logging level into an Android one.
-     *
-     * @param level The {@link java.util.logging.Logger} logging level.
-     *
-     * @return The resulting Android logging level.
-     */
-    static int getAndroidLevel(Level level) {
-        int value = level.intValue();
-        if (value >= 1000) { // SEVERE
-            return Log.ERROR;
-        } else if (value >= 900) { // WARNING
-            return Log.WARN;
-        } else if (value >= 800) { // INFO
-            return Log.INFO;
-        } else {
-            return Log.DEBUG;
         }
     }
 

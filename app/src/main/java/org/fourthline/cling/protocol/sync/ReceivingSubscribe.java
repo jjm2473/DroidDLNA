@@ -69,7 +69,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
                 getUpnpService().getRegistry().getResource(
                         ServiceEventSubscriptionResource.class,
                         getInputMessage().getUri()
-        );
+                );
 
         if (resource == null) {
             log.fine("No local resource found: " + getInputMessage());
@@ -90,7 +90,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
         if (requestMessage.getSubscriptionId() != null) {
             return processRenewal(resource.getModel(), requestMessage);
-        } else if (requestMessage.hasNotificationHeader() && requestMessage.getCallbackURLs() != null){
+        } else if (requestMessage.hasNotificationHeader() && requestMessage.getCallbackURLs() != null) {
             return processNewSubscription(resource.getModel(), requestMessage);
         } else {
             log.fine("No subscription ID, no NT or Callback, neither subscription or renewal: " + getInputMessage());
@@ -135,13 +135,13 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
             return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
-        Integer timeoutSeconds; 
-        if(getUpnpService().getConfiguration().isReceivedSubscriptionTimeoutIgnored()) {
-        	timeoutSeconds = null; // Use default value
+        Integer timeoutSeconds;
+        if (getUpnpService().getConfiguration().isReceivedSubscriptionTimeoutIgnored()) {
+            timeoutSeconds = null; // Use default value
         } else {
-        	timeoutSeconds = requestMessage.getRequestedTimeoutSeconds();
+            timeoutSeconds = requestMessage.getRequestedTimeoutSeconds();
         }
-        
+
         try {
             subscription = new LocalGENASubscription(service, timeoutSeconds, callbackURLs) {
                 public void established() {

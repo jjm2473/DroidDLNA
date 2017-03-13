@@ -26,16 +26,16 @@ public class SCIDHeader extends DLNAHeader<String> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             setValue(s);
             return;
         }
         throw new InvalidHeaderException("Invalid SCID header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

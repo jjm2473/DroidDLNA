@@ -68,18 +68,18 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         // Jetty client needs threads for its internal expiration routines, which we don't need but
         // can't disable, so let's abuse the request executor service for this
         client.setThreadPool(
-            new ExecutorThreadPool(getConfiguration().getRequestExecutorService()) {
-                @Override
-                protected void doStop() throws Exception {
-                    // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
+                new ExecutorThreadPool(getConfiguration().getRequestExecutorService()) {
+                    @Override
+                    protected void doStop() throws Exception {
+                        // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
+                    }
                 }
-            }
         );
 
         // These are some safety settings, we should never run into these timeouts as we
         // do our own expiration checking
-        client.setTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-        client.setConnectTimeout((configuration.getTimeoutSeconds()+5) * 1000);
+        client.setTimeout((configuration.getTimeoutSeconds() + 5) * 1000);
+        client.setConnectTimeout((configuration.getTimeoutSeconds() + 5) * 1000);
 
         client.setMaxRetries(configuration.getRequestRetryCount());
 
@@ -87,7 +87,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
             client.start();
         } catch (Exception ex) {
             throw new InitializationException(
-                "Could not start Jetty HTTP client: " + ex, ex
+                    "Could not start Jetty HTTP client: " + ex, ex
             );
         }
     }
@@ -196,9 +196,9 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
             final UpnpRequest requestOperation = getRequestMessage().getOperation();
             if (log.isLoggable(Level.FINE))
                 log.fine(
-                    "Preparing HTTP request message with method '"
-                        + requestOperation.getHttpMethodName()
-                        + "': " + getRequestMessage()
+                        "Preparing HTTP request message with method '"
+                                + requestOperation.getHttpMethodName()
+                                + "': " + getRequestMessage()
                 );
 
             setURL(requestOperation.getURI().toString());
@@ -215,10 +215,10 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
             // Add the default user agent if not already set on the message
             if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
                 setRequestHeader(
-                    UpnpHeader.Type.USER_AGENT.getHttpName(),
-                    getConfiguration().getUserAgentValue(
-                        getRequestMessage().getUdaMajorVersion(),
-                        getRequestMessage().getUdaMinorVersion())
+                        UpnpHeader.Type.USER_AGENT.getHttpName(),
+                        getConfiguration().getUserAgentValue(
+                                getRequestMessage().getUdaMajorVersion(),
+                                getRequestMessage().getUdaMinorVersion())
                 );
             }
             for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
@@ -239,14 +239,14 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                         log.fine("Writing textual request body: " + getRequestMessage());
 
                     MimeType contentType =
-                        getRequestMessage().getContentTypeHeader() != null
-                            ? getRequestMessage().getContentTypeHeader().getValue()
-                            : ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8;
+                            getRequestMessage().getContentTypeHeader() != null
+                                    ? getRequestMessage().getContentTypeHeader().getValue()
+                                    : ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8;
 
                     String charset =
-                        getRequestMessage().getContentTypeCharset() != null
-                            ? getRequestMessage().getContentTypeCharset()
-                            : "UTF-8";
+                            getRequestMessage().getContentTypeCharset() != null
+                                    ? getRequestMessage().getContentTypeCharset()
+                                    : "UTF-8";
 
                     setRequestContentType(contentType.toString());
                     ByteArrayBuffer buffer;
@@ -264,7 +264,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
                     if (getRequestMessage().getContentTypeHeader() == null)
                         throw new RuntimeException(
-                            "Missing content type header in request message: " + requestMessage
+                                "Missing content type header in request message: " + requestMessage
                         );
                     MimeType contentType = getRequestMessage().getContentTypeHeader().getValue();
 
@@ -280,10 +280,10 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         protected StreamResponseMessage createResponse() {
             // Status
             UpnpResponse responseOperation =
-                new UpnpResponse(
-                    getResponseStatus(),
-                    UpnpResponse.Status.getByStatusCode(getResponseStatus()).getStatusMsg()
-                );
+                    new UpnpResponse(
+                            getResponseStatus(),
+                            UpnpResponse.Status.getByStatusCode(getResponseStatus()).getStatusMsg()
+                    );
 
             if (log.isLoggable(Level.FINE))
                 log.fine("Received response: " + responseOperation);

@@ -15,9 +15,9 @@
 
 package org.fourthline.cling.controlpoint;
 
+import org.fourthline.cling.UpnpServiceConfiguration;
 import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.protocol.ProtocolFactory;
-import org.fourthline.cling.UpnpServiceConfiguration;
 import org.fourthline.cling.registry.Registry;
 
 import java.util.concurrent.Future;
@@ -30,14 +30,21 @@ import java.util.concurrent.Future;
 public interface ControlPoint {
 
     public UpnpServiceConfiguration getConfiguration();
+
     public ProtocolFactory getProtocolFactory();
+
     public Registry getRegistry();
 
     public void search();
+
     public void search(UpnpHeader searchType);
+
     public void search(int mxSeconds);
+
     public void search(UpnpHeader searchType, int mxSeconds);
+
     public Future execute(ActionCallback callback);
+
     public void execute(SubscriptionCallback callback);
 
 }

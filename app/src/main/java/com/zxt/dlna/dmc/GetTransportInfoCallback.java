@@ -1,16 +1,13 @@
-
 package com.zxt.dlna.dmc;
+
+import android.os.Handler;
+import android.util.Log;
 
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.avtransport.callback.GetTransportInfo;
 import org.fourthline.cling.support.model.TransportInfo;
-import org.fourthline.cling.support.model.TransportState;
-import org.fourthline.cling.support.model.TransportStatus;
-
-import android.os.Handler;
-import android.util.Log;
 
 public class GetTransportInfoCallback extends GetTransportInfo {
 
@@ -21,7 +18,7 @@ public class GetTransportInfoCallback extends GetTransportInfo {
     private int type;
 
     public GetTransportInfoCallback(Service paramService, Handler paramHandler,
-            boolean paramBoolean, int paramInt) {
+                                    boolean paramBoolean, int paramInt) {
         super(paramService);
         this.handler = paramHandler;
         this.isOnlyGetState = paramBoolean;
@@ -30,7 +27,7 @@ public class GetTransportInfoCallback extends GetTransportInfo {
 
     @Override
     public void failure(ActionInvocation paramActionInvocation, UpnpResponse paramUpnpResponse,
-            String paramString) {
+                        String paramString) {
         if (this.type == 1) {
             this.handler.sendEmptyMessage(DMCControlMessage.PLAYIMAGEFAILED);
         } else if (this.type == 2) {
@@ -46,10 +43,10 @@ public class GetTransportInfoCallback extends GetTransportInfo {
         Log.e("GetTransportInfoCallback", "" + paramTransportInfo.getCurrentTransportStatus());
         Log.e("isOnlyGetState", Boolean.toString(this.isOnlyGetState));
         handler.sendEmptyMessage(DMCControlMessage.SETURL);
-        
+
         //TODO
         //XGF
-        
+
         // if (!this.isOnlyGetState)
         // if (paramTransportInfo.getCurrentTransportState() ==
         // TransportState.NO_MEDIA_PRESENT

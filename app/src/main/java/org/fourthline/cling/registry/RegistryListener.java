@@ -118,6 +118,7 @@ public interface RegistryListener {
      * <p>
      * This method will not be called when the UPnP stack is shutting down.
      * </p>
+     *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device removed from the {@link org.fourthline.cling.registry.Registry}.
      */
@@ -128,6 +129,7 @@ public interface RegistryListener {
      * <p>
      * This method should typically not block, it executes in the thread that shuts down the UPnP stack.
      * </p>
+     *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      */
     public void beforeShutdown(Registry registry);

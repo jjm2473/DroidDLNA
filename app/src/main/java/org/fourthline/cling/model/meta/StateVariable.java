@@ -21,8 +21,8 @@ import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.types.Datatype;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**

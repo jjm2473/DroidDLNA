@@ -16,11 +16,11 @@
 package org.fourthline.cling.model.message.discovery;
 
 import org.fourthline.cling.model.Location;
-import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.message.IncomingDatagramMessage;
 import org.fourthline.cling.model.message.header.DeviceTypeHeader;
 import org.fourthline.cling.model.message.header.DeviceUSNHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.model.meta.LocalDevice;
 
 /**
  * @author Christian Bauer

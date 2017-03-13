@@ -18,8 +18,8 @@ package org.fourthline.cling.model.types;
 import org.fourthline.cling.model.Constants;
 
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Service identifier with a fixed <code>upnp-org</code> namespace.
@@ -30,18 +30,15 @@ import java.util.regex.Matcher;
  * @author Christian Bauer
  */
 public class UDAServiceId extends ServiceId {
-	
-	private static Logger log = Logger.getLogger(UDAServiceId.class.getName());
 
     public static final String DEFAULT_NAMESPACE = "upnp-org";
     public static final String BROKEN_DEFAULT_NAMESPACE = "schemas-upnp-org"; // TODO: UPNP VIOLATION: Intel UPnP tools!
-
     public static final Pattern PATTERN =
-            Pattern.compile("urn:" + DEFAULT_NAMESPACE + ":serviceId:(" + Constants.REGEX_ID+ ")");
-
-     // Note: 'service' vs. 'serviceId'
+            Pattern.compile("urn:" + DEFAULT_NAMESPACE + ":serviceId:(" + Constants.REGEX_ID + ")");
+    // Note: 'service' vs. 'serviceId'
     public static final Pattern BROKEN_PATTERN =
-            Pattern.compile("urn:" + BROKEN_DEFAULT_NAMESPACE + ":service:(" + Constants.REGEX_ID+ ")");
+            Pattern.compile("urn:" + BROKEN_DEFAULT_NAMESPACE + ":service:(" + Constants.REGEX_ID + ")");
+    private static Logger log = Logger.getLogger(UDAServiceId.class.getName());
 
     public UDAServiceId(String id) {
         super(DEFAULT_NAMESPACE, id);
@@ -66,10 +63,10 @@ public class UDAServiceId extends ServiceId {
         }
 
         // Some devices just set the last token of the Service ID, e.g. 'ContentDirectory'
-        if("ContentDirectory".equals(s) ||
-           "ConnectionManager".equals(s) ||
-           "RenderingControl".equals(s) ||
-           "AVTransport".equals(s)) {
+        if ("ContentDirectory".equals(s) ||
+                "ConnectionManager".equals(s) ||
+                "RenderingControl".equals(s) ||
+                "AVTransport".equals(s)) {
             log.warning("UPnP specification violation, fixing broken Service ID: " + s);
             return new UDAServiceId(s);
         }

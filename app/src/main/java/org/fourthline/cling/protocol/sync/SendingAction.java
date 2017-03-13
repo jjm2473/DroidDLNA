@@ -16,6 +16,7 @@
 package org.fourthline.cling.protocol.sync;
 
 import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.action.ActionCancelledException;
 import org.fourthline.cling.model.action.ActionException;
 import org.fourthline.cling.model.action.ActionInvocation;
@@ -26,7 +27,6 @@ import org.fourthline.cling.model.message.control.OutgoingActionRequestMessage;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.protocol.SendingSync;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.transport.RouterException;
 import org.seamless.util.Exceptions;
 
@@ -106,7 +106,7 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
     }
 
     protected StreamResponseMessage sendRemoteRequest(OutgoingActionRequestMessage requestMessage)
-        throws ActionException, RouterException {
+            throws ActionException, RouterException {
 
         try {
             log.fine("Writing SOAP request body of: " + requestMessage);
@@ -120,7 +120,7 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
                 if (log.isLoggable(Level.FINE)) {
                     log.fine("Sending action request message was interrupted: " + cause);
                 }
-                throw new ActionCancelledException((InterruptedException)cause);
+                throw new ActionCancelledException((InterruptedException) cause);
             }
             throw ex;
         } catch (UnsupportedDataException ex) {
@@ -141,9 +141,9 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
             log.fine("Error reading SOAP body: " + ex);
             log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             throw new ActionException(
-                ErrorCode.ACTION_FAILED,
-                "Error reading SOAP response message. " + ex.getMessage(),
-                false
+                    ErrorCode.ACTION_FAILED,
+                    "Error reading SOAP response message. " + ex.getMessage(),
+                    false
             );
         }
     }
@@ -157,9 +157,9 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
             log.fine("Error reading SOAP body: " + ex);
             log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             throw new ActionException(
-                ErrorCode.ACTION_FAILED,
-                "Error reading SOAP response failure message. " + ex.getMessage(),
-                false
+                    ErrorCode.ACTION_FAILED,
+                    "Error reading SOAP response failure message. " + ex.getMessage(),
+                    false
             );
         }
     }

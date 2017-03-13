@@ -23,7 +23,7 @@ import org.fourthline.cling.model.meta.StateVariable;
 
 /**
  * Reads the value of a state variable, given an instance that implements the service.
- *
+ * <p>
  * TODO: The design of this is not final, not happy with the relationship between ActionExecutor and this.
  *
  * @author Christian Bauer
@@ -34,6 +34,7 @@ public abstract class StateVariableAccessor {
 
         class AccessCommand implements Command {
             Object result;
+
             public void execute(ServiceManager serviceManager) throws Exception {
                 result = read(serviceImpl);
                 if (stateVariable.getService().isStringConvertibleType(result)) {

@@ -15,10 +15,10 @@
 
 package org.fourthline.cling.registry;
 
-import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.ValidationException;
-import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.gena.GENASubscription;
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.ServiceType;
 import org.fourthline.cling.model.types.UDN;
@@ -53,19 +53,22 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
     }
 
     abstract void add(D device);
+
     abstract boolean remove(final D device);
+
     abstract void removeAll();
 
     abstract void maintain();
+
     abstract void shutdown();
 
     /**
      * Returns root and embedded devices registered under the given UDN.
      *
-     * @param udn A unique device name.
+     * @param udn      A unique device name.
      * @param rootOnly Set to true if only root devices (no embedded) should be searched
      * @return Any registered root or embedded device under the given UDN, <tt>null</tt> if
-     *         no device with the given UDN has been registered.
+     * no device with the given UDN has been registered.
      */
     D get(UDN udn, boolean rootOnly) {
         for (RegistryItem<UDN, D> item : deviceItems) {
@@ -74,7 +77,7 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
                 return device;
             }
             if (!rootOnly) {
-                D foundDevice = (D)item.getItem().findDevice(udn);
+                D foundDevice = (D) item.getItem().findDevice(udn);
                 if (foundDevice != null) return foundDevice;
             }
         }
@@ -93,7 +96,7 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
     Collection<D> get(DeviceType deviceType) {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
-            D[] d = (D[])item.getItem().findDevices(deviceType);
+            D[] d = (D[]) item.getItem().findDevices(deviceType);
             if (d != null) {
                 devices.addAll(Arrays.asList(d));
             }
@@ -111,7 +114,7 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
 
-            D[] d = (D[])item.getItem().findDevices(serviceType);
+            D[] d = (D[]) item.getItem().findDevices(serviceType);
             if (d != null) {
                 devices.addAll(Arrays.asList(d));
             }

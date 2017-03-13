@@ -78,14 +78,14 @@ public class DIDLContent {
      * Adds {@link Item} or {@link Container} typed instances, ignores everything else.
      */
     public DIDLContent addObject(Object object) {
-        if(object instanceof Item) {
-        	addItem((Item)object);
-        } else if(object instanceof Container) {
-        	addContainer((Container)object);
+        if (object instanceof Item) {
+            addItem((Item) object);
+        } else if (object instanceof Container) {
+            addContainer((Container) object);
         }
         return this;
     }
-    
+
     public DIDLContent addItem(Item item) {
         getItems().add(item);
         return this;
@@ -214,8 +214,8 @@ public class DIDLContent {
 
         return specificContainers;
     }
-    
+
     public long getCount() {
-    	return items.size() + containers.size();
+        return items.size() + containers.size();
     }
 }

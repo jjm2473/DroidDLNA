@@ -17,13 +17,13 @@ package org.fourthline.cling.model.meta;
 
 import org.fourthline.cling.model.ValidationError;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 
 /**
  * Describes a single action, the deprecated "query any state variable" action.
- *
+ * <p>
  * Note: This is already deprecated in UDA 1.0!
  *
  * @author Christian Bauer

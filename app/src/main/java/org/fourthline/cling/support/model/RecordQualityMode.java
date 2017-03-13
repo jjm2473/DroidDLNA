@@ -39,11 +39,6 @@ public enum RecordQualityMode {
         this.protocolString = protocolString;
     }
 
-    @Override
-    public String toString() {
-        return protocolString;
-    }
-
     public static RecordQualityMode valueOrExceptionOf(String s) throws IllegalArgumentException {
         for (RecordQualityMode recordQualityMode : values()) {
             if (recordQualityMode.protocolString.equals(s)) {
@@ -65,5 +60,10 @@ public enum RecordQualityMode {
             }
         }
         return result.toArray(new RecordQualityMode[result.size()]);
+    }
+
+    @Override
+    public String toString() {
+        return protocolString;
     }
 }

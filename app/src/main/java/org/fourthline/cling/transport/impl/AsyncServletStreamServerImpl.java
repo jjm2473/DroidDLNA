@@ -20,6 +20,12 @@ import org.fourthline.cling.transport.Router;
 import org.fourthline.cling.transport.spi.InitializationException;
 import org.fourthline.cling.transport.spi.StreamServer;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
@@ -28,12 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Implementation based on Servlet 3.0 API.
@@ -47,6 +47,7 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
     final protected AsyncServletStreamServerConfigurationImpl configuration;
     protected int localPort;
     protected String hostAddress;
+    private int mCounter = 0;
 
     public AsyncServletStreamServerImpl(AsyncServletStreamServerConfigurationImpl configuration) {
         this.configuration = configuration;
@@ -61,15 +62,15 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
             if (log.isLoggable(Level.FINE))
                 log.fine("Setting executor service on servlet container adapter");
             getConfiguration().getServletContainerAdapter().setExecutorService(
-                router.getConfiguration().getStreamServerExecutorService()
+                    router.getConfiguration().getStreamServerExecutorService()
             );
 
             if (log.isLoggable(Level.FINE))
                 log.fine("Adding connector: " + bindAddress + ":" + getConfiguration().getListenPort());
             hostAddress = bindAddress.getHostAddress();
             localPort = getConfiguration().getServletContainerAdapter().addConnector(
-                hostAddress,
-                getConfiguration().getListenPort()
+                    hostAddress,
+                    getConfiguration().getListenPort()
             );
 
             String contextPath = router.getConfiguration().getNamespace().getBasePath().getPath();
@@ -92,20 +93,18 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
         getConfiguration().getServletContainerAdapter().startIfNotRunning();
     }
 
-    private int mCounter = 0;
-
     protected Servlet createServlet(final Router router) {
         return new HttpServlet() {
             @Override
             protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-            	final long startTime = System.currentTimeMillis();
-            	final int counter = mCounter++;
+                final long startTime = System.currentTimeMillis();
+                final int counter = mCounter++;
                 if (log.isLoggable(Level.FINE))
-                	log.fine(String.format("HttpServlet.service(): id: %3d, request URI: %s", counter, req.getRequestURI()));
+                    log.fine(String.format("HttpServlet.service(): id: %3d, request URI: %s", counter, req.getRequestURI()));
 
                 AsyncContext async = req.startAsync();
-                async.setTimeout(getConfiguration().getAsyncTimeoutSeconds()*1000);
+                async.setTimeout(getConfiguration().getAsyncTimeoutSeconds() * 1000);
 
                 async.addListener(new AsyncListener() {
 
@@ -142,12 +141,12 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
                 });
 
                 AsyncServletUpnpStream stream =
-                    new AsyncServletUpnpStream(router.getProtocolFactory(), async, req) {
-                        @Override
-                        protected Connection createConnection() {
-                            return new AsyncServletConnection(getRequest());
-                        }
-                    };
+                        new AsyncServletUpnpStream(router.getProtocolFactory(), async, req) {
+                            @Override
+                            protected Connection createConnection() {
+                                return new AsyncServletConnection(getRequest());
+                            }
+                        };
 
                 router.received(stream);
             }

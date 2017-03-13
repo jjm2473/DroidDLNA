@@ -17,8 +17,8 @@ package org.fourthline.cling.binding.annotations;
 
 import org.fourthline.cling.model.types.UDAServiceId;
 
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
@@ -27,5 +27,6 @@ import java.lang.annotation.Target;
 public @interface UpnpServiceId {
 
     String namespace() default UDAServiceId.DEFAULT_NAMESPACE;
+
     String value();
 }

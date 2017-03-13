@@ -21,12 +21,6 @@ import org.fourthline.cling.model.message.header.InvalidHeaderException;
  */
 public class TransferModeHeader extends DLNAHeader<TransferModeHeader.Type> {
 
-    public enum Type {
-        Streaming,
-        Interactive,
-        Background;
-    }
-
     public TransferModeHeader() {
         setValue(Type.Interactive);
     }
@@ -36,18 +30,25 @@ public class TransferModeHeader extends DLNAHeader<TransferModeHeader.Type> {
     }
 
     @Override
+    public String getString() {
+        return getValue().toString();
+    }
+
+    @Override
     public void setString(String s) throws InvalidHeaderException {
         if (s.length() != 0) {
             try {
                 setValue(TransferModeHeader.Type.valueOf(s));
                 return;
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+            }
         }
         throw new InvalidHeaderException("Invalid TransferMode header value: " + s);
     }
 
-    @Override
-    public String getString() {
-        return getValue().toString();
+    public enum Type {
+        Streaming,
+        Interactive,
+        Background;
     }
 }

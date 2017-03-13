@@ -22,6 +22,8 @@ package org.fourthline.cling.model;
  */
 public class DiscoveryOptions {
 
+    // Performance optimization on Android
+    private static String simpleName = DiscoveryOptions.class.getSimpleName();
     protected boolean advertised;
     protected boolean byeByeBeforeFirstAlive;
 
@@ -34,9 +36,8 @@ public class DiscoveryOptions {
     }
 
     /**
-     *
-     * @param advertised If <code>false</code>, no alive notifications will be announced for
-     *                   this device and it will not appear in search responses.
+     * @param advertised             If <code>false</code>, no alive notifications will be announced for
+     *                               this device and it will not appear in search responses.
      * @param byeByeBeforeFirstAlive If <code>true</code>, a byebye NOTIFY message will be send before the
      *                               first alive NOTIFY message.
      */
@@ -47,7 +48,7 @@ public class DiscoveryOptions {
 
     /**
      * @return <boolean>true</boolean> for regular advertisement with alive
-     *         messages and in search responses.
+     * messages and in search responses.
      */
     public boolean isAdvertised() {
         return advertised;
@@ -55,15 +56,13 @@ public class DiscoveryOptions {
 
     /**
      * @return <boolean>true</boolean> if a byebye NOTIFY message will be send before the
-     *         first alive NOTIFY message.
+     * first alive NOTIFY message.
      */
     public boolean isByeByeBeforeFirstAlive() {
         return byeByeBeforeFirstAlive;
     }
 
-    // Performance optimization on Android
-    private static String simpleName = DiscoveryOptions.class.getSimpleName();
-	@Override
+    @Override
     public String toString() {
         return "(" + simpleName + ")" + " advertised: " + isAdvertised() + " byebyeBeforeFirstAlive: " + isByeByeBeforeFirstAlive();
     }

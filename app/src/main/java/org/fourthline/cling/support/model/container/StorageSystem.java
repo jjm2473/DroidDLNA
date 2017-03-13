@@ -44,7 +44,7 @@ public class StorageSystem extends Container {
         super(id, parentID, title, creator, CLASS, childCount);
         if (storageTotal != null)
             setStorageTotal(storageTotal);
-        if (storageUsed!= null)
+        if (storageUsed != null)
             setStorageUsed(storageUsed);
         if (storageFree != null)
             setStorageFree(storageFree);

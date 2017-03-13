@@ -81,8 +81,8 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
         // These are some safety settings, we should never run into these timeouts as we
         // do our own expiration checking
-        HttpConnectionParams.setConnectionTimeout(globalParams, (getConfiguration().getTimeoutSeconds()+5) * 1000);
-        HttpConnectionParams.setSoTimeout(globalParams, (getConfiguration().getTimeoutSeconds()+5) * 1000);
+        HttpConnectionParams.setConnectionTimeout(globalParams, (getConfiguration().getTimeoutSeconds() + 5) * 1000);
+        HttpConnectionParams.setSoTimeout(globalParams, (getConfiguration().getTimeoutSeconds() + 5) * 1000);
 
         HttpConnectionParams.setStaleCheckingEnabled(globalParams, getConfiguration().getStaleCheckingEnabled());
         if (getConfiguration().getSocketBufferSize() != -1)
@@ -99,7 +99,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         httpClient = new DefaultHttpClient(clientConnectionManager, globalParams);
         if (getConfiguration().getRequestRetryCount() != -1) {
             httpClient.setHttpRequestRetryHandler(
-                new DefaultHttpRequestRetryHandler(getConfiguration().getRequestRetryCount(), false)
+                    new DefaultHttpRequestRetryHandler(getConfiguration().getRequestRetryCount(), false)
             );
         }
     }
@@ -226,7 +226,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
                 // Status
                 UpnpResponse responseOperation =
-                    new UpnpResponse(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+                        new UpnpResponse(statusLine.getStatusCode(), statusLine.getReasonPhrase());
 
                 // Message
                 StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
@@ -257,8 +257,8 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         HttpParams localParams = new BasicHttpParams();
 
         localParams.setParameter(
-            CoreProtocolPNames.PROTOCOL_VERSION,
-            requestMessage.getOperation().getHttpMinorVersion() == 0 ? HttpVersion.HTTP_1_0 : HttpVersion.HTTP_1_1
+                CoreProtocolPNames.PROTOCOL_VERSION,
+                requestMessage.getOperation().getHttpMinorVersion() == 0 ? HttpVersion.HTTP_1_0 : HttpVersion.HTTP_1_1
         );
 
         // DefaultHttpClient adds HOST header automatically in its default processor
@@ -266,8 +266,8 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         // Add the default user agent if not already set on the message
         if (!requestMessage.getHeaders().containsKey(UpnpHeader.Type.USER_AGENT)) {
             HttpProtocolParams.setUserAgent(
-                localParams,
-                getConfiguration().getUserAgentValue(requestMessage.getUdaMajorVersion(), requestMessage.getUdaMinorVersion())
+                    localParams,
+                    getConfiguration().getUserAgentValue(requestMessage.getUdaMajorVersion(), requestMessage.getUdaMinorVersion())
             );
         }
 

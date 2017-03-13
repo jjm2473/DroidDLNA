@@ -44,7 +44,7 @@ public class Action<S extends Service> implements Validatable {
         this.name = name;
         if (arguments != null) {
 
-            List<ActionArgument> inputList= new ArrayList<>();
+            List<ActionArgument> inputList = new ArrayList<>();
             List<ActionArgument> outputList = new ArrayList<>();
 
             for (ActionArgument argument : arguments) {

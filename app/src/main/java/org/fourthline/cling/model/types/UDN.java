@@ -17,11 +17,10 @@ package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.ModelUtil;
 
-
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-import java.security.MessageDigest;
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -38,10 +37,8 @@ import java.util.logging.Logger;
  */
 public class UDN {
 
-    final private static Logger log = Logger.getLogger(UDN.class.getName());
-
     public static final String PREFIX = "uuid:";
-
+    final private static Logger log = Logger.getLogger(UDN.class.getName());
     private String identifierString;
 
     /**
@@ -53,19 +50,6 @@ public class UDN {
 
     public UDN(UUID uuid) {
         this.identifierString = uuid.toString();
-    }
-
-    public boolean isUDA11Compliant() {
-        try {
-            UUID.fromString(identifierString);
-            return true;
-        } catch (IllegalArgumentException ex) {
-            return false;
-        }
-    }
-
-    public String getIdentifierString() {
-        return identifierString;
     }
 
     public static UDN valueOf(String udnString) {
@@ -109,8 +93,8 @@ public class UDN {
             }
         } else {
             throw new RuntimeException(
-                "This method does not create a unique identifier on Android, see the Javadoc and " +
-                    "use new UDN(UUID) instead!"
+                    "This method does not create a unique identifier on Android, see the Javadoc and " +
+                            "use new UDN(UUID) instead!"
             );
         }
 
@@ -125,6 +109,19 @@ public class UDN {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public boolean isUDA11Compliant() {
+        try {
+            UUID.fromString(identifierString);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    public String getIdentifierString() {
+        return identifierString;
     }
 
     @Override

@@ -36,6 +36,7 @@ import java.util.logging.Logger;
  * method will be called. The <code>RENEWAL_FAILED</code> reason will be used, however,
  * the response might be <code>null</code> if no response was received from the remote host.
  * </p>
+ *
  * @author Christian Bauer
  */
 public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, IncomingSubscribeResponseMessage> {
@@ -46,11 +47,11 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
 
     public SendingRenewal(UpnpService upnpService, RemoteGENASubscription subscription) {
         super(
-            upnpService,
-            new OutgoingRenewalRequestMessage(
-                subscription,
-                upnpService.getConfiguration().getEventSubscriptionHeaders(subscription.getService())
-            )
+                upnpService,
+                new OutgoingRenewalRequestMessage(
+                        subscription,
+                        upnpService.getConfiguration().getEventSubscriptionHeaders(subscription.getService())
+                )
         );
         this.subscription = subscription;
     }
@@ -79,7 +80,7 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
             getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
                     new Runnable() {
                         public void run() {
-                            subscription.end(CancelReason.RENEWAL_FAILED,responseMessage.getOperation());
+                            subscription.end(CancelReason.RENEWAL_FAILED, responseMessage.getOperation());
                         }
                     }
             );

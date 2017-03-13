@@ -44,7 +44,7 @@ public class StreamResponseMessage extends UpnpMessage<UpnpResponse> {
     }
 
     public StreamResponseMessage(String body) {
-        super(new UpnpResponse(UpnpResponse.Status.OK),BodyType.STRING, body);
+        super(new UpnpResponse(UpnpResponse.Status.OK), BodyType.STRING, body);
     }
 
 
@@ -53,7 +53,7 @@ public class StreamResponseMessage extends UpnpMessage<UpnpResponse> {
     }
 
     public StreamResponseMessage(byte[] body) {
-        super(new UpnpResponse(UpnpResponse.Status.OK),BodyType.BYTES, body);
+        super(new UpnpResponse(UpnpResponse.Status.OK), BodyType.BYTES, body);
     }
 
 

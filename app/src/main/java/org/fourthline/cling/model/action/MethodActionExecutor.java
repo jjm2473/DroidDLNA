@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 
 /**
  * Invokes methods on a service implementation instance with reflection.
- *
+ * <p>
  * <p>
  * If the method has an additional last parameter of type
  * {@link org.fourthline.cling.model.profile.RemoteClientInfo}, the details
@@ -174,11 +174,11 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         }
 
         if (method.getParameterTypes().length > 0
-            && RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length-1])) {
+                && RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length - 1])) {
             if (actionInvocation instanceof RemoteActionInvocation &&
-                ((RemoteActionInvocation)actionInvocation).getRemoteClientInfo() != null) {
+                    ((RemoteActionInvocation) actionInvocation).getRemoteClientInfo() != null) {
                 log.finer("Providing remote client info as last action method input argument: " + method);
-                values.add(i, ((RemoteActionInvocation)actionInvocation).getRemoteClientInfo());
+                values.add(i, ((RemoteActionInvocation) actionInvocation).getRemoteClientInfo());
             } else {
                 // Local call, no client info available
                 values.add(i, null);

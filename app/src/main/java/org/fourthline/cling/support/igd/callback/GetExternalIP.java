@@ -30,7 +30,7 @@ public abstract class GetExternalIP extends ActionCallback {
 
     @Override
     public void success(ActionInvocation invocation) {
-        success((String)invocation.getOutput("NewExternalIPAddress").getValue());
+        success((String) invocation.getOutput("NewExternalIPAddress").getValue());
     }
 
     protected abstract void success(String externalIPAddress);

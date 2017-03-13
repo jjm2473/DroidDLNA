@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 /**
  * Reads the value of a state variable using reflection and a getter method.
- * 
+ *
  * @author Christian Bauer
  */
 public class GetterStateVariableAccessor extends StateVariableAccessor {

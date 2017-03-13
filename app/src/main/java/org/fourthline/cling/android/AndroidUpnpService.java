@@ -26,43 +26,43 @@ import org.fourthline.cling.registry.Registry;
  * Usage example in an Android activity:
  * </p>
  * <pre>{@code
- *AndroidUpnpService upnpService;
+ * AndroidUpnpService upnpService;
  *
- *ServiceConnection serviceConnection = new ServiceConnection() {
+ * ServiceConnection serviceConnection = new ServiceConnection() {
  *     public void onServiceConnected(ComponentName className, IBinder service) {
  *         upnpService = (AndroidUpnpService) service;
  *     }
  *     public void onServiceDisconnected(ComponentName className) {
  *         upnpService = null;
  *     }
- *};
+ * };
  *
- *public void onCreate(...) {
+ * public void onCreate(...) {
  * ...
  *     getApplicationContext().bindService(
  *         new Intent(this, AndroidUpnpServiceImpl.class),
  *         serviceConnection,
  *         Context.BIND_AUTO_CREATE
  *     );
- *}}</pre>
- *<p>
+ * }}</pre>
+ * <p>
  * The default implementation requires permissions in <code>AndroidManifest.xml</code>:
  * </p>
  * <pre>{@code
- *<uses-permission android:name="android.permission.INTERNET"/>
- *<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
- *<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
- *<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
- *<uses-permission android:name="android.permission.WAKE_LOCK"/>
- *}</pre>
+ * <uses-permission android:name="android.permission.INTERNET"/>
+ * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+ * <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+ * <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ * <uses-permission android:name="android.permission.WAKE_LOCK"/>
+ * }</pre>
  * <p>
  * You also have to add the application service component:
  * </p>
  * <pre>{@code
- *<application ...>
+ * <application ...>
  *  ...
  *  <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl"/>
- *</application>
+ * </application>
  * }</pre>
  *
  * @author Christian Bauer

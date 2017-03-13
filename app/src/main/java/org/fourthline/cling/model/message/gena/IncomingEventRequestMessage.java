@@ -15,19 +15,19 @@
 
 package org.fourthline.cling.model.message.gena;
 
-import org.fourthline.cling.model.meta.RemoteService;
-import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.model.message.StreamRequestMessage;
-import org.fourthline.cling.model.message.header.UpnpHeader;
-import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
+import org.fourthline.cling.model.message.header.EventSequenceHeader;
 import org.fourthline.cling.model.message.header.NTEventHeader;
 import org.fourthline.cling.model.message.header.NTSHeader;
-import org.fourthline.cling.model.message.header.EventSequenceHeader;
+import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
+import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.model.meta.RemoteService;
+import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.model.types.NotificationSubtype;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Christian Bauer
@@ -52,7 +52,7 @@ public class IncomingEventRequestMessage extends StreamRequestMessage {
 
     public String getSubscrptionId() {
         SubscriptionIdHeader header =
-                getHeaders().getFirstHeader(UpnpHeader.Type.SID,SubscriptionIdHeader.class);
+                getHeaders().getFirstHeader(UpnpHeader.Type.SID, SubscriptionIdHeader.class);
         return header != null ? header.getValue() : null;
     }
 
@@ -73,7 +73,7 @@ public class IncomingEventRequestMessage extends StreamRequestMessage {
 
     /**
      * @return <code>true</code> if this message has an NT header, and NTS header
-     *         with value {@link org.fourthline.cling.model.types.NotificationSubtype#PROPCHANGE}.
+     * with value {@link org.fourthline.cling.model.types.NotificationSubtype#PROPCHANGE}.
      */
     public boolean hasValidNotificationHeaders() {
         NTEventHeader ntHeader = getHeaders().getFirstHeader(UpnpHeader.Type.NT, NTEventHeader.class);

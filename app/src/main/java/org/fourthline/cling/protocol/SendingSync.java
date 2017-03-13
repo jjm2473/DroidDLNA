@@ -15,9 +15,9 @@
 
 package org.fourthline.cling.protocol;
 
+import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.StreamResponseMessage;
-import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.transport.RouterException;
 
 /**
@@ -27,9 +27,8 @@ import org.fourthline.cling.transport.RouterException;
  * calls its {@link #executeSync()} method.
  * </p>
  *
- * @param <IN> The type of request UPnP message send by this protocol.
+ * @param <IN>  The type of request UPnP message send by this protocol.
  * @param <OUT> The type of response UPnP message expected by this protocol.
- *
  * @author Christian Bauer
  */
 public abstract class SendingSync<IN extends StreamRequestMessage, OUT extends StreamResponseMessage> extends SendingAsync {

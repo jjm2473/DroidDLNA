@@ -21,7 +21,7 @@ package org.fourthline.cling.model.types;
  * @author Christian Bauer
  */
 public enum ErrorCode {
-    
+
     INVALID_ACTION(401, "No action by that name at this service"),
     INVALID_ARGS(402, "Not enough IN args, too many IN args, no IN arg by that name, one or more IN args are of the wrong data type"),
     ACTION_FAILED(501, "Current state of service prevents invoking that action"),
@@ -49,19 +49,19 @@ public enum ErrorCode {
         this.description = description;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public static ErrorCode getByCode(int code) {
         for (ErrorCode errorCode : values()) {
             if (errorCode.getCode() == code)
                 return errorCode;
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

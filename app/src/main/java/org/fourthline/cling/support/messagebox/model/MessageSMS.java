@@ -67,5 +67,5 @@ public class MessageSMS extends Message {
         getSender().appendMessageElements(parent.createChild("Sender"));
         parent.createChild("Body").setContent(getBody());
     }
-    
+
 }

@@ -8,19 +8,16 @@
 
 package com.zxt.dlna.dmr;
 
-import org.fourthline.cling.android.AndroidUpnpService;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import org.fourthline.cling.android.AndroidUpnpService;
+
 public class RenderService extends Service {
     public static final int SUPPORTED_INSTANCES = 1;
-
-    private boolean isopen = false;
-
     protected ZxtMediaRenderer mediaRenderer = null;
-
+    private boolean isopen = false;
     private AndroidUpnpService upnpService = null;
 
     public void closeMediaRenderer() {

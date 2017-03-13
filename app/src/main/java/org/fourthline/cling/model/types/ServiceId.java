@@ -18,8 +18,8 @@ package org.fourthline.cling.model.types;
 import org.fourthline.cling.model.Constants;
 
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents a service identifier, for example <code>urn:my-domain-namespace:serviceId:MyService123</code>
@@ -28,17 +28,13 @@ import java.util.regex.Matcher;
  */
 public class ServiceId {
 
-    final private static Logger log = Logger.getLogger(ServiceId.class.getName());
-
     public static final String UNKNOWN = "UNKNOWN";
-
     public static final Pattern PATTERN =
-        Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_ID + ")");
-
+            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_ID + ")");
     // Note: 'service' vs. 'serviceId'
     public static final Pattern BROKEN_PATTERN =
-               Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_ID+ ")");
-
+            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_ID + ")");
+    final private static Logger log = Logger.getLogger(ServiceId.class.getName());
     private String namespace;
     private String id;
 
@@ -52,14 +48,6 @@ public class ServiceId {
             throw new IllegalArgumentException("Service ID suffix too long (64) or contains illegal characters");
         }
         this.id = id;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public static ServiceId valueOf(String s) throws InvalidValueException {
@@ -103,6 +91,14 @@ public class ServiceId {
         }
 
         throw new InvalidValueException("Can't parse service ID string (namespace/id): " + s);
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override

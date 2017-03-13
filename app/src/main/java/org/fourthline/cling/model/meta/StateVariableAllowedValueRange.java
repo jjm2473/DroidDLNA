@@ -18,8 +18,8 @@ package org.fourthline.cling.model.meta;
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -44,7 +44,7 @@ public class StateVariableAllowedValueRange implements Validatable {
     public StateVariableAllowedValueRange(long minimum, long maximum, long step) {
         if (minimum > maximum) {
             log.warning("UPnP specification violation, allowed value range minimum '" + minimum
-                                + "' is greater than maximum '" + maximum + "', switching values.");
+                    + "' is greater than maximum '" + maximum + "', switching values.");
             this.minimum = maximum;
             this.maximum = minimum;
         } else {

@@ -25,15 +25,15 @@ import org.fourthline.cling.transport.Router;
 import org.fourthline.cling.transport.RouterException;
 import org.fourthline.cling.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.transport.spi.InitializationException;
-import org.fourthline.cling.transport.spi.NetworkAddressFactory;
 import org.fourthline.cling.transport.spi.UpnpStream;
 
-import javax.enterprise.inject.Alternative;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.enterprise.inject.Alternative;
 
 /**
  * <p>
@@ -104,10 +104,10 @@ public class MockRouter implements Router {
         // protocols won't even run
         try {
             return Arrays.asList(
-                new NetworkAddress(
-                    InetAddress.getByName("127.0.0.1"),
-                    NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT
-                )
+                    new NetworkAddress(
+                            InetAddress.getByName("127.0.0.1"),
+                            NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT
+                    )
             );
         } catch (UnknownHostException ex) {
             throw new RuntimeException(ex);
@@ -130,8 +130,8 @@ public class MockRouter implements Router {
         sentStreamRequestMessages.add(msg);
         counter++;
         return getStreamResponseMessages() != null
-            ? getStreamResponseMessages()[counter]
-            : getStreamResponseMessage(msg);
+                ? getStreamResponseMessages()[counter]
+                : getStreamResponseMessage(msg);
     }
 
     public void broadcast(byte[] bytes) {

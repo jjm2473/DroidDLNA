@@ -38,5 +38,5 @@ public interface MulticastReceiverConfiguration {
      * @return The maximum buffer size of received UDP datagrams.
      */
     public int getMaxDatagramBytes();
-    
+
 }

@@ -72,17 +72,17 @@ public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
     public URI getUri() {
         return getOperation().getURI();
     }
-    
+
     public void setUri(URI uri) {
         getOperation().setUri(uri);
     }
 
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-	
-	public Connection getConnection() {
-		return connection;
-	}
-    
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
 }

@@ -47,7 +47,7 @@ public class StreamServerConfigurationImpl implements StreamServerConfiguration 
 
     /**
      * @return Maximum number of queued incoming connections to allow on the listening socket,
-     *         default is system default.
+     * default is system default.
      */
     public int getTcpConnectionBacklog() {
         return tcpConnectionBacklog;

@@ -16,6 +16,7 @@
 package org.fourthline.cling.protocol.sync;
 
 import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.gena.RemoteGENASubscription;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.UpnpResponse;
@@ -23,7 +24,6 @@ import org.fourthline.cling.model.message.gena.IncomingEventRequestMessage;
 import org.fourthline.cling.model.message.gena.OutgoingEventResponseMessage;
 import org.fourthline.cling.model.resource.ServiceEventCallbackResource;
 import org.fourthline.cling.protocol.ReceivingSync;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.transport.RouterException;
 
 import java.util.logging.Logger;
@@ -48,7 +48,7 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
         super(upnpService, inputMessage);
     }
 
-    protected OutgoingEventResponseMessage executeSync() throws RouterException{
+    protected OutgoingEventResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().isContentTypeTextUDA()) {
             log.warning("Received without or with invalid Content-Type: " + getInputMessage());
@@ -95,19 +95,19 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
 
             getUpnpService().getConfiguration().getGenaEventProcessor().readBody(requestMessage);
 
-		} catch (final UnsupportedDataException ex) {
+        } catch (final UnsupportedDataException ex) {
             log.fine("Can't read event message request body, " + ex);
 
             // Pass the parsing failure on to any listeners, so they can take action if necessary
             final RemoteGENASubscription subscription =
-                getUpnpService().getRegistry().getRemoteSubscription(requestMessage.getSubscrptionId());
+                    getUpnpService().getRegistry().getRemoteSubscription(requestMessage.getSubscrptionId());
             if (subscription != null) {
                 getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            subscription.invalidMessage(ex);
+                        new Runnable() {
+                            public void run() {
+                                subscription.invalidMessage(ex);
+                            }
                         }
-                    }
                 );
             }
 

@@ -105,6 +105,31 @@ public class MockUpnpService implements UpnpService {
         return new MockRouter(getConfiguration(), getProtocolFactory());
     }
 
+    public UpnpServiceConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public ControlPoint getControlPoint() {
+        return controlPoint;
+    }
+
+    public ProtocolFactory getProtocolFactory() {
+        return protocolFactory;
+    }
+
+    public Registry getRegistry() {
+        return registry;
+    }
+
+    public MockRouter getRouter() {
+        return router;
+    }
+
+    public void shutdown() {
+        getRegistry().shutdown();
+        getConfiguration().shutdown();
+    }
+
     /**
      * This factory customizes several protocols.
      * <p>
@@ -144,30 +169,5 @@ public class MockUpnpService implements UpnpService {
                 }
             };
         }
-    }
-
-    public UpnpServiceConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public ControlPoint getControlPoint() {
-        return controlPoint;
-    }
-
-    public ProtocolFactory getProtocolFactory() {
-        return protocolFactory;
-    }
-
-    public Registry getRegistry() {
-        return registry;
-    }
-
-    public MockRouter getRouter() {
-        return router;
-    }
-
-    public void shutdown() {
-        getRegistry().shutdown();
-        getConfiguration().shutdown();
     }
 }

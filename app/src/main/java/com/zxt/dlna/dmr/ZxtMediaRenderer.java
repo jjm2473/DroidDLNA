@@ -1,8 +1,12 @@
-
 package com.zxt.dlna.dmr;
 
-import java.io.IOException;
-import java.util.Map;
+import android.content.Context;
+import android.util.Log;
+
+import com.zxt.dlna.activity.SettingActivity;
+import com.zxt.dlna.util.FileUtil;
+import com.zxt.dlna.util.UpnpUtil;
+import com.zxt.dlna.util.Utils;
 
 import org.fourthline.cling.binding.LocalServiceBinder;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
@@ -27,13 +31,8 @@ import org.fourthline.cling.support.lastchange.LastChangeAwareServiceManager;
 import org.fourthline.cling.support.model.TransportState;
 import org.fourthline.cling.support.renderingcontrol.lastchange.RenderingControlLastChangeParser;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.zxt.dlna.activity.SettingActivity;
-import com.zxt.dlna.util.FileUtil;
-import com.zxt.dlna.util.UpnpUtil;
-import com.zxt.dlna.util.Utils;
+import java.io.IOException;
+import java.util.Map;
 
 public class ZxtMediaRenderer {
 
@@ -55,10 +54,10 @@ public class ZxtMediaRenderer {
 
     final protected LocalDevice device;
 
-   protected  Context mContext;
+    protected Context mContext;
 
-    public ZxtMediaRenderer(int numberOfPlayers,Context context) {
-         mContext = context;
+    public ZxtMediaRenderer(int numberOfPlayers, Context context) {
+        mContext = context;
 
         // This is the backend which manages the actual player instances
         mediaPlayers = new ZxtMediaPlayers(
@@ -119,7 +118,7 @@ public class ZxtMediaRenderer {
         renderingControlService.setManager(renderingControl);
 
         try {
-            UDN  udn = UpnpUtil.uniqueSystemIdentifier("msidmr");
+            UDN udn = UpnpUtil.uniqueSystemIdentifier("msidmr");
 
             device = new LocalDevice(
                     //TODO zxt
@@ -127,14 +126,14 @@ public class ZxtMediaRenderer {
                     new DeviceIdentity(udn),
                     new UDADeviceType("MediaRenderer", 1),
                     new DeviceDetails(
-                             SettingActivity.getRenderName(context) + " (" + android.os.Build.MODEL + ")",
+                            SettingActivity.getRenderName(context) + " (" + android.os.Build.MODEL + ")",
                             new ManufacturerDetails(Utils.MANUFACTURER),
                             new ModelDetails(Utils.DMR_NAME, Utils.DMR_DESC, "1", Utils.DMR_MODEL_URL),
-                            new DLNADoc[] {
-                                new DLNADoc("DMR", DLNADoc.Version.V1_5)
-                            }, new DLNACaps(new String[] {
-                                 "av-upload", "image-upload", "audio-upload"
-                            })
+                            new DLNADoc[]{
+                                    new DLNADoc("DMR", DLNADoc.Version.V1_5)
+                            }, new DLNACaps(new String[]{
+                            "av-upload", "image-upload", "audio-upload"
+                    })
                     ),
                     new Icon[]{createDefaultDeviceIcon()},
                     new LocalService[]{
@@ -143,7 +142,7 @@ public class ZxtMediaRenderer {
                             connectionManagerService
                     }
             );
-            Log.i(TAG,  "getType: " +  device.getType().toString());
+            Log.i(TAG, "getType: " + device.getType().toString());
         } catch (ValidationException ex) {
             throw new RuntimeException(ex);
         }
@@ -185,7 +184,7 @@ public class ZxtMediaRenderer {
     synchronized public void stopAllMediaPlayers() {
         for (ZxtMediaPlayer mediaPlayer : mediaPlayers.values()) {
             TransportState state =
-                mediaPlayer.getCurrentTransportInfo().getCurrentTransportState();
+                    mediaPlayer.getCurrentTransportInfo().getCurrentTransportState();
             if (!state.equals(TransportState.NO_MEDIA_PRESENT) ||
                     state.equals(TransportState.STOPPED)) {
                 Log.i(TAG, "Stopping player instance: " + mediaPlayer.getInstanceId());

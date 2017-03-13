@@ -15,25 +15,17 @@
 package org.fourthline.cling.support.model.dlna.types;
 
 /**
- *
  * @author Mario Franco
  */
 public class CodedDataBuffer {
-    
-    public enum TransferMechanism {
-        IMMEDIATELY,
-        TIMESTAMP,
-        OTHER;
-    }
-    
+
     private Long size;
     private TransferMechanism tranfer;
-
     public CodedDataBuffer(Long size, TransferMechanism transfer) {
         this.size = size;
         this.tranfer = transfer;
     }
-    
+
     /**
      * @return the size
      */
@@ -46,5 +38,11 @@ public class CodedDataBuffer {
      */
     public TransferMechanism getTranfer() {
         return tranfer;
+    }
+
+    public enum TransferMechanism {
+        IMMEDIATELY,
+        TIMESTAMP,
+        OTHER;
     }
 }

@@ -29,11 +29,15 @@ public class EventSequenceHeader extends UpnpHeader<UnsignedIntegerFourBytes> {
         setValue(new UnsignedIntegerFourBytes(value));
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
 
         // Cut off leading zeros
         if (!"0".equals(s)) {
-            while(s.startsWith("0")) {
+            while (s.startsWith("0")) {
                 s = s.substring(1);
             }
         }
@@ -44,9 +48,5 @@ public class EventSequenceHeader extends UpnpHeader<UnsignedIntegerFourBytes> {
             throw new InvalidHeaderException("Invalid event sequence, " + ex.getMessage());
         }
 
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }

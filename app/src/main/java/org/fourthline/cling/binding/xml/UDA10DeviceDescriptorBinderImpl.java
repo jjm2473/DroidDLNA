@@ -15,17 +15,6 @@
 
 package org.fourthline.cling.binding.xml;
 
-import static org.fourthline.cling.model.XMLUtil.appendNewElement;
-import static org.fourthline.cling.model.XMLUtil.appendNewElementIfNotNull;
-
-import java.io.StringReader;
-import java.net.URI;
-import java.net.URL;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.fourthline.cling.binding.staging.MutableDevice;
 import org.fourthline.cling.binding.staging.MutableIcon;
 import org.fourthline.cling.binding.staging.MutableService;
@@ -59,6 +48,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import java.io.StringReader;
+import java.net.URI;
+import java.net.URL;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import static org.fourthline.cling.model.XMLUtil.appendNewElement;
+import static org.fourthline.cling.model.XMLUtil.appendNewElementIfNotNull;
+
 /**
  * Implementation based on JAXP DOM.
  *
@@ -67,6 +67,55 @@ import org.xml.sax.SAXParseException;
 public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, ErrorHandler {
 
     private static Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+
+    static protected URI parseURI(String uri) {
+
+        // TODO: UPNP VIOLATION: Netgear DG834 uses a non-URI: 'www.netgear.com'
+        if (uri.startsWith("www.")) {
+            uri = "http://" + uri;
+        }
+
+        // TODO: UPNP VIOLATION: Plutinosoft uses unencoded relative URIs
+        // /var/mobile/Applications/71367E68-F30F-460B-A2D2-331509441D13/Windows Media Player Streamer.app/Icon-ps3.jpg
+        if (uri.contains(" ")) {
+            // We don't want to split/encode individual parts of the URI, too much work
+            // TODO: But we probably should do this? Because browsers do it, everyone
+            // seems to think that spaces in URLs are somehow OK...
+            uri = uri.replaceAll(" ", "%20");
+        }
+
+        try {
+            return URI.create(uri);
+        } catch (Throwable ex) {
+            /*
+            catch Throwable because on Android 2.2, parsing some invalid URI like "http://..."  gives:
+        	        	java.lang.NullPointerException
+        	        	 	at java.net.URI$Helper.isValidDomainName(URI.java:631)
+        	        	 	at java.net.URI$Helper.isValidHost(URI.java:595)
+        	        	 	at java.net.URI$Helper.parseAuthority(URI.java:544)
+        	        	 	at java.net.URI$Helper.parseURI(URI.java:404)
+        	        	 	at java.net.URI$Helper.access$100(URI.java:302)
+        	        	 	at java.net.URI.<init>(URI.java:87)
+        	        		at java.net.URI.create(URI.java:968)
+            */
+            log.fine("Illegal URI, trying with ./ prefix: " + Exceptions.unwrap(ex));
+            // Ignore
+        }
+        try {
+            // The java.net.URI class can't deal with "_urn:foobar" (yeah, great idea Intel UPnP tools guy), as
+            // explained in RFC 3986:
+            //
+            // A path segment that contains a colon character (e.g., "this:that") cannot be used as the first segment
+            // of a relative-path reference, as it would be mistaken for a scheme name. Such a segment must
+            // be preceded by a dot-segment (e.g., "./this:that") to make a relative-path reference.
+            //
+            return URI.create("./" + uri);
+        } catch (IllegalArgumentException ex) {
+            log.warning("Illegal URI '" + uri + "', ignoring value: " + Exceptions.unwrap(ex));
+            // Ignore
+        }
+        return null;
+    }
 
     public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
@@ -245,7 +294,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             } else if (ELEMENT.deviceList.equals(deviceNodeChild)) {
                 hydrateDeviceList(descriptor, deviceNodeChild);
             } else if (ELEMENT.X_DLNADOC.equals(deviceNodeChild) &&
-                Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
+                    Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
                 String txt = XMLUtil.getTextContent(deviceNodeChild);
                 try {
                     descriptor.dlnaDocs.add(DLNADoc.valueOf(txt));
@@ -253,7 +302,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                     log.info("Invalid X_DLNADOC value, ignoring value: " + txt);
                 }
             } else if (ELEMENT.X_DLNACAP.equals(deviceNodeChild) &&
-                Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
+                    Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
                 descriptor.dlnaCaps = DLNACaps.valueOf(XMLUtil.getTextContent(deviceNodeChild));
             }
         }
@@ -288,17 +337,17 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                         String depth = XMLUtil.getTextContent(iconChild);
                         try {
                             icon.depth = (Integer.valueOf(depth));
-                       	} catch(NumberFormatException ex) {
-                       		log.warning("Invalid icon depth '" + depth + "', using 16 as default: " + ex);
-                       		icon.depth = 16;
-                       	}
+                        } catch (NumberFormatException ex) {
+                            log.warning("Invalid icon depth '" + depth + "', using 16 as default: " + ex);
+                            icon.depth = 16;
+                        }
                     } else if (ELEMENT.url.equals(iconChild)) {
                         icon.uri = parseURI(XMLUtil.getTextContent(iconChild));
                     } else if (ELEMENT.mimetype.equals(iconChild)) {
                         try {
                             icon.mimeType = XMLUtil.getTextContent(iconChild);
                             MimeType.valueOf(icon.mimeType);
-                        } catch(IllegalArgumentException ex) {
+                        } catch (IllegalArgumentException ex) {
                             log.warning("Ignoring invalid icon mime type: " + icon.mimeType);
                             icon.mimeType = "";
                         }
@@ -350,7 +399,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                     descriptor.services.add(service);
                 } catch (InvalidValueException ex) {
                     log.warning(
-                        "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
+                            "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
                     );
                 }
             }
@@ -492,12 +541,12 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                 descriptor, deviceElement, Descriptor.Device.DLNA_PREFIX + ":" + ELEMENT.X_DLNACAP,
                 deviceModelDetails.getDlnaCaps(), Descriptor.Device.DLNA_NAMESPACE_URI
         );
-        
+
         appendNewElementIfNotNull(
                 descriptor, deviceElement, Descriptor.Device.SEC_PREFIX + ":" + ELEMENT.ProductCap,
                 deviceModelDetails.getSecProductCaps(), Descriptor.Device.SEC_NAMESPACE_URI
         );
-        
+
         appendNewElementIfNotNull(
                 descriptor, deviceElement, Descriptor.Device.SEC_PREFIX + ":" + ELEMENT.X_ProductCap,
                 deviceModelDetails.getSecProductCaps(), Descriptor.Device.SEC_NAMESPACE_URI
@@ -521,9 +570,9 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.height, icon.getHeight());
             appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.depth, icon.getDepth());
             if (deviceModel instanceof RemoteDevice) {
-            	appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url,  icon.getUri());
+                appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url, icon.getUri());
             } else if (deviceModel instanceof LocalDevice) {
-            	appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url,  namespace.getIconPath(icon));
+                appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url, namespace.getIconPath(icon));
             }
         }
     }
@@ -572,55 +621,6 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
     public void fatalError(SAXParseException e) throws SAXException {
         throw e;
-    }
-
-    static protected URI parseURI(String uri) {
-
-        // TODO: UPNP VIOLATION: Netgear DG834 uses a non-URI: 'www.netgear.com'
-        if (uri.startsWith("www.")) {
-             uri = "http://" + uri;
-        }
-
-        // TODO: UPNP VIOLATION: Plutinosoft uses unencoded relative URIs
-        // /var/mobile/Applications/71367E68-F30F-460B-A2D2-331509441D13/Windows Media Player Streamer.app/Icon-ps3.jpg
-        if (uri.contains(" ")) {
-            // We don't want to split/encode individual parts of the URI, too much work
-            // TODO: But we probably should do this? Because browsers do it, everyone
-            // seems to think that spaces in URLs are somehow OK...
-            uri = uri.replaceAll(" ", "%20");
-        }
-
-        try {
-            return URI.create(uri);
-        } catch (Throwable ex) {
-            /*
-        	catch Throwable because on Android 2.2, parsing some invalid URI like "http://..."  gives:
-        	        	java.lang.NullPointerException
-        	        	 	at java.net.URI$Helper.isValidDomainName(URI.java:631)
-        	        	 	at java.net.URI$Helper.isValidHost(URI.java:595)
-        	        	 	at java.net.URI$Helper.parseAuthority(URI.java:544)
-        	        	 	at java.net.URI$Helper.parseURI(URI.java:404)
-        	        	 	at java.net.URI$Helper.access$100(URI.java:302)
-        	        	 	at java.net.URI.<init>(URI.java:87)
-        	        		at java.net.URI.create(URI.java:968)
-            */
-            log.fine("Illegal URI, trying with ./ prefix: " + Exceptions.unwrap(ex));
-            // Ignore
-        }
-        try {
-            // The java.net.URI class can't deal with "_urn:foobar" (yeah, great idea Intel UPnP tools guy), as
-            // explained in RFC 3986:
-            //
-            // A path segment that contains a colon character (e.g., "this:that") cannot be used as the first segment
-            // of a relative-path reference, as it would be mistaken for a scheme name. Such a segment must
-            // be preceded by a dot-segment (e.g., "./this:that") to make a relative-path reference.
-            //
-            return URI.create("./" + uri);
-        } catch (IllegalArgumentException ex) {
-            log.warning("Illegal URI '" + uri + "', ignoring value: " + Exceptions.unwrap(ex));
-            // Ignore
-        }
-        return null;
     }
 
 }

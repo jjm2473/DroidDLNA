@@ -139,7 +139,7 @@ public class MusicAlbum extends Album {
     public MusicTrack[] getMusicTracks() {
         List<MusicTrack> list = new ArrayList<>();
         for (Item item : getItems()) {
-            if (item instanceof MusicTrack) list.add((MusicTrack)item);
+            if (item instanceof MusicTrack) list.add((MusicTrack) item);
         }
         return list.toArray(new MusicTrack[list.size()]);
     }

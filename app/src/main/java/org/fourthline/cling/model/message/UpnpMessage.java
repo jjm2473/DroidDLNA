@@ -33,23 +33,17 @@ import java.io.UnsupportedEncodingException;
  * <p>
  * Messages are not thread-safe.
  * </p>
- * 
+ *
  * @author Christian Bauer
  */
 public abstract class UpnpMessage<O extends UpnpOperation> {
 
-    public static enum BodyType {
-        STRING, BYTES
-    }
-
     private int udaMajorVersion = 1;
     private int udaMinorVersion = 0;
-
     private O operation;
     private UpnpHeaders headers = new UpnpHeaders();
     private Object body;
     private BodyType bodyType = BodyType.STRING;
-
     protected UpnpMessage(UpnpMessage<O> source) {
         this.operation = source.getOperation();
         this.headers = source.getHeaders();
@@ -133,18 +127,18 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
 
     public String getBodyString() {
         try {
-                if(!hasBody()) {
-                    return null;
+            if (!hasBody()) {
+                return null;
+            }
+            if (getBodyType().equals(BodyType.STRING)) {
+                String body = ((String) getBody());
+                if (body.charAt(0) == '\ufeff') { /* utf8 BOM */
+                    body = body.substring(1);
                 }
-                if(getBodyType().equals(BodyType.STRING)) {
-                    String body = ((String) getBody());
-                    if(body.charAt(0) == '\ufeff') { /* utf8 BOM */
-                        body = body.substring(1);
-                    }
-                    return body;
-                } else {
-                    return new String((byte[]) getBody(), "UTF-8");
-                }
+                return body;
+            } else {
+                return new String((byte[]) getBody(), "UTF-8");
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -152,10 +146,10 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
 
     public byte[] getBodyBytes() {
         try {
-            if(!hasBody()) {
+            if (!hasBody()) {
                 return null;
             }
-            if(getBodyType().equals(BodyType.STRING)) {
+            if (getBodyType().equals(BodyType.STRING)) {
                 return getBodyString().getBytes();
             } else {
                 return (byte[]) getBody();
@@ -206,12 +200,16 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
 
     public boolean isBodyNonEmptyString() {
         return hasBody()
-            && getBodyType().equals(UpnpMessage.BodyType.STRING)
-            && getBodyString().length() > 0;
+                && getBodyType().equals(UpnpMessage.BodyType.STRING)
+                && getBodyString().length() > 0;
     }
 
     @Override
     public String toString() {
         return "(" + getClass().getSimpleName() + ") " + getOperation().toString();
+    }
+
+    public static enum BodyType {
+        STRING, BYTES
     }
 }

@@ -134,7 +134,7 @@ public abstract class AbstractPeeringConnectionManagerService extends Connection
      * Generate a new local connection identifier, prepare the peer, store connection details.
      *
      * @return <code>-1</code> if the {@link #peerFailure(org.fourthline.cling.model.action.ActionInvocation, org.fourthline.cling.model.message.UpnpResponse, String)}
-     *         method had to be called, otherwise the local identifier of the established connection.
+     * method had to be called, otherwise the local identifier of the established connection.
      */
     synchronized public int createConnectionWithPeer(final ServiceReference localServiceReference,
                                                      final ControlPoint controlPoint,
@@ -232,13 +232,13 @@ public abstract class AbstractPeeringConnectionManagerService extends Connection
      * Called when connection creation or closing with a peer failed.
      * <p>
      * This is the failure result of an action invocation on the peer's connection
-     * management service. The execution of the {@link #createConnectionWithPeer(org.fourthline.cling.model.ServiceReference, org.fourthline.cling.controlpoint.ControlPoint, org.fourthline.cling.model.meta.Service, org.fourthline.cling.support.model.ProtocolInfo , org.fourthline.cling.support.model.ConnectionInfo.Direction)}
+     * management service. The execution of the {@link #createConnectionWithPeer(org.fourthline.cling.model.ServiceReference, org.fourthline.cling.controlpoint.ControlPoint, org.fourthline.cling.model.meta.Service, org.fourthline.cling.support.model.ProtocolInfo, org.fourthline.cling.support.model.ConnectionInfo.Direction)}
      * and {@link #closeConnectionWithPeer(org.fourthline.cling.controlpoint.ControlPoint, org.fourthline.cling.model.meta.Service, org.fourthline.cling.support.model.ConnectionInfo)}
      * methods will block until this method completes handling any failure.
      * </p>
      *
-     * @param invocation The underlying action invocation of the remote connection manager service.
-     * @param operation The network message response if there was a response, or <code>null</code>.
+     * @param invocation            The underlying action invocation of the remote connection manager service.
+     * @param operation             The network message response if there was a response, or <code>null</code>.
      * @param defaultFailureMessage A user-friendly error message generated from the invocation exception and response.
      */
     protected abstract void peerFailure(ActionInvocation invocation, UpnpResponse operation, String defaultFailureMessage);

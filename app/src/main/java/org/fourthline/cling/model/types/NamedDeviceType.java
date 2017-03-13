@@ -31,14 +31,6 @@ public class NamedDeviceType {
         this.deviceType = deviceType;
     }
 
-    public UDN getUdn() {
-        return udn;
-    }
-
-    public DeviceType getDeviceType() {
-        return deviceType;
-    }
-
     public static NamedDeviceType valueOf(String s) throws InvalidValueException {
         String[] strings = s.split("::");
         if (strings.length != 2) {
@@ -54,6 +46,14 @@ public class NamedDeviceType {
 
         DeviceType deviceType = DeviceType.valueOf(strings[1]);
         return new NamedDeviceType(udn, deviceType);
+    }
+
+    public UDN getUdn() {
+        return udn;
+    }
+
+    public DeviceType getDeviceType() {
+        return deviceType;
     }
 
     @Override

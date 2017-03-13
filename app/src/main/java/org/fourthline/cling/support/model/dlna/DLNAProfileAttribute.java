@@ -18,15 +18,15 @@ package org.fourthline.cling.support.model.dlna;
  * @author Mario Franco
  */
 public class DLNAProfileAttribute extends DLNAAttribute<DLNAProfiles> {
-    
+
     public DLNAProfileAttribute() {
         setValue(DLNAProfiles.NONE);
     }
-    
+
     public DLNAProfileAttribute(DLNAProfiles profile) {
         setValue(profile);
     }
-    
+
     public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
         DLNAProfiles value = DLNAProfiles.valueOf(s, cf);
         if (value == null) {
@@ -34,7 +34,7 @@ public class DLNAProfileAttribute extends DLNAAttribute<DLNAProfiles> {
         }
         setValue(value);
     }
-    
+
     public String getString() {
         return getValue().getCode();
     }

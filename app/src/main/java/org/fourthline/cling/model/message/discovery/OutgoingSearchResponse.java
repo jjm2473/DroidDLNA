@@ -45,10 +45,10 @@ public class OutgoingSearchResponse extends OutgoingDatagramMessage<UpnpResponse
         getHeaders().add(UpnpHeader.Type.EXT, new EXTHeader());
 
         if ("true".equals(System.getProperty(Constants.SYSTEM_PROPERTY_ANNOUNCE_MAC_ADDRESS))
-            && location.getNetworkAddress().getHardwareAddress() != null) {
+                && location.getNetworkAddress().getHardwareAddress() != null) {
             getHeaders().add(
-                UpnpHeader.Type.EXT_IFACE_MAC,
-                new InterfaceMacHeader(location.getNetworkAddress().getHardwareAddress())
+                    UpnpHeader.Type.EXT_IFACE_MAC,
+                    new InterfaceMacHeader(location.getNetworkAddress().getHardwareAddress())
             );
         }
     }

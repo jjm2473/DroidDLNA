@@ -15,7 +15,12 @@
 
 package org.fourthline.cling.model;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -147,9 +152,9 @@ public class XMLUtil {
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
-        if(encodeQuotes) {
-        	s = s.replaceAll("'", "&apos;");
-        	s = s.replaceAll("\"", "&quot;");
+        if (encodeQuotes) {
+            s = s.replaceAll("'", "&apos;");
+            s = s.replaceAll("\"", "&quot;");
         }
         return s;
     }

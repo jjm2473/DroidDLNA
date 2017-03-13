@@ -32,6 +32,8 @@ import org.fourthline.cling.transport.DisableRouter;
 import org.fourthline.cling.transport.EnableRouter;
 import org.fourthline.cling.transport.Router;
 
+import java.util.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -39,7 +41,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import java.util.logging.Logger;
 
 /**
  * Adapter for CDI environments.

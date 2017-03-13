@@ -29,21 +29,21 @@ public class UDNHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         if (!s.startsWith(UDN.PREFIX)) {
-            throw new InvalidHeaderException("Invalid UDA header value, must start with '"+UDN.PREFIX+"': " + s);
+            throw new InvalidHeaderException("Invalid UDA header value, must start with '" + UDN.PREFIX + "': " + s);
         }
 
         if (s.contains("::urn")) {
             throw new InvalidHeaderException("Invalid UDA header value, must not contain '::urn': " + s);
         }
 
-        UDN udn = new UDN( s.substring(UDN.PREFIX.length()) );
+        UDN udn = new UDN(s.substring(UDN.PREFIX.length()));
         setValue(udn);
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 }
 

@@ -17,8 +17,8 @@ package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.Constants;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Device type with a fixed <code>schemas-upnp-org</code> namespace.
@@ -43,13 +43,13 @@ public class UDADeviceType extends DeviceType {
 
     public static UDADeviceType valueOf(String s) throws InvalidValueException {
         Matcher matcher = PATTERN.matcher(s);
-        
+
         try {
-        	if (matcher.matches())
-        		return new UDADeviceType(matcher.group(1), Integer.valueOf(matcher.group(2)));
-        } catch(RuntimeException e) {
-        	throw new InvalidValueException(String.format(
-                "Can't parse UDA device type string (namespace/type/version) '%s': %s", s, e.toString()
+            if (matcher.matches())
+                return new UDADeviceType(matcher.group(1), Integer.valueOf(matcher.group(2)));
+        } catch (RuntimeException e) {
+            throw new InvalidValueException(String.format(
+                    "Can't parse UDA device type string (namespace/type/version) '%s': %s", s, e.toString()
             ));
         }
         throw new InvalidValueException("Can't parse UDA device type string (namespace/type/version): " + s);

@@ -49,13 +49,14 @@ import org.fourthline.cling.protocol.sync.SendingSubscribe;
 import org.fourthline.cling.protocol.sync.SendingUnsubscribe;
 import org.fourthline.cling.transport.RouterException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 /**
  * Default implementation, directly instantiates the appropriate protocols.
@@ -94,7 +95,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
             switch (incomingRequest.getOperation().getMethod()) {
                 case NOTIFY:
                     return isByeBye(incomingRequest) || isSupportedServiceAdvertisement(incomingRequest)
-                        ? createReceivingNotification(incomingRequest) : null;
+                            ? createReceivingNotification(incomingRequest) : null;
                 case MSEARCH:
                     return createReceivingSearch(incomingRequest);
             }
@@ -103,7 +104,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
             IncomingDatagramMessage<UpnpResponse> incomingResponse = message;
 
             return isSupportedServiceAdvertisement(incomingResponse)
-                ? createReceivingSearchResponse(incomingResponse) : null;
+                    ? createReceivingSearchResponse(incomingResponse) : null;
         }
 
         throw new ProtocolCreationException("Protocol for incoming datagram message not found: " + message);
@@ -184,12 +185,12 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
                 log.warning("Fixing trailing garbage in event message path: " + message.getUri().getPath());
                 String invalid = message.getUri().toString();
                 message.setUri(
-                    URI.create(invalid.substring(
-                        0, invalid.indexOf(Namespace.CALLBACK_FILE) + Namespace.CALLBACK_FILE.length()
-                    ))
+                        URI.create(invalid.substring(
+                                0, invalid.indexOf(Namespace.CALLBACK_FILE) + Namespace.CALLBACK_FILE.length()
+                        ))
                 );
                 if (getUpnpService().getConfiguration().getNamespace().isEventCallbackPath(message.getUri())
-                    && message.getOperation().getMethod().equals(UpnpRequest.Method.NOTIFY))
+                        && message.getOperation().getMethod().equals(UpnpRequest.Method.NOTIFY))
                     return createReceivingEvent(message);
             }
 
@@ -217,14 +218,14 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
     public SendingSubscribe createSendingSubscribe(RemoteGENASubscription subscription) throws ProtocolCreationException {
         try {
             List<NetworkAddress> activeStreamServers =
-                getUpnpService().getRouter().getActiveStreamServers(
-                    subscription.getService().getDevice().getIdentity().getDiscoveredOnLocalAddress()
-                );
+                    getUpnpService().getRouter().getActiveStreamServers(
+                            subscription.getService().getDevice().getIdentity().getDiscoveredOnLocalAddress()
+                    );
             return new SendingSubscribe(getUpnpService(), subscription, activeStreamServers);
         } catch (RouterException ex) {
             throw new ProtocolCreationException(
-                "Failed to obtain local stream servers (for event callback URL creation) from router",
-                ex
+                    "Failed to obtain local stream servers (for event callback URL creation) from router",
+                    ex
             );
         }
     }

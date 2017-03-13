@@ -16,6 +16,7 @@
 package org.fourthline.cling.transport.impl;
 
 import org.fourthline.cling.model.Constants;
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.XMLUtil;
 import org.fourthline.cling.model.message.UpnpMessage;
 import org.fourthline.cling.model.message.gena.IncomingEventRequestMessage;
@@ -23,7 +24,6 @@ import org.fourthline.cling.model.message.gena.OutgoingEventRequestMessage;
 import org.fourthline.cling.model.meta.StateVariable;
 import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.transport.spi.GENAEventProcessor;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,13 +33,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 
 /**
  * Default implementation based on the <em>W3C DOM</em> XML processing API.
@@ -51,7 +51,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
-    	return DocumentBuilderFactory.newInstance();
+        return DocumentBuilderFactory.newInstance();
     }
 
     public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
@@ -97,7 +97,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
             documentBuilder.setErrorHandler(this);
 
             Document d = documentBuilder.parse(
-                new InputSource(new StringReader(body))
+                    new InputSource(new StringReader(body))
             );
 
             Element propertysetElement = readPropertysetElement(d);
@@ -184,7 +184,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     protected String getMessageBody(UpnpMessage message) throws UnsupportedDataException {
         if (!message.isBodyNonEmptyString())
             throw new UnsupportedDataException(
-                "Can't transform null or non-string/zero-length body of: " + message
+                    "Can't transform null or non-string/zero-length body of: " + message
             );
         return message.getBodyString().trim();
     }

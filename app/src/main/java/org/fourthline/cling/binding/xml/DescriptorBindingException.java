@@ -17,7 +17,7 @@ package org.fourthline.cling.binding.xml;
 
 /**
  * Thrown if device or service descriptor metadata couldn't be read or written.
- * 
+ *
  * @author Christian Bauer
  */
 public class DescriptorBindingException extends Exception {

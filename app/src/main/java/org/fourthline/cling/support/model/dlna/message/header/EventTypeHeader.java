@@ -14,18 +14,24 @@
  */
 package org.fourthline.cling.support.model.dlna.message.header;
 
-import java.util.regex.Pattern;
 import org.fourthline.cling.model.message.header.InvalidHeaderException;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Mario Franco
  */
 public class EventTypeHeader extends DLNAHeader<String> {
-    
+
     final static Pattern pattern = Pattern.compile("^[0-9]{4}$", Pattern.CASE_INSENSITIVE);
 
     public EventTypeHeader() {
         setValue("0000");
+    }
+
+    @Override
+    public String getString() {
+        return getValue().toString();
     }
 
     @Override
@@ -35,10 +41,5 @@ public class EventTypeHeader extends DLNAHeader<String> {
             return;
         }
         throw new InvalidHeaderException("Invalid EventType header value: " + s);
-    }
-
-    @Override
-    public String getString() {
-        return getValue().toString();
     }
 }

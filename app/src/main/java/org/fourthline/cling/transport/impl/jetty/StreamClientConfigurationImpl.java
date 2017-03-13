@@ -37,8 +37,8 @@ public class StreamClientConfigurationImpl extends AbstractStreamClientConfigura
     /**
      * @return By default <code>0</code>.
      */
-	public int getRequestRetryCount() {
-		return 0;
-	}
+    public int getRequestRetryCount() {
+        return 0;
+    }
 
 }

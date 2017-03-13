@@ -18,8 +18,8 @@ package org.fourthline.cling.model.types;
 import org.fourthline.cling.model.Constants;
 import org.fourthline.cling.model.ModelUtil;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Header in SOAP action messages, naturally declaring the same thing as the body of the SOAP message.
@@ -32,10 +32,10 @@ public class SoapActionType {
     public static final String MAGIC_CONTROL_TYPE = "control-1-0";
 
     public static final Pattern PATTERN_MAGIC_CONTROL =
-            Pattern.compile(Constants.NS_UPNP_CONTROL_10 +"#("+Constants.REGEX_UDA_NAME+")");
+            Pattern.compile(Constants.NS_UPNP_CONTROL_10 + "#(" + Constants.REGEX_UDA_NAME + ")");
 
     public static final Pattern PATTERN =
-            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+)#("+Constants.REGEX_UDA_NAME+")");
+            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+)#(" + Constants.REGEX_UDA_NAME + ")");
 
     private String namespace;
     private String type;
@@ -57,6 +57,26 @@ public class SoapActionType {
         }
     }
 
+    public static SoapActionType valueOf(String s) throws InvalidValueException {
+        Matcher magicControlMatcher = SoapActionType.PATTERN_MAGIC_CONTROL.matcher(s);
+
+        try {
+            if (magicControlMatcher.matches()) {
+                return new SoapActionType(MAGIC_CONTROL_NS, MAGIC_CONTROL_TYPE, null, magicControlMatcher.group(1)); // throws IllegalArgumentException
+            }
+
+            Matcher matcher = SoapActionType.PATTERN.matcher(s);
+            if (matcher.matches())
+                return new SoapActionType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)), matcher.group(4));
+
+        } catch (RuntimeException e) {
+            throw new InvalidValueException(String.format(
+                    "Can't parse action type string (namespace/type/version#actionName) '%s': %s", s, e.toString()
+            ));
+        }
+        throw new InvalidValueException("Can't parse action type string (namespace/type/version#actionName): " + s);
+    }
+
     public String getActionName() {
         return actionName;
     }
@@ -71,26 +91,6 @@ public class SoapActionType {
 
     public Integer getVersion() {
         return version;
-    }
-
-    public static SoapActionType valueOf(String s) throws InvalidValueException {
-        Matcher magicControlMatcher = SoapActionType.PATTERN_MAGIC_CONTROL.matcher(s);
-        
-        try {
-        	if (magicControlMatcher.matches()) {
-        		return new SoapActionType(MAGIC_CONTROL_NS, MAGIC_CONTROL_TYPE, null, magicControlMatcher.group(1)); // throws IllegalArgumentException
-        	}
-
-        	Matcher matcher = SoapActionType.PATTERN.matcher(s);
-        	if (matcher.matches())
-        		return new SoapActionType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)), matcher.group(4));
-
-        } catch(RuntimeException e) {
-        	throw new InvalidValueException(String.format(
-                "Can't parse action type string (namespace/type/version#actionName) '%s': %s", s, e.toString()
-            ));
-        }
-        throw new InvalidValueException("Can't parse action type string (namespace/type/version#actionName): " + s);
     }
 
     public ServiceType getServiceType() {

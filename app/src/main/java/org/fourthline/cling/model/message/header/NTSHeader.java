@@ -29,6 +29,10 @@ public class NTSHeader extends UpnpHeader<NotificationSubtype> {
         setValue(type);
     }
 
+    public String getString() {
+        return getValue().getHeaderString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         for (NotificationSubtype type : NotificationSubtype.values()) {
             if (s.equals(type.getHeaderString())) {
@@ -40,9 +44,5 @@ public class NTSHeader extends UpnpHeader<NotificationSubtype> {
             throw new InvalidHeaderException("Invalid NTS header value: " + s);
         }
 
-    }
-
-    public String getString() {
-        return getValue().getHeaderString();
     }
 }

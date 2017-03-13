@@ -15,8 +15,8 @@
 
 package org.fourthline.cling.model.message.header;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Christian Bauer
@@ -40,6 +40,14 @@ public class MANHeader extends UpnpHeader<String> {
         this.namespace = namespace;
     }
 
+    public String getString() {
+        if (getValue() == null) return null;
+        StringBuilder s = new StringBuilder();
+        s.append("\"").append(getValue()).append("\"");
+        if (getNamespace() != null) s.append("; ns=").append(getNamespace());
+        return s.toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
 
         Matcher matcher = PATTERN.matcher(s);
@@ -58,14 +66,6 @@ public class MANHeader extends UpnpHeader<String> {
         } else {
             throw new InvalidHeaderException("Invalid MAN header value: " + s);
         }
-    }
-
-    public String getString() {
-        if (getValue() == null) return null;
-        StringBuilder s = new StringBuilder();
-        s.append("\"").append(getValue()).append("\"");
-        if (getNamespace() != null) s.append("; ns=").append(getNamespace());
-        return s.toString();
     }
 
     public String getNamespace() {

@@ -15,9 +15,9 @@
 
 package org.fourthline.cling.model.types.csv;
 
+import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.types.Datatype;
 import org.fourthline.cling.model.types.InvalidValueException;
-import org.fourthline.cling.model.ModelUtil;
 import org.seamless.util.Reflections;
 
 import java.util.ArrayList;

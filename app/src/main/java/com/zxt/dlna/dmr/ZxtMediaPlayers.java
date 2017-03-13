@@ -1,14 +1,13 @@
-
 package com.zxt.dlna.dmr;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import android.content.Context;
 
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 import org.fourthline.cling.support.lastchange.LastChange;
 import org.fourthline.cling.support.model.TransportState;
 
-import android.content.Context;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * @author offbye

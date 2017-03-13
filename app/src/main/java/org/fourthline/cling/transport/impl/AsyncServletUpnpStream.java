@@ -26,12 +26,6 @@ import org.fourthline.cling.transport.spi.UpnpStream;
 import org.seamless.util.Exceptions;
 import org.seamless.util.io.IO;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -41,6 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Implementation based on Servlet 3.0 API.
@@ -77,7 +78,7 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         ServletResponse response;
         if ((response = asyncContext.getResponse()) == null) {
             throw new IllegalStateException(
-                "Couldn't get response from asynchronous context, already timed out"
+                    "Couldn't get response from asynchronous context, already timed out"
             );
         }
         return (HttpServletResponse) response;
@@ -168,10 +169,10 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         StreamRequestMessage requestMessage;
         try {
             requestMessage =
-                new StreamRequestMessage(
-                    UpnpRequest.Method.getByHttpName(requestMethod),
-                    URI.create(requestURI)
-                );
+                    new StreamRequestMessage(
+                            UpnpRequest.Method.getByHttpName(requestMethod),
+                            URI.create(requestURI)
+                    );
         } catch (IllegalArgumentException ex) {
             throw new RuntimeException("Invalid request URI: " + requestURI, ex);
         }

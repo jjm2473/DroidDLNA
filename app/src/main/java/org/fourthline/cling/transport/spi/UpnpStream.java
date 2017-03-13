@@ -38,6 +38,7 @@ import java.util.logging.Logger;
  * <p>
  * An implementation does not have to be thread-safe.
  * </p>
+ *
  * @author Christian Bauer
  */
 public abstract class UpnpStream implements Runnable {
@@ -63,6 +64,7 @@ public abstract class UpnpStream implements Runnable {
      * condition will be encapsulated in the returned response message and has to be
      * passed to the HTTP client as it is.
      * </p>
+     *
      * @param requestMsg The TCP (HTTP) stream request message.
      * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be send to the client.
      */

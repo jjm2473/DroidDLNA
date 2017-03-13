@@ -1,8 +1,13 @@
-
 package com.zxt.dlna.dms;
 
-import java.io.IOException;
-import java.net.URI;
+import android.content.Context;
+import android.util.Log;
+
+import com.zxt.dlna.activity.SettingActivity;
+import com.zxt.dlna.application.BaseApplication;
+import com.zxt.dlna.util.FileUtil;
+import com.zxt.dlna.util.UpnpUtil;
+import com.zxt.dlna.util.Utils;
 
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.model.DefaultServiceManager;
@@ -18,31 +23,19 @@ import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.UDADeviceType;
 import org.fourthline.cling.model.types.UDN;
 
-import com.zxt.dlna.activity.SettingActivity;
-import com.zxt.dlna.application.BaseApplication;
-import com.zxt.dlna.util.FileUtil;
-import com.zxt.dlna.util.UpnpUtil;
-import com.zxt.dlna.util.Utils;
-
-import android.content.Context;
-import android.util.Log;
+import java.io.IOException;
 
 public class MediaServer {
 
-    private UDN udn ;
-
-    private LocalDevice localDevice;
-
-    private final static String deviceType = "MediaServer";
-
-    private final static int version = 1;
-
-    private final static String LOGTAG = "MediaServer";
-
     public final static int PORT = 8192;
+    private final static String deviceType = "MediaServer";
+    private final static int version = 1;
+    private final static String LOGTAG = "MediaServer";
+    private UDN udn;
+    private LocalDevice localDevice;
     private Context mContext;
 
-    public MediaServer(Context context ) throws ValidationException {
+    public MediaServer(Context context) throws ValidationException {
         mContext = context;
         DeviceType type = new UDADeviceType(deviceType, version);
 
@@ -94,5 +87,5 @@ public class MediaServer {
             return null;
         }
     }
-   
+
 }

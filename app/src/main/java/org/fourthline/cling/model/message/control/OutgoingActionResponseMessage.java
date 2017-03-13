@@ -16,14 +16,14 @@
 package org.fourthline.cling.model.message.control;
 
 import org.fourthline.cling.model.Constants;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.QueryStateVariableAction;
 import org.fourthline.cling.model.message.StreamResponseMessage;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.message.header.ContentTypeHeader;
 import org.fourthline.cling.model.message.header.EXTHeader;
 import org.fourthline.cling.model.message.header.ServerHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.model.meta.Action;
+import org.fourthline.cling.model.meta.QueryStateVariableAction;
 
 /**
  * @author Christian Bauer

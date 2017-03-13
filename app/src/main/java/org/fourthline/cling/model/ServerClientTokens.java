@@ -32,7 +32,7 @@ public class ServerClientTokens {
     private int majorVersion = 1;
     private int minorVersion = 0;
 
-    private String osName  =  System.getProperty("os.name").replaceAll("[^a-zA-Z0-9\\.\\-_]", "");
+    private String osName = System.getProperty("os.name").replaceAll("[^a-zA-Z0-9\\.\\-_]", "");
     private String osVersion = System.getProperty("os.version").replaceAll("[^a-zA-Z0-9\\.\\-_]", "");
     private String productName = UserConstants.PRODUCT_TOKEN_NAME;
     private String productVersion = UserConstants.PRODUCT_TOKEN_VERSION;
@@ -109,7 +109,7 @@ public class ServerClientTokens {
 
     @Override
     public String toString() {
-        return getOsName()+"/"+getOsVersion() 
+        return getOsName() + "/" + getOsVersion()
                 + " UPnP/" + getMajorVersion() + "." + getMinorVersion() + " "
                 + getProductName() + "/" + getProductVersion();
     }
@@ -132,7 +132,7 @@ public class ServerClientTokens {
     }
 
     public String getOsToken() {
-        return getOsName().replaceAll(" ", "_")+"/"+getOsVersion().replaceAll(" ", "_");
+        return getOsName().replaceAll(" ", "_") + "/" + getOsVersion().replaceAll(" ", "_");
     }
 
     public String getProductToken() {

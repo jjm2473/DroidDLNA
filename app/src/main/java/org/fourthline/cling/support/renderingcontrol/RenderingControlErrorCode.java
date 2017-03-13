@@ -31,20 +31,20 @@ public enum RenderingControlErrorCode {
         this.description = description;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public static RenderingControlErrorCode getByCode(int code) {
         for (RenderingControlErrorCode errorCode : RenderingControlErrorCode.values()) {
             if (errorCode.getCode() == code)
                 return errorCode;
         }
         return null;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

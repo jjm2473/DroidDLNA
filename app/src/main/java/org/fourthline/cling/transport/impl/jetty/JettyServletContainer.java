@@ -25,13 +25,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.fourthline.cling.transport.spi.ServletContainerAdapter;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A singleton wrapper of a <code>org.eclipse.jetty.server.Server</code>.
@@ -49,15 +50,43 @@ import java.util.logging.Logger;
  */
 public class JettyServletContainer implements ServletContainerAdapter {
 
-    final private static Logger log = Logger.getLogger(JettyServletContainer.class.getName());
-
     // Singleton
     public static final JettyServletContainer INSTANCE = new JettyServletContainer();
+    final private static Logger log = Logger.getLogger(JettyServletContainer.class.getName());
+    protected Server server;
+
     private JettyServletContainer() {
         resetServer();
     }
 
-    protected Server server;
+    /**
+     * Casts the request to a Jetty API and tries to write a space character to the output stream of the socket.
+     * <p>
+     * This space character might confuse the HTTP client. The Cling transports for Jetty Client and
+     * Apache HttpClient have been tested to work with space characters. Unfortunately, Sun JDK's
+     * HttpURLConnection does not gracefully handle any garbage in the HTTP request!
+     * </p>
+     */
+    public static boolean isConnectionOpen(HttpServletRequest request) {
+        return isConnectionOpen(request, " ".getBytes());
+    }
+
+    public static boolean isConnectionOpen(HttpServletRequest request, byte[] heartbeat) {
+        Request jettyRequest = (Request) request;
+        AbstractHttpConnection connection = jettyRequest.getConnection();
+        Socket socket = (Socket) connection.getEndPoint().getTransport();
+        if (log.isLoggable(Level.FINE))
+            log.fine("Checking if client connection is still open: " + socket.getRemoteSocketAddress());
+        try {
+            socket.getOutputStream().write(heartbeat);
+            socket.getOutputStream().flush();
+            return true;
+        } catch (IOException ex) {
+            if (log.isLoggable(Level.FINE))
+                log.fine("Client connection has been closed: " + socket.getRemoteSocketAddress());
+            return false;
+        }
+    }
 
     @Override
     synchronized public void setExecutorService(ExecutorService executorService) {
@@ -96,7 +125,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
     }
 
     @Override
-    synchronized public void removeConnector(String host, int port)  {
+    synchronized public void removeConnector(String host, int port) {
         Connector[] connectors = server.getConnectors();
         for (Connector connector : connectors) {
             if (connector.getHost().equals(host) && connector.getLocalPort() == port) {
@@ -125,7 +154,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
         }
         log.info("Registering UPnP servlet under context path: " + contextPath);
         ServletContextHandler servletHandler =
-            new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+                new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         if (contextPath != null && contextPath.length() > 0)
             servletHandler.setContextPath(contextPath);
         ServletHolder s = new ServletHolder(servlet);
@@ -164,35 +193,6 @@ public class JettyServletContainer implements ServletContainerAdapter {
     protected void resetServer() {
         server = new Server(); // Has its own QueuedThreadPool
         server.setGracefulShutdown(1000); // Let's wait a second for ongoing transfers to complete
-    }
-
-    /**
-     * Casts the request to a Jetty API and tries to write a space character to the output stream of the socket.
-     * <p>
-     * This space character might confuse the HTTP client. The Cling transports for Jetty Client and
-     * Apache HttpClient have been tested to work with space characters. Unfortunately, Sun JDK's
-     * HttpURLConnection does not gracefully handle any garbage in the HTTP request!
-     * </p>
-     */
-    public static boolean isConnectionOpen(HttpServletRequest request) {
-        return isConnectionOpen(request, " ".getBytes());
-    }
-
-    public static boolean isConnectionOpen(HttpServletRequest request, byte[] heartbeat) {
-        Request jettyRequest = (Request)request;
-        AbstractHttpConnection connection = jettyRequest.getConnection();
-        Socket socket = (Socket)connection.getEndPoint().getTransport();
-        if (log.isLoggable(Level.FINE))
-            log.fine("Checking if client connection is still open: " + socket.getRemoteSocketAddress());
-        try {
-            socket.getOutputStream().write(heartbeat);
-            socket.getOutputStream().flush();
-            return true;
-        } catch (IOException ex) {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Client connection has been closed: " + socket.getRemoteSocketAddress());
-            return false;
-        }
     }
 
 }

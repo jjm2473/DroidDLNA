@@ -15,8 +15,8 @@
 
 package org.fourthline.cling.model.message;
 
-import org.seamless.http.Headers;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.seamless.http.Headers;
 
 import java.io.ByteArrayInputStream;
 import java.util.LinkedHashMap;
@@ -73,10 +73,10 @@ public class UpnpHeaders extends Headers {
                 if (upnpHeader == null || upnpHeader.getValue() == null) {
                     if (log.isLoggable(Level.FINE))
                         log.fine(
-                            "Ignoring known but irrelevant header (value violates the UDA specification?) '"
-                                + type.getHttpName()
-                                + "': "
-                                + value
+                                "Ignoring known but irrelevant header (value violates the UDA specification?) '"
+                                        + type.getHttpName()
+                                        + "': "
+                                        + value
                         );
                 } else {
                     addParsedValue(type, upnpHeader);

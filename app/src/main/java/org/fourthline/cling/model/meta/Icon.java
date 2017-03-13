@@ -19,9 +19,9 @@ package org.fourthline.cling.model.meta;
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.types.BinHexDatatype;
-import org.seamless.util.io.IO;
 import org.seamless.util.MimeType;
 import org.seamless.util.URIUtil;
+import org.seamless.util.io.IO;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * The metadata of a device icon, might include the actual image data of a local icon.
- *
+ * <p>
  * <p>
  * Note that validation of icons is lax on purpose, a valid <code>Icon</code> might still
  * return <code>null</code> from {@link #getMimeType()}, {@link #getWidth()},
@@ -72,7 +72,7 @@ public class Icon implements Validatable {
      *
      * @param url A URL of the icon data that can be read with <code>new File(url.toURI())</code>.
      */
-    public Icon(String mimeType, int width, int height, int depth, URL url) throws IOException{
+    public Icon(String mimeType, int width, int height, int depth, URL url) throws IOException {
         this(mimeType, width, height, depth, new File(URIUtil.toURI(url)));
     }
 
@@ -104,8 +104,8 @@ public class Icon implements Validatable {
 
     /**
      * Use this constructor if your local icon is binary data encoded with <em>BinHex</em>.
-
-     * @param uniqueName Must be a valid URI path segment and unique within the scope of a device.
+     *
+     * @param uniqueName    Must be a valid URI path segment and unique within the scope of a device.
      * @param binHexEncoded The icon bytes encoded as BinHex.
      */
     public Icon(String mimeType, int width, int height, int depth, String uniqueName, String binHexEncoded) {
@@ -185,19 +185,19 @@ public class Icon implements Validatable {
                     "URL is required"
             ));
         } else {
-        	try {
-        		URL testURI = getUri().toURL();
-        		if (testURI == null)
-        			throw new MalformedURLException();
-        	} catch (MalformedURLException ex) {
-        		errors.add(new ValidationError(
-        				getClass(),
-        				"uri",
-        				"URL must be valid: " + ex.getMessage())
-        				);
-        	} catch (IllegalArgumentException ex) {
-        		// Relative URI is fine here!
-        	}
+            try {
+                URL testURI = getUri().toURL();
+                if (testURI == null)
+                    throw new MalformedURLException();
+            } catch (MalformedURLException ex) {
+                errors.add(new ValidationError(
+                        getClass(),
+                        "uri",
+                        "URL must be valid: " + ex.getMessage())
+                );
+            } catch (IllegalArgumentException ex) {
+                // Relative URI is fine here!
+            }
         }
 
         return errors;

@@ -44,6 +44,7 @@ import org.apache.http.protocol.ResponseConnControl;
 import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.util.EntityUtils;
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.message.Connection;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.StreamResponseMessage;
@@ -52,7 +53,6 @@ import org.fourthline.cling.model.message.UpnpMessage;
 import org.fourthline.cling.model.message.UpnpOperation;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.protocol.ProtocolFactory;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.transport.spi.UpnpStream;
 import org.seamless.util.Exceptions;
 
@@ -132,6 +132,8 @@ public abstract class HttpServerConnectionUpnpStream extends UpnpStream {
         }
     }
 
+    abstract protected Connection createConnection();
+
     /**
      * A thread-safe custom service implementation that creates a UPnP message from the request,
      * then passes it to <tt>UpnpStream#process()</tt>, finally sends the response back to the
@@ -155,17 +157,17 @@ public abstract class HttpServerConnectionUpnpStream extends UpnpStream {
 
             StreamRequestMessage requestMessage;
             try {
-            	requestMessage =
-                    new StreamRequestMessage(
-                            UpnpRequest.Method.getByHttpName(requestMethod),
-                            URI.create(requestURI)
-                    );
-            } catch(IllegalArgumentException e) {
-            	String msg = "Invalid request URI: " + requestURI + ": " + e.getMessage();
-            	log.warning(msg);
+                requestMessage =
+                        new StreamRequestMessage(
+                                UpnpRequest.Method.getByHttpName(requestMethod),
+                                URI.create(requestURI)
+                        );
+            } catch (IllegalArgumentException e) {
+                String msg = "Invalid request URI: " + requestURI + ": " + e.getMessage();
+                log.warning(msg);
                 throw new HttpException(msg, e);
             }
-            
+
             if (requestMessage.getOperation().getMethod().equals(UpnpRequest.Method.UNKNOWN)) {
                 log.fine("Method not supported by UPnP stack: " + requestMethod);
                 throw new MethodNotSupportedException("Method not supported: " + requestMethod);
@@ -186,9 +188,9 @@ public abstract class HttpServerConnectionUpnpStream extends UpnpStream {
             // Body
             if (httpRequest instanceof HttpEntityEnclosingRequest) {
                 log.fine("Request contains entity body, setting on UPnP message");
-                
+
                 HttpEntityEnclosingRequest entityEnclosingHttpRequest = (HttpEntityEnclosingRequest) httpRequest;
-                
+
                 HttpEntity entity = entityEnclosingHttpRequest.getEntity();
 
                 if (requestMessage.isContentTypeMissingOrText()) {
@@ -198,7 +200,7 @@ public abstract class HttpServerConnectionUpnpStream extends UpnpStream {
                     log.fine("HTTP request message contains binary entity");
                     requestMessage.setBody(UpnpMessage.BodyType.BYTES, EntityUtils.toByteArray(entity));
                 }
-                
+
 
             } else {
                 log.fine("Request did not contain entity body");
@@ -262,7 +264,5 @@ public abstract class HttpServerConnectionUpnpStream extends UpnpStream {
         }
 
     }
-
-    abstract protected Connection createConnection();
 
 }

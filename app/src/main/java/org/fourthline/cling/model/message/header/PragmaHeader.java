@@ -19,7 +19,6 @@ import org.fourthline.cling.model.types.InvalidValueException;
 import org.fourthline.cling.model.types.PragmaType;
 
 /**
- *
  * @author Christian Bauer
  * @author Mario Franco
  */
@@ -36,15 +35,15 @@ public class PragmaHeader extends UpnpHeader<PragmaType> {
         setString(s);
     }
 
+    public String getString() {
+        return getValue().getString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(PragmaType.valueOf(s));
         } catch (InvalidValueException invalidValueException) {
             throw new InvalidHeaderException("Invalid Range Header: " + invalidValueException.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().getString();
     }
 }

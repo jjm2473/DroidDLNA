@@ -26,25 +26,32 @@ import java.lang.annotation.Target;
 public @interface UpnpStateVariable {
 
     String name() default "";
+
     String datatype() default "";
 
     String defaultValue() default "";
 
     // String types
     String[] allowedValues() default {};
+
     Class allowedValuesEnum() default void.class;
 
     // Numeric types
     long allowedValueMinimum() default 0;
+
     long allowedValueMaximum() default 0;
+
     long allowedValueStep() default 1;
 
     // Dynamic
     Class allowedValueProvider() default void.class;
+
     Class allowedValueRangeProvider() default void.class;
 
     boolean sendEvents() default true;
+
     int eventMaximumRateMilliseconds() default 0;
+
     int eventMinimumDelta() default 0;
 
 }

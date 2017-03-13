@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * </p>
  * <pre>{@code
  * upnpService.getRegistry().addListener(
- *newPortMappingListener(newPortMapping(8123, "10.0.0.2",PortMapping.Protocol.TCP))
+ * newPortMappingListener(newPortMapping(8123, "10.0.0.2",PortMapping.Protocol.TCP))
  * );}</pre>
  * <p>
  * If all you need from the Cling UPnP stack is NAT port mapping, use the following idiom:
@@ -69,14 +69,11 @@ import java.util.logging.Logger;
  */
 public class PortMappingListener extends DefaultRegistryListener {
 
-    private static final Logger log = Logger.getLogger(PortMappingListener.class.getName());
-
     public static final DeviceType IGD_DEVICE_TYPE = new UDADeviceType("InternetGatewayDevice", 1);
     public static final DeviceType CONNECTION_DEVICE_TYPE = new UDADeviceType("WANConnectionDevice", 1);
-
     public static final ServiceType IP_SERVICE_TYPE = new UDAServiceType("WANIPConnection", 1);
     public static final ServiceType PPP_SERVICE_TYPE = new UDAServiceType("WANPPPConnection", 1);
-
+    private static final Logger log = Logger.getLogger(PortMappingListener.class.getName());
     protected PortMapping[] portMappings;
 
     // The key of the map is Service and equality is object identity, this is by-design

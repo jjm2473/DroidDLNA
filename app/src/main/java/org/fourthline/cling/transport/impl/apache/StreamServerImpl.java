@@ -85,7 +85,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
                     .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, configuration.isTcpNoDelay());
 
         } catch (Exception ex) {
-            throw new InitializationException("Could not initialize "+getClass().getSimpleName()+": " + ex.toString(), ex);
+            throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex.toString(), ex);
         }
 
     }
@@ -134,7 +134,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
                             @Override
                             protected Connection createConnection() {
                                 return new ApacheServerConnection(
-                                    clientSocket, httpServerConnection
+                                        clientSocket, httpServerConnection
                                 );
 
                             }

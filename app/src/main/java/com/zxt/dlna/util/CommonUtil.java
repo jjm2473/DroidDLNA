@@ -51,7 +51,7 @@ public class CommonUtil {
             return Environment.getExternalStorageDirectory().getAbsolutePath() + "/";// filePath:/sdcard/
         } else {
             return Environment.getDataDirectory().getAbsolutePath() + "/data/"; // filePath:
-                                                                                // /data/data/
+            // /data/data/
         }
     }
 

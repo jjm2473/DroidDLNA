@@ -30,7 +30,7 @@ import java.util.List;
  * Includes the URI's for getting the service's descriptor, calling its
  * actions, and subscribing to events.
  * </p>
- * 
+ *
  * @author Christian Bauer
  */
 public class RemoteService extends Service<RemoteDevice, RemoteService> {

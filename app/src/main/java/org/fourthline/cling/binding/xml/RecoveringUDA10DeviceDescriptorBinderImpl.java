@@ -43,7 +43,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
 
             try {
                 if (descriptorXml != null)
-                  descriptorXml = descriptorXml.trim(); // Always trim whitespace
+                    descriptorXml = descriptorXml.trim(); // Always trim whitespace
                 device = super.describe(undescribedDevice, descriptorXml);
                 return device;
             } catch (DescriptorBindingException ex) {
@@ -93,7 +93,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             }
 
             fixedXml = XmlPullParserUtils.fixXMLEntities(descriptorXml);
-            if(!fixedXml.equals(descriptorXml)) {
+            if (!fixedXml.equals(descriptorXml)) {
                 try {
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
@@ -113,7 +113,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     }
 
     private String fixGarbageLeadingChars(String descriptorXml) {
-    		/* Recover this:
+            /* Recover this:
 
     		HTTP/1.1 200 OK
     		Content-Length: 4268
@@ -130,10 +130,10 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     		<?xml version="1.0"?>...
     	    */
 
-    		int index = descriptorXml.indexOf("<?xml");
-    		if(index == -1) return descriptorXml;
-    		return descriptorXml.substring(index);
-    	}
+        int index = descriptorXml.indexOf("<?xml");
+        if (index == -1) return descriptorXml;
+        return descriptorXml.substring(index);
+    }
 
     protected String fixGarbageTrailingChars(String descriptorXml, DescriptorBindingException ex) {
         int index = descriptorXml.indexOf("</root>");
@@ -195,10 +195,10 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
 
         // Add missing namespace, it only matters that it is defined, not that it is correct
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-            + "<root "
-            + String.format(Locale.ROOT, "xmlns:%s=\"urn:schemas-dlna-org:device-1-0\"", missingNS) + rootAttributes + ">"
-            + rootBody
-            + "</root>";
+                + "<root "
+                + String.format(Locale.ROOT, "xmlns:%s=\"urn:schemas-dlna-org:device-1-0\"", missingNS) + rootAttributes + ">"
+                + rootBody
+                + "</root>";
 
         // TODO: Should we match different undeclared prefixes with their correct namespace?
         // So if it's "dlna" we use "urn:schemas-dlna-org:device-1-0" etc.
@@ -218,7 +218,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
      * @param exception The original exception while parsing the XML.
      */
     protected void handleInvalidDescriptor(String xml, DescriptorBindingException exception)
-        throws DescriptorBindingException {
+            throws DescriptorBindingException {
         throw exception;
     }
 
@@ -243,7 +243,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
      * @return Device A "fixed" {@link Device} model, instead of throwing an exception.
      */
     protected <D extends Device> D handleInvalidDevice(String xml, D device, ValidationException exception)
-        throws ValidationException {
+            throws ValidationException {
         throw exception;
     }
 }

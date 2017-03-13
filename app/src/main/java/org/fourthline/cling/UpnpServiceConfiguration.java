@@ -134,8 +134,8 @@ public interface UpnpServiceConfiguration {
      * </p>
      *
      * @return An array of service types that are exclusively discovered, no other service will
-     *         be discovered. A <code>null</code> return value will disable discovery!
-     *         An empty array means all services will be discovered.
+     * be discovered. A <code>null</code> return value will disable discovery!
+     * An empty array means all services will be discovered.
      */
     public ServiceType[] getExclusiveServiceTypes();
 
@@ -143,7 +143,7 @@ public interface UpnpServiceConfiguration {
      * @return The time in milliseconds to wait between each registry maintenance operation.
      */
     public int getRegistryMaintenanceIntervalMillis();
-    
+
     /**
      * Optional setting for flooding alive NOTIFY messages for local devices.
      * <p>
@@ -171,9 +171,8 @@ public interface UpnpServiceConfiguration {
      * </p>
      *
      * @return <code>true</code> if the timeout in incoming event subscriptions should be ignored
-     *         and the default value ({@link org.fourthline.cling.model.UserConstants#DEFAULT_SUBSCRIPTION_DURATION_SECONDS})
-     *         should be used instead.
-     *
+     * and the default value ({@link org.fourthline.cling.model.UserConstants#DEFAULT_SUBSCRIPTION_DURATION_SECONDS})
+     * should be used instead.
      */
     public boolean isReceivedSubscriptionTimeoutIgnored();
 
@@ -193,7 +192,7 @@ public interface UpnpServiceConfiguration {
      * </p>
      *
      * @return <code>null</code> (the default) to accept the remote device's proposed maximum age, or
-     *         <code>0</code> for unlimited age, or a value in seconds.
+     * <code>0</code> for unlimited age, or a value in seconds.
      */
     public Integer getRemoteDeviceMaxAgeSeconds();
 

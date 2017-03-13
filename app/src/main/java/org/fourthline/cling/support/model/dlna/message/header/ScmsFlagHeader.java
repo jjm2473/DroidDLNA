@@ -14,9 +14,10 @@
  */
 package org.fourthline.cling.support.model.dlna.message.header;
 
-import java.util.regex.Pattern;
 import org.fourthline.cling.model.message.header.InvalidHeaderException;
 import org.fourthline.cling.support.model.dlna.types.ScmsFlagType;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Mario Franco
@@ -24,22 +25,22 @@ import org.fourthline.cling.support.model.dlna.types.ScmsFlagType;
 public class ScmsFlagHeader extends DLNAHeader<ScmsFlagType> {
 
     final static Pattern pattern = Pattern.compile("^[01]{2}$", Pattern.CASE_INSENSITIVE);
-    
-    public ScmsFlagHeader() {
-    }
 
-    @Override
-    public void setString(String s) throws InvalidHeaderException {
-        if (pattern.matcher(s).matches()) {
-          setValue(new ScmsFlagType(s.charAt(0) == '0', s.charAt(1) == '0'));
-          return;
-        }
-        throw new InvalidHeaderException("Invalid ScmsFlag header value: " + s);
+    public ScmsFlagHeader() {
     }
 
     @Override
     public String getString() {
         ScmsFlagType v = getValue();
-        return (v.isCopyright()?"0":"1") + (v.isOriginal()?"0":"1");
+        return (v.isCopyright() ? "0" : "1") + (v.isOriginal() ? "0" : "1");
+    }
+
+    @Override
+    public void setString(String s) throws InvalidHeaderException {
+        if (pattern.matcher(s).matches()) {
+            setValue(new ScmsFlagType(s.charAt(0) == '0', s.charAt(1) == '0'));
+            return;
+        }
+        throw new InvalidHeaderException("Invalid ScmsFlag header value: " + s);
     }
 }

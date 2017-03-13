@@ -117,9 +117,9 @@ public class AnnotationStateVariableBinder {
                 allowedValueRange = getAllowedRangeFromProvider();
             } else if (getAnnotation().allowedValueMinimum() > 0 || getAnnotation().allowedValueMaximum() > 0) {
                 allowedValueRange = getAllowedValueRange(
-                    getAnnotation().allowedValueMinimum(),
-                    getAnnotation().allowedValueMaximum(),
-                    getAnnotation().allowedValueStep()
+                        getAnnotation().allowedValueMinimum(),
+                        getAnnotation().allowedValueMaximum(),
+                        getAnnotation().allowedValueStep()
                 );
             } else {
                 log.finer("Not restricting allowed value range (of numeric typed state var): " + getName());
@@ -133,13 +133,13 @@ public class AnnotationStateVariableBinder {
                     v = Long.valueOf(defaultValue);
                 } catch (Exception ex) {
                     throw new LocalServiceBindingException(
-                        "Default value '" + defaultValue + "' is not numeric (for range checking) of: " + getName()
+                            "Default value '" + defaultValue + "' is not numeric (for range checking) of: " + getName()
                     );
                 }
 
                 if (!allowedValueRange.isInRange(v)) {
                     throw new LocalServiceBindingException(
-                        "Default value '" + defaultValue + "' is not in allowed range of: " + getName()
+                            "Default value '" + defaultValue + "' is not in allowed range of: " + getName()
                     );
                 }
             }
@@ -280,34 +280,34 @@ public class AnnotationStateVariableBinder {
         Class provider = getAnnotation().allowedValueProvider();
         if (!AllowedValueProvider.class.isAssignableFrom(provider))
             throw new LocalServiceBindingException(
-                "Allowed value provider is not of type " + AllowedValueProvider.class + ": " + getName()
+                    "Allowed value provider is not of type " + AllowedValueProvider.class + ": " + getName()
             );
         try {
             return ((Class<? extends AllowedValueProvider>) provider).newInstance().getValues();
         } catch (Exception ex) {
             throw new LocalServiceBindingException(
-                "Allowed value provider can't be instantiated: " + getName(), ex
+                    "Allowed value provider can't be instantiated: " + getName(), ex
             );
         }
     }
 
-    protected StateVariableAllowedValueRange getAllowedRangeFromProvider() throws  LocalServiceBindingException {
+    protected StateVariableAllowedValueRange getAllowedRangeFromProvider() throws LocalServiceBindingException {
         Class provider = getAnnotation().allowedValueRangeProvider();
         if (!AllowedValueRangeProvider.class.isAssignableFrom(provider))
             throw new LocalServiceBindingException(
-                "Allowed value range provider is not of type " + AllowedValueRangeProvider.class + ": " + getName()
+                    "Allowed value range provider is not of type " + AllowedValueRangeProvider.class + ": " + getName()
             );
         try {
             AllowedValueRangeProvider providerInstance =
-                ((Class<? extends AllowedValueRangeProvider>) provider).newInstance();
+                    ((Class<? extends AllowedValueRangeProvider>) provider).newInstance();
             return getAllowedValueRange(
-                providerInstance.getMinimum(),
-                providerInstance.getMaximum(),
-                providerInstance.getStep()
+                    providerInstance.getMinimum(),
+                    providerInstance.getMaximum(),
+                    providerInstance.getStep()
             );
         } catch (Exception ex) {
             throw new LocalServiceBindingException(
-                "Allowed value range provider can't be instantiated: " + getName(), ex
+                    "Allowed value range provider can't be instantiated: " + getName(), ex
             );
         }
     }

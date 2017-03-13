@@ -17,8 +17,8 @@ package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.Constants;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Service type with a fixed <code>schemas-upnp-org</code> namespace.
@@ -49,7 +49,7 @@ public class UDAServiceType extends ServiceType {
                 return new UDAServiceType(matcher.group(1), Integer.valueOf(matcher.group(2)));
         } catch (RuntimeException e) {
             throw new InvalidValueException(String.format(
-                "Can't parse UDA service type string (namespace/type/version) '%s': %s", s, e.toString()));
+                    "Can't parse UDA service type string (namespace/type/version) '%s': %s", s, e.toString()));
         }
         throw new InvalidValueException("Can't parse UDA service type string (namespace/type/version): " + s);
     }

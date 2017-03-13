@@ -33,7 +33,6 @@ import java.util.logging.Logger;
  * </p>
  *
  * @param <M> The type of UPnP message handled by this protocol.
- *
  * @author Christian Bauer
  */
 public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable {
@@ -75,7 +74,7 @@ public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable 
                     log.log(Level.INFO, "Interrupted protocol '" + getClass().getSimpleName() + "': " + ex, cause);
                 } else {
                     throw new RuntimeException(
-                        "Fatal error while executing protocol '" + getClass().getSimpleName() + "': " + ex, ex
+                            "Fatal error while executing protocol '" + getClass().getSimpleName() + "': " + ex, ex
                     );
                 }
             }
@@ -86,7 +85,6 @@ public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable 
      * Provides an opportunity to pause before executing the protocol.
      *
      * @return <code>true</code> (default) if execution should continue after waiting.
-     *
      * @throws InterruptedException If waiting has been interrupted, which also stops execution.
      */
     protected boolean waitBeforeExecution() throws InterruptedException {

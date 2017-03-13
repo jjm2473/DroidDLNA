@@ -16,7 +16,6 @@
 package org.fourthline.cling.model.meta;
 
 
-
 import org.fourthline.cling.model.Validatable;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.types.Datatype;
@@ -120,9 +119,9 @@ public class StateVariableTypeDetails implements Validatable {
                 }
             }
 
-            if(!foundDefaultInAllowedValues(defaultValue, allowedValues)) {
+            if (!foundDefaultInAllowedValues(defaultValue, allowedValues)) {
                 log.warning("UPnP specification violation, allowed string values " +
-                                    "don't contain default value: " + defaultValue
+                        "don't contain default value: " + defaultValue
                 );
             }
         }

@@ -17,32 +17,25 @@ package org.fourthline.cling.support.model.dlna.types;
 import org.fourthline.cling.model.types.BytesRange;
 
 /**
- *
  * @author Mario Franco
  */
 public class AvailableSeekRangeType {
 
 
-    public enum Mode {
-        MODE_0,
-        MODE_1,
-    }
-    
     private Mode modeFlag;
     private NormalPlayTimeRange normalPlayTimeRange;
     private BytesRange bytesRange;
-    
-
     public AvailableSeekRangeType(Mode modeFlag, NormalPlayTimeRange nptRange) {
         this.modeFlag = modeFlag;
         this.normalPlayTimeRange = nptRange;
     }
-    
+
+
     public AvailableSeekRangeType(Mode modeFlag, BytesRange byteRange) {
         this.modeFlag = modeFlag;
         this.bytesRange = byteRange;
     }
-    
+
     public AvailableSeekRangeType(Mode modeFlag, NormalPlayTimeRange nptRange, BytesRange byteRange) {
         this.modeFlag = modeFlag;
         this.normalPlayTimeRange = nptRange;
@@ -68,6 +61,11 @@ public class AvailableSeekRangeType {
      */
     public Mode getModeFlag() {
         return modeFlag;
+    }
+
+    public enum Mode {
+        MODE_0,
+        MODE_1,
     }
 
 }

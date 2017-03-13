@@ -15,8 +15,8 @@
 
 package org.fourthline.cling.support.model;
 
-import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 import org.fourthline.cling.model.action.ActionArgumentValue;
+import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 
 import java.util.Map;
 

@@ -66,28 +66,7 @@ import java.net.URL;
  */
 public abstract class ActionCallback implements Runnable {
 
-    /**
-     * Empty implementation of callback methods, simplifies synchronous
-     * execution of an {@link org.fourthline.cling.model.action.ActionInvocation}.
-     */
-    public static final class Default extends ActionCallback {
-
-        public Default(ActionInvocation actionInvocation, ControlPoint controlPoint) {
-            super(actionInvocation, controlPoint);
-        }
-
-        @Override
-        public void success(ActionInvocation invocation) {
-        }
-
-        @Override
-        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-
-        }
-    }
-
     protected final ActionInvocation actionInvocation;
-
     protected ControlPoint controlPoint;
 
     protected ActionCallback(ActionInvocation actionInvocation, ControlPoint controlPoint) {
@@ -117,7 +96,7 @@ public abstract class ActionCallback implements Runnable {
 
         // Local execution
         if (service instanceof LocalService) {
-            LocalService localService = (LocalService)service;
+            LocalService localService = (LocalService) service;
 
             // Executor validates input inside the execute() call immediately
             localService.getExecutor(actionInvocation.getAction()).execute(actionInvocation);
@@ -128,22 +107,22 @@ public abstract class ActionCallback implements Runnable {
                 success(actionInvocation);
             }
 
-        // Remote execution
-        } else if (service instanceof RemoteService){
+            // Remote execution
+        } else if (service instanceof RemoteService) {
 
-            if (getControlPoint()  == null) {
+            if (getControlPoint() == null) {
                 throw new IllegalStateException("Callback must be executed through ControlPoint");
             }
 
-            RemoteService remoteService = (RemoteService)service;
+            RemoteService remoteService = (RemoteService) service;
 
             // Figure out the remote URL where we'd like to send the action request to
             URL controLURL;
             try {
-            	controLURL = remoteService.getDevice().normalizeURI(remoteService.getControlURI());
-            } catch(IllegalArgumentException e) {
-            	failure(actionInvocation, null, "bad control URL: " + remoteService.getControlURI());
-            	return ;
+                controLURL = remoteService.getDevice().normalizeURI(remoteService.getControlURI());
+            } catch (IllegalArgumentException e) {
+                failure(actionInvocation, null, "bad control URL: " + remoteService.getControlURI());
+                return;
             }
 
             // Do it
@@ -189,7 +168,7 @@ public abstract class ActionCallback implements Runnable {
      * Called when the action invocation failed.
      *
      * @param invocation The failed invocation, call its <code>getFailure()</code> method for more details.
-     * @param operation If the invocation was on a remote service, the response message, otherwise null.
+     * @param operation  If the invocation was on a remote service, the response message, otherwise null.
      * @param defaultMsg A user-friendly error message generated from the invocation exception and response.
      * @see #createDefaultFailureMessage
      */
@@ -198,5 +177,25 @@ public abstract class ActionCallback implements Runnable {
     @Override
     public String toString() {
         return "(ActionCallback) " + actionInvocation;
+    }
+
+    /**
+     * Empty implementation of callback methods, simplifies synchronous
+     * execution of an {@link org.fourthline.cling.model.action.ActionInvocation}.
+     */
+    public static final class Default extends ActionCallback {
+
+        public Default(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+            super(actionInvocation, controlPoint);
+        }
+
+        @Override
+        public void success(ActionInvocation invocation) {
+        }
+
+        @Override
+        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+
+        }
     }
 }

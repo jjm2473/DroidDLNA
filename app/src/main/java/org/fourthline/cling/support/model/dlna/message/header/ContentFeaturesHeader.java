@@ -14,9 +14,10 @@
  */
 package org.fourthline.cling.support.model.dlna.message.header;
 
-import java.util.EnumMap;
 import org.fourthline.cling.model.message.header.InvalidHeaderException;
 import org.fourthline.cling.support.model.dlna.DLNAAttribute;
+
+import java.util.EnumMap;
 
 /**
  * @author Mario Franco
@@ -25,6 +26,18 @@ public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type
 
     public ContentFeaturesHeader() {
         setValue(new EnumMap<DLNAAttribute.Type, DLNAAttribute>(DLNAAttribute.Type.class));
+    }
+
+    @Override
+    public String getString() {
+        String s = "";
+        for (DLNAAttribute.Type type : DLNAAttribute.Type.values()) {
+            String value = getValue().containsKey(type) ? getValue().get(type).getString() : null;
+            if (value != null && value.length() != 0) {
+                s += (s.length() == 0 ? "" : ";") + type.getAttributeName() + "=" + value;
+            }
+        }
+        return s;
     }
 
     @Override
@@ -42,17 +55,5 @@ public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type
                 }
             }
         }
-    }
-
-    @Override
-    public String getString() {
-        String s = "";
-        for (DLNAAttribute.Type type : DLNAAttribute.Type.values()) {
-            String value = getValue().containsKey(type) ? getValue().get(type).getString() : null;
-            if (value != null && value.length() != 0) {
-                s += (s.length() == 0 ? "" : ";") + type.getAttributeName() + "=" + value;
-            }
-        }
-        return s;
     }
 }

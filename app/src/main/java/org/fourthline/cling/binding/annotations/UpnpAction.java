@@ -26,5 +26,6 @@ import java.lang.annotation.Target;
 public @interface UpnpAction {
 
     String name() default "";
+
     UpnpOutputArgument[] out() default {};
 }

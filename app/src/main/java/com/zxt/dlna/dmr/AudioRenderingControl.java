@@ -4,10 +4,10 @@ import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
 import org.fourthline.cling.model.types.UnsignedIntegerTwoBytes;
 import org.fourthline.cling.support.lastchange.LastChange;
+import org.fourthline.cling.support.model.Channel;
 import org.fourthline.cling.support.renderingcontrol.AbstractAudioRenderingControl;
 import org.fourthline.cling.support.renderingcontrol.RenderingControlErrorCode;
 import org.fourthline.cling.support.renderingcontrol.RenderingControlException;
-import org.fourthline.cling.support.model.Channel;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -75,7 +75,7 @@ public class AudioRenderingControl extends AbstractAudioRenderingControl {
 
     @Override
     protected Channel[] getCurrentChannels() {
-        return new Channel[] {
+        return new Channel[]{
                 Channel.Master
         };
     }

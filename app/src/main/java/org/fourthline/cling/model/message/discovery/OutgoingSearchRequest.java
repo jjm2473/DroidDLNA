@@ -16,6 +16,7 @@
 package org.fourthline.cling.model.message.discovery;
 
 import org.fourthline.cling.model.Constants;
+import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.message.OutgoingDatagramMessage;
 import org.fourthline.cling.model.message.UpnpRequest;
 import org.fourthline.cling.model.message.header.HostHeader;
@@ -23,7 +24,6 @@ import org.fourthline.cling.model.message.header.MANHeader;
 import org.fourthline.cling.model.message.header.MXHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.model.types.NotificationSubtype;
-import org.fourthline.cling.model.ModelUtil;
 
 /**
  * @author Christian Bauer

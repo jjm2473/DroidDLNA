@@ -65,7 +65,7 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
 
     public String getDisplayString() {
         if (this instanceof CustomDatatype) {
-            return ((CustomDatatype)this).getName();
+            return ((CustomDatatype) this).getName();
         } else if (getBuiltin() != null) {
             return getBuiltin().getDescriptorName();
         } else {

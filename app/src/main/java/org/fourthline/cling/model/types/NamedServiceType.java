@@ -31,14 +31,6 @@ public class NamedServiceType {
         this.serviceType = serviceType;
     }
 
-    public UDN getUdn() {
-        return udn;
-    }
-
-    public ServiceType getServiceType() {
-        return serviceType;
-    }
-
     public static NamedServiceType valueOf(String s) throws InvalidValueException {
         String[] strings = s.split("::");
         if (strings.length != 2) {
@@ -54,6 +46,14 @@ public class NamedServiceType {
 
         ServiceType serviceType = ServiceType.valueOf(strings[1]);
         return new NamedServiceType(udn, serviceType);
+    }
+
+    public UDN getUdn() {
+        return udn;
+    }
+
+    public ServiceType getServiceType() {
+        return serviceType;
     }
 
     @Override

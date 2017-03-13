@@ -17,8 +17,8 @@ package org.fourthline.cling.model.types;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * The type of a state variable value, able to convert to/from string representation.
@@ -27,6 +27,51 @@ import java.util.Locale;
  * @author Christian Bauer
  */
 public interface Datatype<V> {
+
+    /**
+     * @return <code>true</code> if this datatype can handle values of the given Java type.
+     */
+    public boolean isHandlingJavaType(Class type);
+
+    /**
+     * @return The built-in UPnP standardized type this datatype is mapped to or
+     * <code>null</code> if this is a custom datatype.
+     */
+    public Builtin getBuiltin();
+
+    /**
+     * @param value The value to validate or <code>null</code>.
+     * @return Returns <code>true</code> if the value was <code>null</code>, validation result otherwise.
+     */
+    public boolean isValid(V value);
+
+    /**
+     * Transforms a value supported by this datatype into a string representation.
+     * <p>
+     * This method calls {@link #isValid(Object)} before converting the value, it throws
+     * an exception if validation fails.
+     * </p>
+     *
+     * @param value The value to transform.
+     * @return The transformed value as a string, or an empty string when the value is null, never returns <code>null</code>.
+     * @throws InvalidValueException
+     */
+    public String getString(V value) throws InvalidValueException;
+
+    /**
+     * Transforms a string representation into a value of the supported type.
+     *
+     * @param s The string representation of a value.
+     * @return The converted value or <code>null</code> if the string was <code>null</code> or empty.
+     * @throws InvalidValueException If the string couldn't be parsed.
+     */
+    public V valueOf(String s) throws InvalidValueException;
+
+    /**
+     * @return Metadata about this datatype, a nice string for display that describes
+     * this datatype (e.g. concrete class name).
+     */
+    public String getDisplayString();
 
     /**
      * Mapping from Java type to UPnP built-in type.
@@ -69,14 +114,6 @@ public interface Datatype<V> {
             this.builtinType = builtinType;
         }
 
-        public Class getJavaType() {
-            return javaType;
-        }
-
-        public Builtin getBuiltinType() {
-            return builtinType;
-        }
-
         public static Default getByJavaType(Class javaType) {
             for (Default d : Default.values()) {
                 if (d.getJavaType().equals(javaType)) {
@@ -84,6 +121,14 @@ public interface Datatype<V> {
                 }
             }
             return null;
+        }
+
+        public Class getJavaType() {
+            return javaType;
+        }
+
+        public Builtin getBuiltinType() {
+            return builtinType;
         }
 
         @Override
@@ -156,14 +201,6 @@ public interface Datatype<V> {
             this.datatype = datatype;
         }
 
-        public String getDescriptorName() {
-            return descriptorName;
-        }
-
-        public Datatype getDatatype() {
-            return datatype;
-        }
-
         public static Builtin getByDescriptorName(String descriptorName) {
             // The UPnP spec clearly says "must be one of these values", so I'm assuming
             // they are case sensitive. But we want to work with broken devices, which of
@@ -182,52 +219,15 @@ public interface Datatype<V> {
                             builtin.equals(I4) ||
                             builtin.equals(INT));
         }
+
+        public String getDescriptorName() {
+            return descriptorName;
+        }
+
+        public Datatype getDatatype() {
+            return datatype;
+        }
     }
-
-    /**
-     * @return <code>true</code> if this datatype can handle values of the given Java type.
-     */
-    public boolean isHandlingJavaType(Class type);
-
-    /**
-     * @return The built-in UPnP standardized type this datatype is mapped to or
-     *         <code>null</code> if this is a custom datatype.
-     */
-    public Builtin getBuiltin();
-
-    /**
-     * @param value The value to validate or <code>null</code>.
-     * @return Returns <code>true</code> if the value was <code>null</code>, validation result otherwise.
-     */
-    public boolean isValid(V value);
-
-    /**
-     * Transforms a value supported by this datatype into a string representation.
-     * <p>
-     * This method calls {@link #isValid(Object)} before converting the value, it throws
-     * an exception if validation fails.
-     * </p>
-     *
-     * @param value The value to transform.
-     * @return The transformed value as a string, or an empty string when the value is null, never returns <code>null</code>.
-     * @throws InvalidValueException
-     */
-    public String getString(V value) throws InvalidValueException;
-
-    /**
-     * Transforms a string representation into a value of the supported type.
-     *
-     * @param s The string representation of a value.
-     * @return The converted value or <code>null</code> if the string was <code>null</code> or empty.
-     * @throws InvalidValueException If the string couldn't be parsed.
-     */
-    public V valueOf(String s) throws InvalidValueException;
-
-    /**
-     * @return Metadata about this datatype, a nice string for display that describes
-     *         this datatype (e.g. concrete class name).
-     */
-    public String getDisplayString();
 
 
 }

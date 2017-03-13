@@ -23,7 +23,7 @@ import java.net.URI;
  * @author Christian Bauer
  */
 public class IconResource extends Resource<Icon> {
-    
+
     public IconResource(URI localURI, Icon model) {
         super(localURI, model);
     }

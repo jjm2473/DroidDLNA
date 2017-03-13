@@ -42,7 +42,7 @@ public class RemoteActionInvocation extends ActionInvocation {
     }
 
     public RemoteActionInvocation(ActionException failure,
-                            RemoteClientInfo remoteClientInfo) {
+                                  RemoteClientInfo remoteClientInfo) {
         super(failure);
         this.remoteClientInfo = remoteClientInfo;
     }

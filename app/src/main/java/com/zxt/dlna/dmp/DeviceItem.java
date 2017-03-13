@@ -17,10 +17,10 @@
 
 package com.zxt.dlna.dmp;
 
+import android.graphics.drawable.Drawable;
+
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.types.UDN;
-
-import android.graphics.drawable.Drawable;
 
 /**
  * Wraps a <tt>Device</tt> for display with icon and label. Equality is

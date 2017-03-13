@@ -29,7 +29,7 @@ import static org.fourthline.cling.support.model.DIDLObject.Property.UPNP;
 /**
  * @author Christian Bauer
  */
-public class ImageItem extends Item{
+public class ImageItem extends Item {
 
     public static final Class CLASS = new Class("object.item.imageItem");
 

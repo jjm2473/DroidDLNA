@@ -15,10 +15,11 @@
 
 package org.fourthline.cling.registry.event;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Qualifier;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;

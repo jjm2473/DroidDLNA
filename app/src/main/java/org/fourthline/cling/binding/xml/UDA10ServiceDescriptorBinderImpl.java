@@ -40,13 +40,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import static org.fourthline.cling.binding.xml.Descriptor.Service.ATTRIBUTE;
 import static org.fourthline.cling.binding.xml.Descriptor.Service.ELEMENT;
@@ -76,10 +77,10 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             documentBuilder.setErrorHandler(this);
 
             Document d = documentBuilder.parse(
-                new InputSource(
-                    // TODO: UPNP VIOLATION: Virgin Media Superhub sends trailing spaces/newlines after last XML element, need to trim()
-                    new StringReader(descriptorXml.trim())
-                )
+                    new InputSource(
+                            // TODO: UPNP VIOLATION: Virgin Media Superhub sends trailing spaces/newlines after last XML element, need to trim()
+                            new StringReader(descriptorXml.trim())
+                    )
             );
 
             return describe(undescribedService, d);
@@ -114,7 +115,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     }
 
     protected <S extends Service> S buildInstance(S undescribedService, MutableService descriptor) throws ValidationException {
-        return (S)descriptor.build(undescribedService.getDevice());
+        return (S) descriptor.build(undescribedService.getDevice());
     }
 
     protected void hydrateBasic(MutableService descriptor, Service undescribedService) {
@@ -449,7 +450,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 
         if (stateVariable.getTypeDetails().getDatatype() instanceof CustomDatatype) {
             appendNewElementIfNotNull(descriptor, stateVariableElement, ELEMENT.dataType,
-                    ((CustomDatatype)stateVariable.getTypeDetails().getDatatype()).getName());
+                    ((CustomDatatype) stateVariable.getTypeDetails().getDatatype()).getName());
         } else {
             appendNewElementIfNotNull(descriptor, stateVariableElement, ELEMENT.dataType,
                     stateVariable.getTypeDetails().getDatatype().getBuiltin().getDescriptorName());

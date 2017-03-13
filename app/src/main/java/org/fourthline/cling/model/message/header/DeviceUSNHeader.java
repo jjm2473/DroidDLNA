@@ -35,16 +35,16 @@ public class DeviceUSNHeader extends UpnpHeader<NamedDeviceType> {
         setValue(value);
     }
 
+    public String getString() {
+        return getValue().toString();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(NamedDeviceType.valueOf(s));
         } catch (Exception ex) {
             throw new InvalidHeaderException("Invalid device USN header value, " + ex.getMessage());
         }
-    }
-
-    public String getString() {
-        return getValue().toString();
     }
 
 }

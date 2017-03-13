@@ -92,8 +92,8 @@ public class ConnectionManagerService {
     }
 
     public ConnectionManagerService(PropertyChangeSupport propertyChangeSupport,
-                                            ProtocolInfos sourceProtocolInfo, ProtocolInfos sinkProtocolInfo,
-                                            ConnectionInfo... activeConnections) {
+                                    ProtocolInfos sourceProtocolInfo, ProtocolInfos sinkProtocolInfo,
+                                    ConnectionInfo... activeConnections) {
         this.propertyChangeSupport =
                 propertyChangeSupport == null
                         ? new PropertyChangeSupport(this) : propertyChangeSupport;

@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
 
 /**
  * Settings for the default implementation.
- * 
+ *
  * @author Christian Bauer
  */
 public class MulticastReceiverConfigurationImpl implements MulticastReceiverConfiguration {

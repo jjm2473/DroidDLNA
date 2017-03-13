@@ -23,7 +23,7 @@ import static org.fourthline.cling.support.model.DIDLObject.Property.UPNP;
  * @author Christian Bauer
  */
 public class StorageVolume extends Container {
-    
+
     public static final Class CLASS = new Class("object.container.storageVolume");
 
     public StorageVolume() {
@@ -44,7 +44,7 @@ public class StorageVolume extends Container {
         super(id, parentID, title, creator, CLASS, childCount);
         if (storageTotal != null)
             setStorageTotal(storageTotal);
-        if (storageUsed!= null)
+        if (storageUsed != null)
             setStorageUsed(storageUsed);
         if (storageFree != null)
             setStorageFree(storageFree);
@@ -87,5 +87,5 @@ public class StorageVolume extends Container {
         replaceFirstProperty(new UPNP.STORAGE_MEDIUM(storageMedium));
         return this;
     }
-    
+
 }

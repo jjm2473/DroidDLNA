@@ -16,6 +16,7 @@
 package org.fourthline.cling.protocol.sync;
 
 import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.action.ActionCancelledException;
 import org.fourthline.cling.model.action.ActionException;
 import org.fourthline.cling.model.action.RemoteActionInvocation;
@@ -29,7 +30,6 @@ import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.model.resource.ServiceControlResource;
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.protocol.ReceivingSync;
-import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.transport.RouterException;
 import org.seamless.util.Exceptions;
 
@@ -54,7 +54,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         super(upnpService, inputMessage);
     }
 
-    protected StreamResponseMessage executeSync() throws RouterException{
+    protected StreamResponseMessage executeSync() throws RouterException {
 
         ContentTypeHeader contentTypeHeader =
                 getInputMessage().getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);
@@ -117,8 +117,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
                 } else {
                     responseMessage =
                             new OutgoingActionResponseMessage(
-                                UpnpResponse.Status.INTERNAL_SERVER_ERROR,
-                                invocation.getAction()
+                                    UpnpResponse.Status.INTERNAL_SERVER_ERROR,
+                                    invocation.getAction()
                             );
                 }
             }
@@ -130,14 +130,14 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
         } catch (UnsupportedDataException ex) {
-        	log.log(Level.WARNING, "Error reading action request XML body: " + ex.toString(), Exceptions.unwrap(ex));
+            log.log(Level.WARNING, "Error reading action request XML body: " + ex.toString(), Exceptions.unwrap(ex));
 
             invocation =
                     new RemoteActionInvocation(
-                        Exceptions.unwrap(ex) instanceof ActionException
-                                ? (ActionException)Exceptions.unwrap(ex)
-                                : new ActionException(ErrorCode.ACTION_FAILED, ex.getMessage()),
-                        getRemoteClientInfo()
+                            Exceptions.unwrap(ex) instanceof ActionException
+                                    ? (ActionException) Exceptions.unwrap(ex)
+                                    : new ActionException(ErrorCode.ACTION_FAILED, ex.getMessage()),
+                            getRemoteClientInfo()
                     );
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 

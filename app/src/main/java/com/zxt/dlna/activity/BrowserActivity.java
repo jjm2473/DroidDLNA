@@ -1,21 +1,4 @@
-
 package com.zxt.dlna.activity;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.fourthline.cling.android.AndroidUpnpService;
-import org.fourthline.cling.android.AndroidUpnpServiceImpl;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.LocalDevice;
-import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.registry.DefaultRegistryListener;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.transport.Router;
-import org.fourthline.cling.transport.RouterException;
-
-import com.zxt.dlna.util.FixedAndroidHandler;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -33,7 +16,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.zxt.dlna.R;
+import com.zxt.dlna.util.FixedAndroidHandler;
+
+import org.fourthline.cling.android.AndroidUpnpService;
+import org.fourthline.cling.android.AndroidUpnpServiceImpl;
+import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.meta.LocalDevice;
+import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.meta.Service;
+import org.fourthline.cling.registry.DefaultRegistryListener;
+import org.fourthline.cling.registry.Registry;
+import org.fourthline.cling.transport.Router;
+import org.fourthline.cling.transport.RouterException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BrowserActivity extends ListActivity {
     private ArrayAdapter<DeviceDisplay> listAdapter;
@@ -151,7 +150,7 @@ public class BrowserActivity extends ListActivity {
                     logger.setLevel(Level.FINEST);
                 }
                 break;
-        // DOC:OPTIONAL
+            // DOC:OPTIONAL
         }
         return false;
     }
@@ -184,7 +183,7 @@ public class BrowserActivity extends ListActivity {
 
         @Override
         public void remoteDeviceDiscoveryFailed(Registry registry, final RemoteDevice device,
-                final Exception ex) {
+                                                final Exception ex) {
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(
@@ -193,7 +192,7 @@ public class BrowserActivity extends ListActivity {
                                     + device.getDisplayString()
                                     + "': "
                                     + (ex != null ? ex.toString()
-                                            : "Couldn't retrieve device/service descriptors"),
+                                    : "Couldn't retrieve device/service descriptors"),
                             Toast.LENGTH_LONG).show();
                 }
             });

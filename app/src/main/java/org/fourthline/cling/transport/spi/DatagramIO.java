@@ -15,11 +15,11 @@
 
 package org.fourthline.cling.transport.spi;
 
-import org.fourthline.cling.transport.Router;
 import org.fourthline.cling.model.message.OutgoingDatagramMessage;
+import org.fourthline.cling.transport.Router;
 
-import java.net.InetAddress;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 
 /**
  * Service for receiving (unicast only) and sending UDP datagrams, one per bound IP address.
@@ -45,7 +45,6 @@ import java.net.DatagramPacket;
  * </p>
  *
  * @param <C> The type of the service's configuration.
- *
  * @author Christian Bauer
  */
 public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable {
@@ -53,8 +52,8 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
     /**
      * Configures the service and starts any listening sockets.
      *
-     * @param bindAddress The address to bind any sockets on.
-     * @param router The router which handles received {@link org.fourthline.cling.model.message.IncomingDatagramMessage}s.
+     * @param bindAddress       The address to bind any sockets on.
+     * @param router            The router which handles received {@link org.fourthline.cling.model.message.IncomingDatagramMessage}s.
      * @param datagramProcessor Reads and writes datagrams.
      * @throws InitializationException If the service could not be initialized or started.
      */

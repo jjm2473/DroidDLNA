@@ -23,7 +23,8 @@ import java.util.Date;
 public class ExpirationDetails {
 
     public static final int UNLIMITED_AGE = 0;
-
+    // Performance optimization on Android
+    private static String simpleName = ExpirationDetails.class.getSimpleName();
     private int maxAgeSeconds = UNLIMITED_AGE;
     private long lastRefreshTimestampSeconds = getCurrentTimestampSeconds();
 
@@ -61,7 +62,7 @@ public class ExpirationDetails {
     public boolean hasExpired(boolean halfTime) {
         // Note: Uses direct field access for performance reasons on Android
         return maxAgeSeconds != UNLIMITED_AGE &&
-                (lastRefreshTimestampSeconds + (maxAgeSeconds/(halfTime ? 2 : 1))) < getCurrentTimestampSeconds();
+                (lastRefreshTimestampSeconds + (maxAgeSeconds / (halfTime ? 2 : 1))) < getCurrentTimestampSeconds();
     }
 
     public long getSecondsUntilExpiration() {
@@ -72,12 +73,10 @@ public class ExpirationDetails {
     }
 
     protected long getCurrentTimestampSeconds() {
-        return new Date().getTime()/1000;
+        return new Date().getTime() / 1000;
     }
 
-    // Performance optimization on Android
-    private static  String simpleName = ExpirationDetails.class.getSimpleName();
-	@Override
+    @Override
     public String toString() {
         return "(" + simpleName + ")" + " MAX AGE: " + maxAgeSeconds;
     }

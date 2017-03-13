@@ -31,6 +31,10 @@ public class USNRootDeviceHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
+    public String getString() {
+        return getValue().toString() + ROOT_DEVICE_SUFFIX;
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         if (!s.startsWith(UDN.PREFIX) || !s.endsWith(ROOT_DEVICE_SUFFIX)) {
             throw new InvalidHeaderException(
@@ -41,10 +45,6 @@ public class USNRootDeviceHeader extends UpnpHeader<UDN> {
         }
         UDN udn = new UDN(s.substring(UDN.PREFIX.length(), s.length() - ROOT_DEVICE_SUFFIX.length()));
         setValue(udn);
-    }
-
-    public String getString() {
-        return getValue().toString() + ROOT_DEVICE_SUFFIX;
     }
 
 }

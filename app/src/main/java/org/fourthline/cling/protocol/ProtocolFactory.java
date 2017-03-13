@@ -17,12 +17,12 @@ package org.fourthline.cling.protocol;
 
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.gena.LocalGENASubscription;
 import org.fourthline.cling.model.gena.RemoteGENASubscription;
 import org.fourthline.cling.model.message.IncomingDatagramMessage;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.protocol.async.SendingNotificationAlive;
 import org.fourthline.cling.protocol.async.SendingNotificationByebye;
 import org.fourthline.cling.protocol.async.SendingSearch;
@@ -44,7 +44,7 @@ import java.net.URL;
  * <p>
  * An implementation has to be thread-safe.
  * </p>
- * 
+ *
  * @author Christian Bauer
  */
 public interface ProtocolFactory {
@@ -58,7 +58,7 @@ public interface ProtocolFactory {
      *
      * @param message The incoming message, either {@link org.fourthline.cling.model.message.UpnpRequest} or
      *                {@link org.fourthline.cling.model.message.UpnpResponse}.
-     * @return        The appropriate protocol that handles the messages or <code>null</code> if the message should be dropped.
+     * @return The appropriate protocol that handles the messages or <code>null</code> if the message should be dropped.
      * @throws ProtocolCreationException If no protocol could be found for the message.
      */
     public ReceivingAsync createReceivingAsync(IncomingDatagramMessage message) throws ProtocolCreationException;
@@ -72,7 +72,7 @@ public interface ProtocolFactory {
      *
      * @param requestMessage The incoming message, examime {@link org.fourthline.cling.model.message.UpnpRequest.Method}
      *                       to determine the protocol.
-     * @return        The appropriate protocol that handles the messages.
+     * @return The appropriate protocol that handles the messages.
      * @throws ProtocolCreationException If no protocol could be found for the message.
      */
     public ReceivingSync createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException;

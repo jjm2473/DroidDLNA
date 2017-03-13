@@ -30,6 +30,10 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
         setValue(tokens);
     }
 
+    public String getString() {
+        return getValue().getHttpToken();
+    }
+
     public void setString(String s) throws InvalidHeaderException {
         // TODO: This parsing is not as robust as I'd like, probably should use regexs instead
 
@@ -54,8 +58,8 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
         try {
 
             int numberOfSpaces = 0;
-            for( int i = 0; i < s.length(); i++ ) {
-                if( s.charAt(i) == ' ' ) numberOfSpaces++;
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == ' ') numberOfSpaces++;
             }
 
             String[] osNameVersion;
@@ -72,7 +76,7 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
 
                 // Some guys think that whitespace in token names is OK... it's not ... but let's try...
                 String beforeUpnpToken = s.substring(0, s.indexOf("UPnP/1.")).trim();
-                String afterUpnpToken = s.substring(s.indexOf("UPnP/1.")+8).trim(); // Assumes minor version is 0-9!
+                String afterUpnpToken = s.substring(s.indexOf("UPnP/1.") + 8).trim(); // Assumes minor version is 0-9!
                 osNameVersion = beforeUpnpToken.split("/");
                 productNameVersion = afterUpnpToken.split("/");
 
@@ -117,9 +121,5 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
         }
 
         setValue(serverClientTokens);
-    }
-
-    public String getString() {
-        return getValue().getHttpToken();
     }
 }

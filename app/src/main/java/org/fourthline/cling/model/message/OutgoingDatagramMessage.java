@@ -48,7 +48,7 @@ public abstract class OutgoingDatagramMessage<O extends UpnpOperation> extends U
     public int getDestinationPort() {
         return destinationPort;
     }
-    
+
     @Override
     public UpnpHeaders getHeaders() {
         return this.headers;

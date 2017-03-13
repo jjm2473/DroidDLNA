@@ -58,7 +58,7 @@ public class AudioBook extends AudioItem {
         if (date != null)
             setDate(date);
     }
-    
+
     public StorageMedium getStorageMedium() {
         return getFirstPropertyValue(UPNP.STORAGE_MEDIUM.class);
     }
