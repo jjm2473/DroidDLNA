@@ -98,7 +98,7 @@ public class ZxtMediaRenderer {
                 ) {
                     @Override
                     protected AVTransportService createServiceInstance() throws Exception {
-                        return new AVTransportService(avTransportLastChange, mediaPlayers);
+                        return new AVTransportService(avTransportLastChange, mContext, mediaPlayers);
                     }
                 };
         avTransportService.setManager(avTransport);

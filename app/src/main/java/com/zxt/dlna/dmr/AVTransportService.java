@@ -1,5 +1,6 @@
 package com.zxt.dlna.dmr;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.zxt.dlna.util.Utils;
@@ -19,26 +20,29 @@ import org.fourthline.cling.support.model.StorageMedium;
 import org.fourthline.cling.support.model.TransportAction;
 import org.fourthline.cling.support.model.TransportInfo;
 import org.fourthline.cling.support.model.TransportSettings;
-import org.seamless.http.HttpFetch;
-import org.seamless.util.URIUtil;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * @author offbye
  */
 public class AVTransportService extends AbstractAVTransportService {
 
-    final private static Logger log = Logger.getLogger(AVTransportService.class.getName());
-
     private static final String TAG = "GstAVTransportService";
 
     final private Map<UnsignedIntegerFourBytes, ZxtMediaPlayer> players;
 
-    protected AVTransportService(LastChange lastChange, Map<UnsignedIntegerFourBytes, ZxtMediaPlayer> players) {
+    private Context mContext;
+
+    protected AVTransportService(LastChange lastChange, Context context, Map<UnsignedIntegerFourBytes, ZxtMediaPlayer> players) {
         super(lastChange);
+        this.mContext = context;
         this.players = players;
     }
 
@@ -54,11 +58,57 @@ public class AVTransportService extends AbstractAVTransportService {
         return player;
     }
 
+    private void play(UnsignedIntegerFourBytes instanceId, URI uri, String metaData) throws AVTransportException {
+        String type = MediaType.UNKNOWN;
+        String name = null;
+        if(metaData != null) {
+            try {
+                MetaData data = MetaData.parse(metaData);
+                if(data.type != null){
+                    type = data.type;
+                }
+                if(data.name != null){
+                    name = data.name;
+                }
+            } catch (SAXException e) {
+                Log.e(TAG, "Parse meta data", e);
+            }
+        }
+
+        if(MediaType.UNKNOWN.equals(type)) {
+            switch (uri.getScheme()) {
+                case "http":
+                case "https":
+                    try {
+                        type = getTypeOfHttpHead(uri);
+                    } catch (Exception e) {
+                        Log.e(TAG, "HEAD HTTP(s) " + uri.toString(), e);
+                    }
+                    if (!MediaType.UNKNOWN.equals(type)) {
+                        break;
+                    }
+                case "file":
+                    type = MediaType.fromUriPath(uri);
+                    break;
+                default:
+                    type = MediaType.VIDEO;
+                    break;
+            }
+        }
+
+        if(name == null){
+            name = uri.toString();
+        }
+
+        Log.i(TAG, type + " : " + name);
+        getInstance(instanceId).setURI(uri, type, name, metaData);
+    }
+
     @Override
     public void setAVTransportURI(UnsignedIntegerFourBytes instanceId,
                                   String currentURI,
                                   String currentURIMetaData) throws AVTransportException {
-        Log.d(TAG, currentURI + "---" + currentURIMetaData);
+        Log.d(TAG, currentURI + " --- " + currentURIMetaData);
         URI uri;
         try {
             uri = new URI(currentURI);
@@ -68,38 +118,11 @@ public class AVTransportService extends AbstractAVTransportService {
             );
         }
 
-        if (currentURI.startsWith("http:")) {
-            try {
-                HttpFetch.validate(URIUtil.toURL(uri));
-            } catch (Exception ex) {
-                throw new AVTransportException(
-                        AVTransportErrorCode.RESOURCE_NOT_FOUND, ex.getMessage()
-                );
-            }
-        } else if (!currentURI.startsWith("file:")) {
-            throw new AVTransportException(
-                    ErrorCode.INVALID_ARGS, "Only HTTP and file: resource identifiers are supported"
-            );
-        }
-
-        // TODO: Check mime type of resource against supported types
-        // TODO: DIDL fragment parsing and handling of currentURIMetaData
-        String type = "image";
-        String name = "unknow";
-        if(currentURIMetaData != null) {
-            if (currentURIMetaData.contains("object.item.videoItem")) {
-                type = "video";
-            } else if (currentURIMetaData.contains("object.item.imageItem")) {
-                type = "image";
-            } else if (currentURIMetaData.contains("object.item.audioItem")) {
-                type = "audio";
-            }
-            name = currentURIMetaData.substring(currentURIMetaData.indexOf("<dc:title>") + 10,
-                    currentURIMetaData.indexOf("</dc:title>"));
-            Log.d(TAG, name);
-        }
-
-        getInstance(instanceId).setURI(uri, type, name, currentURIMetaData);
+        play(instanceId, uri, currentURIMetaData);
+//        if(uri != null){
+//            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri.toString()));
+//            this.mContext.startActivity(intent);
+//        }
     }
 
     @Override
@@ -147,7 +170,7 @@ public class AVTransportService extends AbstractAVTransportService {
     @Override
     public void record(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         // Not implemented
-        log.info("### TODO: Not implemented: Record");
+        Log.i(TAG, "### TODO: Not implemented: Record");
     }
 
     @Override
@@ -185,33 +208,33 @@ public class AVTransportService extends AbstractAVTransportService {
     @Override
     public void next(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         // Not implemented
-        log.info("### TODO: Not implemented: Next");
+        Log.i(TAG, "### TODO: Not implemented: Next");
     }
 
     @Override
     public void previous(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         // Not implemented
-        log.info("### TODO: Not implemented: Previous");
+        Log.i(TAG, "### TODO: Not implemented: Previous");
     }
 
     @Override
     public void setNextAVTransportURI(UnsignedIntegerFourBytes instanceId,
                                       String nextURI,
                                       String nextURIMetaData) throws AVTransportException {
-        log.info("### TODO: Not implemented: SetNextAVTransportURI");
+        Log.i(TAG, "### TODO: Not implemented: SetNextAVTransportURI");
         // Not implemented
     }
 
     @Override
     public void setPlayMode(UnsignedIntegerFourBytes instanceId, String newPlayMode) throws AVTransportException {
         // Not implemented
-        log.info("### TODO: Not implemented: SetPlayMode");
+        Log.i(TAG, "### TODO: Not implemented: SetPlayMode");
     }
 
     @Override
     public void setRecordQualityMode(UnsignedIntegerFourBytes instanceId, String newRecordQualityMode) throws AVTransportException {
         // Not implemented
-        log.info("### TODO: Not implemented: SetRecordQualityMode");
+        Log.i(TAG, "### TODO: Not implemented: SetRecordQualityMode");
     }
 
     @Override
@@ -228,5 +251,19 @@ public class AVTransportService extends AbstractAVTransportService {
             i++;
         }
         return ids;
+    }
+
+    private static String getTypeOfHttpHead(URI uri) throws IOException {
+        URL url = uri.toURL();
+        URLConnection urlConnection = url.openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+        httpURLConnection.setRequestMethod("HEAD");
+        httpURLConnection.setInstanceFollowRedirects(true);
+        httpURLConnection.setConnectTimeout(2000);
+        httpURLConnection.setDoInput(false);
+        httpURLConnection.setDoOutput(false);
+        httpURLConnection.connect();
+        String contentType = httpURLConnection.getHeaderField("Content-Type");
+        return MediaType.fromContentType(contentType);
     }
 }
