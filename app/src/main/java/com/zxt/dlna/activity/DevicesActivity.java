@@ -30,9 +30,6 @@ import com.zxt.dlna.R;
 import com.zxt.dlna.application.BaseApplication;
 import com.zxt.dlna.dmp.DeviceItem;
 import com.zxt.dlna.dmr.ZxtMediaRenderer;
-import com.zxt.dlna.dms.ContentNode;
-import com.zxt.dlna.dms.ContentTree;
-import com.zxt.dlna.dms.MediaServer;
 import com.zxt.dlna.util.FileUtil;
 import com.zxt.dlna.util.FixedAndroidHandler;
 import com.zxt.dlna.util.ImageUtil;
@@ -73,22 +70,16 @@ public class DevicesActivity extends Activity {
     private static boolean serverPrepared = false;
 
     private String fileName;
-    private ListView mDevLv;
     private ListView mDmrLv;
 
     private ArrayList<DeviceItem> mDevList = new ArrayList<>();
     private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
-    private int mImageContaierId = Integer.valueOf(ContentTree.IMAGE_ID) + 1;
     private long exitTime = 0;
     private DevAdapter mDevAdapter;
     private DevAdapter mDmrDevAdapter;
     private AndroidUpnpService upnpService;
     private DeviceListRegistryListener deviceListRegistryListener;
 
-    private MediaServer mediaServer;
-    private String[] imageThumbColumns = new String[]{
-            MediaStore.Images.Thumbnails.IMAGE_ID,
-            MediaStore.Images.Thumbnails.DATA};
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -99,31 +90,6 @@ public class DevicesActivity extends Activity {
             upnpService = (AndroidUpnpService) service;
             BaseApplication.upnpService = upnpService;
             Log.v(LOGTAG, "Connected to UPnP Service");
-
-            if (mediaServer == null && SettingActivity.getDmsOn(DevicesActivity.this)) {
-                try {
-                    mediaServer = new MediaServer(DevicesActivity.this);
-                    upnpService.getRegistry().addDevice(mediaServer.getDevice());
-                    DeviceItem localDevItem = new DeviceItem(mediaServer.getDevice());
-
-                    deviceListRegistryListener.deviceAdded(localDevItem);
-                    new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            prepareMediaServer();
-                        }
-                    }).start();
-
-                } catch (Exception ex) {
-                    // TODO: handle exception
-                    log.log(Level.SEVERE, "Creating demo device failed", ex);
-                    Toast.makeText(DevicesActivity.this,
-                            R.string.create_demo_failed, Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
-            }
 
             if (SettingActivity.getRenderOn(DevicesActivity.this)) {
                 ZxtMediaRenderer mediaRenderer = new ZxtMediaRenderer(1, DevicesActivity.this);
@@ -181,25 +147,6 @@ public class DevicesActivity extends Activity {
     }
 
     private void init() {
-
-        mDevLv = (ListView) findViewById(R.id.media_server_list);
-
-        if (null != mDevList && mDevList.size() > 0) {
-            BaseApplication.deviceItem = mDevList.get(0);
-        }
-
-        mDevAdapter = new DevAdapter(DevicesActivity.this, 0, mDevList);
-        mDevLv.setAdapter(mDevAdapter);
-        mDevLv.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                if (null != mDevList && mDevList.size() > 0) {
-                    BaseApplication.deviceItem = mDevList.get(arg2);
-                    startActivity(new Intent(DevicesActivity.this, ContentActivity.class));
-                    // mDevAdapter.notifyDataSetChanged();
-                }
-            }
-        });
 
         mDmrLv = (ListView) findViewById(R.id.renderer_list);
 
@@ -288,306 +235,6 @@ public class DevicesActivity extends Activity {
         Toast.makeText(this, R.string.searching_lan, Toast.LENGTH_SHORT).show();
         upnpService.getRegistry().removeAllRemoteDevices();
         upnpService.getControlPoint().search();
-    }
-
-    private void prepareMediaServer() {
-
-        if (serverPrepared)
-            return;
-        ContentNode rootNode = ContentTree.getRootNode();
-        // Video Container
-        Container videoContainer = new Container();
-        videoContainer.setClazz(new DIDLObject.Class("object.container"));
-        videoContainer.setId(ContentTree.VIDEO_ID);
-        videoContainer.setParentID(ContentTree.ROOT_ID);
-        videoContainer.setTitle("Videos");
-        videoContainer.setRestricted(true);
-        videoContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-        videoContainer.setChildCount(0);
-
-        rootNode.getContainer().addContainer(videoContainer);
-        rootNode.getContainer().setChildCount(rootNode.getContainer().getChildCount() + 1);
-        ContentTree.addNode(ContentTree.VIDEO_ID, new ContentNode(ContentTree.VIDEO_ID, videoContainer));
-
-        Cursor cursor;
-        String[] videoColumns = {MediaStore.Video.Media._ID,
-                MediaStore.Video.Media.TITLE, MediaStore.Video.Media.DATA,
-                MediaStore.Video.Media.ARTIST,
-                MediaStore.Video.Media.MIME_TYPE, MediaStore.Video.Media.SIZE,
-                MediaStore.Video.Media.DURATION,
-                MediaStore.Video.Media.RESOLUTION,
-                MediaStore.Video.Media.DESCRIPTION};
-        cursor = managedQuery(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,videoColumns, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                String id = ContentTree.VIDEO_PREFIX + cursor.getInt(cursor.getColumnIndex(MediaStore.Video.Media._ID));
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
-                String creator = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.ARTIST));
-                String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
-
-                String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
-                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
-                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));
-
-                String resolution = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.RESOLUTION));
-                String description = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DESCRIPTION));
-
-                Res res = new Res(new MimeType(mimeType.substring(0,
-                        mimeType.indexOf('/')), mimeType.substring(mimeType
-                        .indexOf('/') + 1)), size, "http://"
-                        + mediaServer.getAddress() + "/" + id);
-
-                res.setDuration(duration / (1000 * 60 * 60) + ":"
-                        + (duration % (1000 * 60 * 60)) / (1000 * 60) + ":"
-                        + (duration % (1000 * 60)) / 1000);
-                res.setResolution(resolution);
-
-                VideoItem videoItem = new VideoItem(id, ContentTree.VIDEO_ID, title, creator, res);
-
-                // add video thumb Property
-                String videoSavePath = ImageUtil.getSaveVideoFilePath(filePath, id);
-
-                DIDLObject.Property albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(
-                        URI.create("http://" + mediaServer.getAddress()
-                                + videoSavePath));
-                Property[] properties = {albumArtURI};
-                videoItem.addProperties(properties);
-                videoItem.setDescription(description);
-                videoContainer.addItem(videoItem);
-                videoContainer.setChildCount(videoContainer.getChildCount() + 1);
-                ContentTree.addNode(id,new ContentNode(id, videoItem, filePath));
-
-                // Log.v(LOGTAG, "added video item " + title + "from " +
-                // filePath);
-            } while (cursor.moveToNext());
-        }
-
-        // Audio Container
-        Container audioContainer = new Container(ContentTree.AUDIO_ID,
-                ContentTree.ROOT_ID, "Audios", "GNaP MediaServer",
-                new DIDLObject.Class("object.container"), 0);
-        audioContainer.setRestricted(true);
-        audioContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-        rootNode.getContainer().addContainer(audioContainer);
-        rootNode.getContainer().setChildCount(rootNode.getContainer().getChildCount() + 1);
-        ContentTree.addNode(ContentTree.AUDIO_ID, new ContentNode(ContentTree.AUDIO_ID, audioContainer));
-
-        String[] audioColumns = {MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.MIME_TYPE, MediaStore.Audio.Media.SIZE,
-                MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM};
-        cursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, audioColumns, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                String id = ContentTree.AUDIO_PREFIX
-                        + cursor.getInt(cursor
-                        .getColumnIndex(MediaStore.Audio.Media._ID));
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
-                String creator = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
-                String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-                String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE));
-
-                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));
-                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
-                String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
-                Res res = null;
-
-                try {
-                    res = new Res(new MimeType(mimeType.substring(0,
-                            mimeType.indexOf('/')), mimeType.substring(mimeType
-                            .indexOf('/') + 1)), size, "http://"
-                            + mediaServer.getAddress() + "/" + id);
-                } catch (Exception e) {
-                    Log.w(LOGTAG, "Exception1", e);
-                }
-
-                if (null == res) {
-                    break;
-                }
-                res.setDuration(duration / (1000 * 60 * 60) + ":"
-                        + (duration % (1000 * 60 * 60)) / (1000 * 60) + ":"
-                        + (duration % (1000 * 60)) / 1000);
-
-                // Music Track must have `artist' with role field, or
-                // DIDLParser().generate(didl) will throw nullpointException
-                MusicTrack musicTrack = new MusicTrack(id,
-                        ContentTree.AUDIO_ID, title, creator, album,
-                        new PersonWithRole(creator, "Performer"), res);
-                audioContainer.addItem(musicTrack);
-                audioContainer.setChildCount(audioContainer.getChildCount() + 1);
-                ContentTree.addNode(id, new ContentNode(id, musicTrack,filePath));
-
-                // Log.v(LOGTAG, "added audio item " + title + "from " +
-                // filePath);
-            } while (cursor.moveToNext());
-        }
-
-        // get image thumbnail
-        Cursor thumbCursor = this.managedQuery(
-                MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-                imageThumbColumns, null, null, null);
-        HashMap<Integer, String> imageThumbs = new HashMap<Integer, String>();
-        if (null != thumbCursor && thumbCursor.moveToFirst()) {
-            do {
-                imageThumbs.put(thumbCursor.getInt(0), thumbCursor.getString(1));
-            } while (thumbCursor.moveToNext());
-
-            if (Integer.parseInt(Build.VERSION.SDK) < 14) {
-                thumbCursor.close();
-            }
-        }
-
-        // Image Container
-        Container imageContainer = new Container(ContentTree.IMAGE_ID,
-                ContentTree.ROOT_ID, "Images", "GNaP MediaServer",
-                new DIDLObject.Class("object.container"), 0);
-        imageContainer.setRestricted(true);
-        imageContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-        rootNode.getContainer().addContainer(imageContainer);
-        rootNode.getContainer().setChildCount(rootNode.getContainer().getChildCount() + 1);
-        ContentTree.addNode(ContentTree.IMAGE_ID, new ContentNode(ContentTree.IMAGE_ID, imageContainer));
-
-        String[] imageColumns = {MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.TITLE, MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.DESCRIPTION};
-        cursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                imageColumns, null, null, MediaStore.Images.Media.DATA);
-
-        Container typeContainer = null;
-        if (cursor.moveToFirst()) {
-            do {
-                int imageId = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID));
-
-                String id = ContentTree.IMAGE_PREFIX
-                        + cursor.getInt(cursor
-                        .getColumnIndex(MediaStore.Images.Media._ID));
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE));
-
-                String creator = "unkown";
-                String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                String mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE));
-
-                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE));
-                String description = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DESCRIPTION));
-
-                String url = "http://" + mediaServer.getAddress() + "/" + filePath;
-
-                Res res = new Res(new MimeType(mimeType.substring(0,
-                        mimeType.indexOf('/')), mimeType.substring(mimeType
-                        .indexOf('/') + 1)), size, url);
-
-                Container tempTypeContainer = null;
-                if (null != typeContainer) {
-                    tempTypeContainer = typeContainer;
-                }
-                if (TextUtils.isEmpty(fileName)) {
-                    fileName = FileUtil.getFoldName(filePath);
-                    typeContainer = new Container(
-                            String.valueOf(mImageContaierId),
-                            ContentTree.IMAGE_ID, fileName, "GNaP MediaServer",
-                            new DIDLObject.Class("object.container"), 0);
-                    typeContainer.setRestricted(true);
-                    typeContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-
-                    tempTypeContainer = typeContainer;
-                    imageContainer.addContainer(tempTypeContainer);
-                    imageContainer.setChildCount(imageContainer.getChildCount() + 1);
-
-                    ContentTree.addNode(String.valueOf(mImageContaierId),
-                            new ContentNode(String.valueOf(mImageContaierId),
-                                    tempTypeContainer));
-
-                    ImageItem imageItem = new ImageItem(id, String.valueOf(mImageContaierId), title, creator, res);
-
-                    if (imageThumbs.containsKey(imageId)) {
-                        String thumb = imageThumbs.get(imageId);
-                        Log.i(LOGTAG, " image thumb:" + thumb);
-                        // set albumArt Property
-                        DIDLObject.Property albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(
-                                URI.create("http://" + mediaServer.getAddress() + thumb));
-                        Property[] properties = {albumArtURI};
-                        imageItem.addProperties(properties);
-                    }
-                    imageItem.setDescription(description);
-
-                    tempTypeContainer.addItem(imageItem);
-                    tempTypeContainer.setChildCount(tempTypeContainer.getChildCount() + 1);
-                    ContentTree.addNode(id, new ContentNode(id, imageItem, filePath));
-                } else {
-                    if (!fileName.equalsIgnoreCase(FileUtil.getFoldName(filePath))) {
-                        mImageContaierId++;
-                        fileName = FileUtil.getFoldName(filePath);
-
-                        typeContainer = new Container(
-                                String.valueOf(mImageContaierId),
-                                ContentTree.IMAGE_ID, fileName,
-                                "GNaP MediaServer", new DIDLObject.Class(
-                                "object.container"), 0);
-                        typeContainer.setRestricted(true);
-                        typeContainer.setWriteStatus(WriteStatus.NOT_WRITABLE);
-
-                        tempTypeContainer = typeContainer;
-                        imageContainer.addContainer(tempTypeContainer);
-                        imageContainer.setChildCount(imageContainer.getChildCount() + 1);
-
-                        ContentTree.addNode(
-                                String.valueOf(mImageContaierId),
-                                new ContentNode(String
-                                        .valueOf(mImageContaierId),
-                                        tempTypeContainer));
-
-                        ImageItem imageItem = new ImageItem(id, String.valueOf(mImageContaierId), title, creator, res);
-
-                        if (imageThumbs.containsKey(imageId)) {
-                            String thumb = imageThumbs.get(imageId);
-                            Log.i(LOGTAG, " image thumb:" + thumb);
-                            // set albumArt Property
-                            DIDLObject.Property albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(
-                                    URI.create("http://"
-                                            + mediaServer.getAddress() + thumb));
-                            Property[] properties = {albumArtURI};
-                            imageItem.addProperties(properties);
-                        }
-                        imageItem.setDescription(description);
-                        tempTypeContainer.addItem(imageItem);
-                        tempTypeContainer.setChildCount(typeContainer.getChildCount() + 1);
-                        ContentTree.addNode(id, new ContentNode(id, imageItem, filePath));
-                    } else {
-                        ImageItem imageItem = new ImageItem(id,
-                                String.valueOf(mImageContaierId), title,
-                                creator, res);
-
-                        if (imageThumbs.containsKey(imageId)) {
-                            String thumb = imageThumbs.get(imageId);
-                            Log.i(LOGTAG, " image thumb:" + thumb);
-                            // set albumArt Property
-                            DIDLObject.Property albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(
-                                    URI.create("http://"
-                                            + mediaServer.getAddress() + thumb));
-                            Property[] properties = {albumArtURI};
-                            imageItem.addProperties(properties);
-                        }
-                        imageItem.setDescription(description);
-                        tempTypeContainer.addItem(imageItem);
-                        tempTypeContainer.setChildCount(typeContainer.getChildCount() + 1);
-                        ContentTree.addNode(id, new ContentNode(id, imageItem, filePath));
-                    }
-                }
-
-                // imageContainer.addItem(imageItem);
-                // imageContainer
-                // .setChildCount(imageContainer.getChildCount() + 1);
-                // ContentTree.addNode(id,
-                // new ContentNode(id, imageItem, filePath));
-
-                Log.v(LOGTAG, "added image item " + title + "from " + filePath);
-            } while (cursor.moveToNext());
-        }
-        serverPrepared = true;
     }
 
     public class DeviceListRegistryListener extends DefaultRegistryListener {

@@ -85,16 +85,19 @@ public class AVTransportService extends AbstractAVTransportService {
         // TODO: Check mime type of resource against supported types
         // TODO: DIDL fragment parsing and handling of currentURIMetaData
         String type = "image";
-        if (currentURIMetaData.contains("object.item.videoItem")) {
-            type = "video";
-        } else if (currentURIMetaData.contains("object.item.imageItem")) {
-            type = "image";
-        } else if (currentURIMetaData.contains("object.item.audioItem")) {
-            type = "audio";
+        String name = "unknow";
+        if(currentURIMetaData != null) {
+            if (currentURIMetaData.contains("object.item.videoItem")) {
+                type = "video";
+            } else if (currentURIMetaData.contains("object.item.imageItem")) {
+                type = "image";
+            } else if (currentURIMetaData.contains("object.item.audioItem")) {
+                type = "audio";
+            }
+            name = currentURIMetaData.substring(currentURIMetaData.indexOf("<dc:title>") + 10,
+                    currentURIMetaData.indexOf("</dc:title>"));
+            Log.d(TAG, name);
         }
-        String name = currentURIMetaData.substring(currentURIMetaData.indexOf("<dc:title>") + 10,
-                currentURIMetaData.indexOf("</dc:title>"));
-        Log.d(TAG, name);
 
         getInstance(instanceId).setURI(uri, type, name, currentURIMetaData);
     }

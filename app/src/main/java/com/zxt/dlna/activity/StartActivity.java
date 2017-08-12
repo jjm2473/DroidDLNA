@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.zxt.dlna.R;
 import com.zxt.dlna.application.BaseApplication;
-import com.zxt.dlna.dms.ContentTree;
 import com.zxt.dlna.util.FileUtil;
 import com.zxt.dlna.util.ImageUtil;
 
@@ -122,7 +121,7 @@ public class StartActivity extends Activity {
     }
 
     private void jumpToMain() {
-        Intent intent = new Intent(StartActivity.this, DevicesActivity.class);
+        Intent intent = new Intent(StartActivity.this, IndexActivity.class);
         startActivity(intent);
         this.finish();
     }
