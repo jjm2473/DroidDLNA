@@ -32,18 +32,24 @@
         android:textColor="#ffffffff"
         android:textSize="12.0sp"
         android:visibility="invisible" />
-
+
+
     <TextView
         android:id="@+id/video_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp"
+        android:layout_toLeftOf="@+id/topBar_list_switch"
+        android:layout_toRightOf="@+id/topBar_back"
         android:ellipsize="marquee"
         android:gravity="center"
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:textSize="16sp"
-        android:textColor="#ffdadada" />
+        android:maxLines="1"
+        android:textColor="#ffdadada"
+        android:textSize="16sp" />
 
 </RelativeLayout>

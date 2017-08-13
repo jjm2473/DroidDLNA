@@ -70,6 +70,8 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
     private AudioManager mAudioManager;
     private TextView mTextViewTime;
 
+    private View mProgressLayout;
+
     private SeekBar mSeekBarProgress;
 
     private TextView mTextViewLength;
@@ -140,9 +142,11 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
                     }
 
                     mTextViewLength.setText(Utils.secToTime(duration / 1000));
-                    mSeekBarProgress.setMax(duration);
                     mTextViewTime.setText(Utils.secToTime(position / 1000));
-                    mSeekBarProgress.setProgress(position);
+                    if(duration > 0) {
+                        mSeekBarProgress.setMax(duration);
+                        mSeekBarProgress.setProgress(position);
+                    }
                     mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_PROGRESS_UPDATE, 500);
 
                     break;
@@ -236,6 +240,8 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
         mTextProgress = (TextView) findViewById(R.id.prepare_progress);
         mTextInfo = (TextView) findViewById(R.id.info);
 
+        mProgressLayout = findViewById(R.id.progress_layout);
+
         mSeekBarProgress = (SeekBar) findViewById(R.id.seekBar_progress);
         mSeekBarProgress.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -294,12 +300,31 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        playURI = intent.getStringExtra("playURI");
-        if (!TextUtils.isEmpty(playURI)) {
-            setUri(playURI);
+    protected void onNewIntent(final Intent intent) {
+        Log.i(LOGTAG, "onNewIntent");
+        final String uri = intent.getStringExtra("playURI");
+        if (!TextUtils.isEmpty(uri)) {
+            mMediaPlayer.pause();
+            mProgressLayout.setVisibility(View.VISIBLE);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(!GPlayer.this.isFinishing() && mMediaPlayer != null) {
+                        playURI = uri;
+                        Log.i(LOGTAG, "load new uri");
+                        try {
+                            mMediaPlayer.reset();
+                            mMediaPlayer.setDataSource(playURI);
+                            mMediaPlayer.prepareAsync();
+                            setTitle(intent);
+                        } catch (IOException e) {
+                            Log.e(LOGTAG, "", e);
+                            mVideoTitle.setText("IOException");
+                        }
+                    }
+                }
+            }, 500);
         }
-        setTitle(intent);
         super.onNewIntent(intent);
     }
 
@@ -445,11 +470,9 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
         Log.v(LOGTAG, "surfaceCreated Called");
         mMediaPlayer.setDisplay(holder);
         try {
-            mMediaPlayer.prepare();
+            mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e) {
             Log.v(LOGTAG, "IllegalStateException", e);
-        } catch (IOException e) {
-            Log.v(LOGTAG, "IOException", e);
         }
     }
 
@@ -512,6 +535,7 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
             Log.v(LOGTAG, "Media Info, Media Info Bad Interleaving " + extra);
         } else if (whatInfo == MediaPlayer.MEDIA_INFO_NOT_SEEKABLE) {
             Log.v(LOGTAG, "Media Info, Media Info Not Seekable " + extra);
+            mProgressLayout.setVisibility(View.GONE);
         } else if (whatInfo == MediaPlayer.MEDIA_INFO_UNKNOWN) {
             Log.v(LOGTAG, "Media Info, Media Info Unknown " + extra);
         } else if (whatInfo == MediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING) {
@@ -534,11 +558,13 @@ public class GPlayer extends Activity implements OnCompletionListener, OnErrorLi
 
     @Override
     public boolean onError(MediaPlayer mp, int whatError, int extra) {
-        Log.d(LOGTAG, "onError Called" + whatError + "  " + extra);
+        Log.d(LOGTAG, "onError Called " + whatError + "  " + extra);
         if (whatError == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-            Log.v(LOGTAG, "Media Error, Server Died " + extra);
+            Log.e(LOGTAG, "Media Error, Server Died " + extra);
         } else if (whatError == MediaPlayer.MEDIA_ERROR_UNKNOWN) {
-            Log.v(LOGTAG, "Media Error, Error Unknown " + extra);
+            Log.e(LOGTAG, "Media Error, Error Unknown " + extra);
+        } else if (whatError == -38) {
+            return true;
         }
 
         return false;
