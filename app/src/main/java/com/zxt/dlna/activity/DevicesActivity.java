@@ -65,17 +65,13 @@ public class DevicesActivity extends Activity {
 
     public static final int DMR_GET_NO = 0;
     public static final int DMR_GET_SUC = 1;
-    private static final Logger log = Logger.getLogger(DevicesActivity.class.getName());
     private final static String LOGTAG = "DevicesActivity";
     private static boolean serverPrepared = false;
 
-    private String fileName;
     private ListView mDmrLv;
 
-    private ArrayList<DeviceItem> mDevList = new ArrayList<>();
     private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
     private long exitTime = 0;
-    private DevAdapter mDevAdapter;
     private DevAdapter mDmrDevAdapter;
     private AndroidUpnpService upnpService;
     private DeviceListRegistryListener deviceListRegistryListener;
@@ -84,7 +80,6 @@ public class DevicesActivity extends Activity {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
 
-            mDevList.clear();
             mDmrList.clear();
 
             upnpService = (AndroidUpnpService) service;
@@ -97,26 +92,12 @@ public class DevicesActivity extends Activity {
                 deviceListRegistryListener.dmrAdded(new DeviceItem(mediaRenderer.getDevice()));
             }
 
-            // xgf
-            for (Device device : upnpService.getRegistry().getDevices()) {
-                if (device.getType().getNamespace().equals("schemas-upnp-org") && device.getType().getType().equals("MediaServer")) {
-                    final DeviceItem display = new DeviceItem(device, device
-                            .getDetails().getFriendlyName(),
-                            device.getDisplayString(), "(REMOTE) "
-                            + device.getType().getDisplayString());
-                    deviceListRegistryListener.deviceAdded(display);
-                }
-            }
-
             // Getting ready for future device advertisements
             upnpService.getRegistry().addListener(deviceListRegistryListener);
             // Refresh device list
             upnpService.getControlPoint().search();
 
             // select first device by default
-            if (null != mDevList && mDevList.size() > 0 && null == BaseApplication.deviceItem) {
-                BaseApplication.deviceItem = mDevList.get(0);
-            }
 
             if (null != mDmrList && mDmrList.size() > 0 && null == BaseApplication.dmrDeviceItem) {
                 BaseApplication.dmrDeviceItem = mDmrList.get(0);
@@ -259,15 +240,6 @@ public class DevicesActivity extends Activity {
             Log.e("DeviceListRegistryListener", "remoteDeviceAdded:" + device.toString() + device.getType().getType());
 
             if (device.getType().getNamespace().equals("schemas-upnp-org")
-                    && device.getType().getType().equals("MediaServer")) {
-                final DeviceItem display = new DeviceItem(device, device
-                        .getDetails().getFriendlyName(),
-                        device.getDisplayString(), "(REMOTE) "
-                        + device.getType().getDisplayString());
-                deviceAdded(display);
-            }
-
-            if (device.getType().getNamespace().equals("schemas-upnp-org")
                     && device.getType().getType().equals("MediaRenderer")) {
                 final DeviceItem dmrDisplay = new DeviceItem(device, device
                         .getDetails().getFriendlyName(),
@@ -279,8 +251,6 @@ public class DevicesActivity extends Activity {
 
         @Override
         public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-            final DeviceItem display = new DeviceItem(device, device.getDisplayString());
-            deviceRemoved(display);
 
             if (device.getType().getNamespace().equals("schemas-upnp-org")
                     && device.getType().getType().equals("MediaRenderer")) {
@@ -298,10 +268,6 @@ public class DevicesActivity extends Activity {
                     "localDeviceAdded:" + device.toString()
                             + device.getType().getType());
 
-            final DeviceItem display = new DeviceItem(device, device
-                    .getDetails().getFriendlyName(), device.getDisplayString(),
-                    "(REMOTE) " + device.getType().getDisplayString());
-            deviceAdded(display);
         }
 
         @Override
@@ -309,29 +275,6 @@ public class DevicesActivity extends Activity {
             Log.e("DeviceListRegistryListener",
                     "localDeviceRemoved:" + device.toString()
                             + device.getType().getType());
-
-            final DeviceItem display = new DeviceItem(device, device.getDisplayString());
-            deviceRemoved(display);
-        }
-
-        public void deviceAdded(final DeviceItem di) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if (!mDevList.contains(di)) {
-                        mDevList.add(di);
-                        mDevAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
-
-        public void deviceRemoved(final DeviceItem di) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    mDevList.remove(di);
-                    mDevAdapter.notifyDataSetChanged();
-                }
-            });
         }
 
         public void dmrAdded(final DeviceItem di) {
