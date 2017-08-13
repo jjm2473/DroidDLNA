@@ -254,7 +254,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         mTextInfo = (TextView) findViewById(R.id.info);
 
         mProgressLayout = findViewById(R.id.progress_layout);
-
+        mCanSeek = true;
         mSeekBarProgress = (SeekBar) findViewById(R.id.seekBar_progress);
         mSeekBarProgress.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -320,6 +320,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             mMediaPlayer.pause();
             mProgressLayout.setVisibility(View.VISIBLE);
             mHandler.postDelayed(new Runnable() {
+
                 @Override
                 public void run() {
                     if(!Player.this.isFinishing() && mMediaPlayer != null) {
@@ -328,6 +329,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                         try {
                             mMediaPlayer.reset();
                             mMediaPlayer.setDataSource(playURI);
+                            mCanSeek = true;
                             mMediaPlayer.prepareAsync();
                             setTitle(intent);
                         } catch (IOException e) {
@@ -351,6 +353,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         }
+        updatePausePlay();
         super.onStop();
     }
 
@@ -547,6 +550,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             Log.v(LOGTAG, "Media Info, Media Info Bad Interleaving " + extra);
         } else if (whatInfo == MediaPlayer.MEDIA_INFO_NOT_SEEKABLE) {
             Log.v(LOGTAG, "Media Info, Media Info Not Seekable " + extra);
+            mCanSeek = false;
             mProgressLayout.setVisibility(View.GONE);
         } else if (whatInfo == MediaPlayer.MEDIA_INFO_UNKNOWN) {
             Log.v(LOGTAG, "Media Info, Media Info Unknown " + extra);
@@ -643,9 +647,11 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     @Override
     public void seekTo(int pos) {
-        mMediaPlayer.seekTo(pos);
-        if (null != mMediaListener) {
-            mMediaListener.positionChanged(pos);
+        if(mCanSeek) {
+            mMediaPlayer.seekTo(pos);
+            if (null != mMediaListener) {
+                mMediaListener.positionChanged(pos);
+            }
         }
     }
 
@@ -703,16 +709,18 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 pause();
                 updatePausePlay();
             } else if (str1.equals(Action.SEEK)) {
-                boolean isPaused = false;
-                if (!mMediaPlayer.isPlaying()) {
-                    isPaused = true;
-                }
-                int position = intent.getIntExtra("position", 0);
-                mMediaPlayer.seekTo(position);
-                if (isPaused) {
-                    pause();
-                } else {
-                    start();
+                if(mCanSeek) {
+                    boolean isPaused = false;
+                    if (!mMediaPlayer.isPlaying()) {
+                        isPaused = true;
+                    }
+                    int position = intent.getIntExtra("position", 0);
+                    seekTo(position);
+                    if (isPaused) {
+                        pause();
+                    } else {
+                        start();
+                    }
                 }
 
             } else if (str1.equals(Action.SET_VOLUME)) {
