@@ -79,6 +79,7 @@
     <string name="dms_name">媒体服务器名称</string>
     <string name="dms_name_breif">本地媒体服务器名称，,你可以在其他设备上查找它</string>
     <string name="device_local">DroidDLNA Media Server</string>
+    <string name="dlna_player">DLNA播放器</string>
     <string name="player">媒体播放器</string>
     <string name="player_on">开启本地播放器服务,其他设备可以通过DLNA/Upnp协议推送媒体文件到本机</string>
     <string name="player_off">关闭本地播放器服务,其他设备不可以通过DLNA/Upnp协议推送媒体文件到本机</string>

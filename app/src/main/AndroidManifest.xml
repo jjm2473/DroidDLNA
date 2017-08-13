@@ -51,6 +51,7 @@
         </activity>
         <activity
             android:name="com.zxt.dlna.dmp.GPlayer"
+            android:label="@string/dlna_player"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"

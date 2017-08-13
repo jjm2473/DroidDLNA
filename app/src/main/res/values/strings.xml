@@ -79,7 +79,8 @@
     <string name="dms_name">media server name</string>
     <string name="dms_name_breif">you can find local media server name on other devices</string>
     <string name="device_local">DroidDLNA Media Server</string>
-    <string name="player">media player</string>
+    <string name="dlna_player">DLNA Player</string>
+    <string name="player">Media Player</string>
     <string name="player_on">start local player service， other devices can push media files to local device</string>
     <string name="player_off">stop local player service， other devices can not push media files to local device</string>
     <string name="player_name">player name</string>
