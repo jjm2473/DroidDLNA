@@ -1,6 +1,7 @@
 package com.zxt.dlna.application;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.multidex.MultiDexApplication;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -11,6 +12,7 @@ import com.zxt.dlna.dmp.ContentItem;
 import com.zxt.dlna.dmp.DeviceItem;
 
 import org.fourthline.cling.android.AndroidUpnpService;
+import org.fourthline.cling.android.AndroidUpnpServiceImpl;
 import org.fourthline.cling.support.model.DIDLContent;
 
 import java.net.InetAddress;
@@ -88,5 +90,6 @@ public class BaseApplication extends MultiDexApplication {
         super.onCreate();
         mContext = getApplicationContext();
         initImageLoader(getApplicationContext());
+        this.startService(new Intent(this, AndroidUpnpServiceImpl.class));
     }
 }

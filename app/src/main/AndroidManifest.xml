@@ -28,33 +28,40 @@
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.IndexActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.DevicesActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.ControlActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.SettingActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.dmp.GPlayer"
-            android:label="@string/player"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="com.zxt.dlna.dmp.Player"
+            android:label="@string/player"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
 
             <!-- This filter captures protocols without type info -->

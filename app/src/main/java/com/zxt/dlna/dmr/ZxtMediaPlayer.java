@@ -7,7 +7,7 @@ import android.media.AudioManager;
 import android.util.Log;
 
 import com.zxt.dlna.dmp.GPlayer;
-import com.zxt.dlna.dmp.GPlayer.MediaListener;
+import com.zxt.dlna.dmp.Player.MediaListener;
 import com.zxt.dlna.util.Action;
 
 import org.fourthline.cling.model.ModelUtil;
