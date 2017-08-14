@@ -37,7 +37,7 @@ public class IndexActivity extends TabActivity {
     private void findViews() {
 
         mDeviceRb = (RadioButton) findViewById(R.id.main_tab_devices);
-        mControlRb = (RadioButton) findViewById(R.id.main_tab_control);
+        //mControlRb = (RadioButton) findViewById(R.id.main_tab_control);
         mSettingsRb = (RadioButton) findViewById(R.id.main_tab_settings);
 
         mTabHost = this.getTabHost();
@@ -50,10 +50,10 @@ public class IndexActivity extends TabActivity {
                 .setIndicator(getString(R.string.device)).setContent(intent);
         mTabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, ControlActivity.class);
-        spec = mTabHost.newTabSpec(getString(R.string.control))
-                .setIndicator(getString(R.string.control)).setContent(intent);
-        mTabHost.addTab(spec);
+//        intent = new Intent().setClass(this, ControlActivity.class);
+//        spec = mTabHost.newTabSpec(getString(R.string.control))
+//                .setIndicator(getString(R.string.control)).setContent(intent);
+//        mTabHost.addTab(spec);
 
         intent = new Intent().setClass(this, SettingActivity.class);
         spec = mTabHost.newTabSpec(getString(R.string.setting))
@@ -72,9 +72,9 @@ public class IndexActivity extends TabActivity {
                     case R.id.main_tab_devices:
                         mTabHost.setCurrentTabByTag(getString(R.string.device));
                         break;
-                    case R.id.main_tab_control:
-                        mTabHost.setCurrentTabByTag(getString(R.string.control));
-                        break;
+//                    case R.id.main_tab_control:
+//                        mTabHost.setCurrentTabByTag(getString(R.string.control));
+//                        break;
                     case R.id.main_tab_settings:
                         mTabHost.setCurrentTabByTag(getString(R.string.setting));
                         break;

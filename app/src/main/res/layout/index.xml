@@ -44,12 +44,12 @@
                     android:drawableTop="@drawable/bg_checkbox_icon_menu_0"
                     android:text="@string/device" />
 
-                <RadioButton
-                    android:id="@+id/main_tab_control"
-                    style="@style/MMTabButton"
-                    android:layout_weight="1.0"
-                    android:drawableTop="@drawable/bg_checkbox_icon_menu_2"
-                    android:text="@string/control" />
+                <!--<RadioButton-->
+                    <!--android:id="@+id/main_tab_control"-->
+                    <!--style="@style/MMTabButton"-->
+                    <!--android:layout_weight="1.0"-->
+                    <!--android:drawableTop="@drawable/bg_checkbox_icon_menu_2"-->
+                    <!--android:text="@string/control" />-->
 
                 <RadioButton
                     android:id="@+id/main_tab_settings"

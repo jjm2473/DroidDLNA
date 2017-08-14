@@ -58,6 +58,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     private static final int MEDIA_PLAYER_VIDEO_SIZE_CHANGED = 4007;
     private static final int MEDIA_PLAYER_VOLUME_CHANGED = 4008;
     private static final int MEDIA_PLAYER_HIDDEN_CONTROL = 4009;
+    private static final int CLEAN_BACK_COUNT = 5001;
 
     private MediaListener mMediaListener = null;
     Display currentDisplay;
@@ -165,6 +166,10 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 case MEDIA_PLAYER_HIDDEN_CONTROL: {
                     mLayoutTop.setVisibility(View.GONE);
                     mLayoutBottom.setVisibility(View.GONE);
+                    break;
+                }
+                case CLEAN_BACK_COUNT: {
+                    mBackCount = 0;
                     break;
                 }
                 default:
@@ -371,6 +376,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             } else {
                 mBackCount++;
                 Toast.makeText(this, R.string.player_exit, Toast.LENGTH_SHORT).show();
+                mHandler.sendEmptyMessageDelayed(CLEAN_BACK_COUNT, 1000);
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -382,11 +388,14 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     }
 
     private void exit() {
+        if (null != mMediaListener) {
+            mMediaListener.endOfMedia();
+            mMediaListener = null;
+        }
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-        mMediaListener = null;
         finish();
     }
 
@@ -541,7 +550,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         mHandler.sendEmptyMessage(MEDIA_PLAYER_PREPARED);
 
         mHandler.sendEmptyMessage(MEDIA_PLAYER_PROGRESS_UPDATE);
-        mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_HIDDEN_CONTROL, 10000);
+        mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_HIDDEN_CONTROL, 5000);
     }
 
     @Override
@@ -565,9 +574,6 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.v(LOGTAG, "onCompletion Called");
-        if (null != mMediaListener) {
-            mMediaListener.endOfMedia();
-        }
 
         exit();
     }
@@ -681,6 +687,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             Log.e(LOGTAG, "stop()", e);
         }
 
+        exit();
     }
 
     public interface MediaListener {
@@ -701,6 +708,10 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             String str1 = intent.getStringExtra("helpAction");
+
+            if(mMediaPlayer == null){
+                return;
+            }
 
             if (str1.equals(Action.PLAY)) {
                 start();
