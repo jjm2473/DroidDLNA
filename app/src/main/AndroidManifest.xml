@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
+    <permission android:name="com.zxt.dlna.dmr.permission.ACCESS_DEVICE_CHANGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.zxt.dlna.dmr.permission.ACCESS_DEVICE_CHANGE" />
+
     <application
         android:name="com.zxt.dlna.application.BaseApplication"
         android:icon="@drawable/ic_launcher"
@@ -111,8 +114,9 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
 
-        <service android:name="com.zxt.dlna.dmr.RenderPlayerService" />
-        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" />
-    </application>
+        <service android:name="com.zxt.dlna.dmr.RenderPlayerService" android:stopWithTask="false" />
+        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" android:stopWithTask="false" />
+        <service android:name="com.zxt.dlna.dmr.RenderService" android:stopWithTask="false" android:exported="false" />
 
+    </application>
 </manifest>

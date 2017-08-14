@@ -5,13 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,83 +23,34 @@ import android.widget.Toast;
 import com.zxt.dlna.R;
 import com.zxt.dlna.application.BaseApplication;
 import com.zxt.dlna.dmp.DeviceItem;
-import com.zxt.dlna.dmr.ZxtMediaRenderer;
-import com.zxt.dlna.util.FileUtil;
-import com.zxt.dlna.util.FixedAndroidHandler;
-import com.zxt.dlna.util.ImageUtil;
+import com.zxt.dlna.dmr.RenderService;
 import com.zxt.dlna.util.Utils;
 
-import org.fourthline.cling.android.AndroidUpnpService;
-import org.fourthline.cling.android.AndroidUpnpServiceImpl;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.LocalDevice;
-import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.registry.DefaultRegistryListener;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.support.model.DIDLObject;
-import org.fourthline.cling.support.model.DIDLObject.Property;
-import org.fourthline.cling.support.model.PersonWithRole;
-import org.fourthline.cling.support.model.Res;
-import org.fourthline.cling.support.model.WriteStatus;
-import org.fourthline.cling.support.model.container.Container;
-import org.fourthline.cling.support.model.item.ImageItem;
-import org.fourthline.cling.support.model.item.MusicTrack;
-import org.fourthline.cling.support.model.item.VideoItem;
-import org.seamless.util.MimeType;
-import org.seamless.util.logging.LoggingUtil;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class DevicesActivity extends Activity {
+public class DevicesActivity extends Activity implements RenderService.DeviceListChangeListener {
 
     public static final int DMR_GET_NO = 0;
     public static final int DMR_GET_SUC = 1;
     private final static String LOGTAG = "DevicesActivity";
     private static boolean serverPrepared = false;
 
-    private ListView mDmrLv;
-
-    private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
+    private List<DeviceItem> mDmrList;
     private long exitTime = 0;
     private DevAdapter mDmrDevAdapter;
-    private AndroidUpnpService upnpService;
-    private DeviceListRegistryListener deviceListRegistryListener;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder service) {
 
-            mDmrList.clear();
-
-            upnpService = (AndroidUpnpService) service;
-            BaseApplication.upnpService = upnpService;
-            Log.v(LOGTAG, "Connected to UPnP Service");
-
-            if (SettingActivity.getRenderOn(DevicesActivity.this)) {
-                ZxtMediaRenderer mediaRenderer = new ZxtMediaRenderer(1, DevicesActivity.this);
-                upnpService.getRegistry().addDevice(mediaRenderer.getDevice());
-                deviceListRegistryListener.dmrAdded(new DeviceItem(mediaRenderer.getDevice()));
-            }
-
-            // Getting ready for future device advertisements
-            upnpService.getRegistry().addListener(deviceListRegistryListener);
-            // Refresh device list
-            upnpService.getControlPoint().search();
-
-            // select first device by default
-
-            if (null != mDmrList && mDmrList.size() > 0 && null == BaseApplication.dmrDeviceItem) {
-                BaseApplication.dmrDeviceItem = mDmrList.get(0);
-            }
+            RenderService.DeviceListService deviceListService = (RenderService.DeviceListService) service;
+            mDmrList = deviceListService.getDeviceList();
+            init();
+            deviceListService.registerListener(DevicesActivity.this, DevicesActivity.this);
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            upnpService = null;
+
         }
     };
 
@@ -113,31 +58,20 @@ public class DevicesActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Fix the logging integration between java.util.logging and Android
-        // internal logging
-        LoggingUtil.resetRootHandler(new FixedAndroidHandler());
-        Logger.getLogger("org.teleal.cling").setLevel(Level.INFO);
-
         setContentView(R.layout.devices);
-        init();
 
-        deviceListRegistryListener = new DeviceListRegistryListener();
-
-        getApplicationContext().bindService(new Intent(this, AndroidUpnpServiceImpl.class),
-                serviceConnection, Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(this.getApplicationContext(), RenderService.class);
+        getApplicationContext().startService(intent);
+        this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void init() {
 
-        mDmrLv = (ListView) findViewById(R.id.renderer_list);
-
-        if (null != mDmrList && mDmrList.size() > 0) {
-            BaseApplication.dmrDeviceItem = mDmrList.get(0);
-        }
+        ListView dmrLv = (ListView) findViewById(R.id.renderer_list);
 
         mDmrDevAdapter = new DevAdapter(DevicesActivity.this, 0, mDmrList);
-        mDmrLv.setAdapter(mDmrDevAdapter);
-        mDmrLv.setOnItemClickListener(new OnItemClickListener() {
+        dmrLv.setAdapter(mDmrDevAdapter);
+        dmrLv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 if (null != mDmrList && mDmrList.size() > 0) {
@@ -167,10 +101,7 @@ public class DevicesActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (upnpService != null) {
-            upnpService.getRegistry().removeListener(deviceListRegistryListener);
-        }
-        getApplicationContext().unbindService(serviceConnection);
+        this.unbindService(serviceConnection);
     }
 
     @Override
@@ -184,7 +115,7 @@ public class DevicesActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
-                searchNetwork();
+                //searchNetwork();
                 break;
             case 1: {
                 finish();
@@ -203,99 +134,15 @@ public class DevicesActivity extends Activity {
                 exitTime = System.currentTimeMillis();
             } else {
                 finish();
-                System.exit(0);
             }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    protected void searchNetwork() {
-        if (upnpService == null)
-            return;
-        Toast.makeText(this, R.string.searching_lan, Toast.LENGTH_SHORT).show();
-        upnpService.getRegistry().removeAllRemoteDevices();
-        upnpService.getControlPoint().search();
-    }
-
-    public class DeviceListRegistryListener extends DefaultRegistryListener {
-
-		/* Discovery performance optimization for very slow Android devices! */
-
-        @Override
-        public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
-        }
-
-        @Override
-        public void remoteDeviceDiscoveryFailed(Registry registry, final RemoteDevice device, final Exception ex) {
-        }
-
-		/*
-         * End of optimization, you can remove the whole block if your Android
-		 * handset is fast (>= 600 Mhz)
-		 */
-
-        @Override
-        public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-            Log.e("DeviceListRegistryListener", "remoteDeviceAdded:" + device.toString() + device.getType().getType());
-
-            if (device.getType().getNamespace().equals("schemas-upnp-org")
-                    && device.getType().getType().equals("MediaRenderer")) {
-                final DeviceItem dmrDisplay = new DeviceItem(device, device
-                        .getDetails().getFriendlyName(),
-                        device.getDisplayString(), "(REMOTE) "
-                        + device.getType().getDisplayString());
-                dmrAdded(dmrDisplay);
-            }
-        }
-
-        @Override
-        public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-
-            if (device.getType().getNamespace().equals("schemas-upnp-org")
-                    && device.getType().getType().equals("MediaRenderer")) {
-                final DeviceItem dmrDisplay = new DeviceItem(device, device
-                        .getDetails().getFriendlyName(),
-                        device.getDisplayString(), "(REMOTE) "
-                        + device.getType().getDisplayString());
-                dmrRemoved(dmrDisplay);
-            }
-        }
-
-        @Override
-        public void localDeviceAdded(Registry registry, LocalDevice device) {
-            Log.e("DeviceListRegistryListener",
-                    "localDeviceAdded:" + device.toString()
-                            + device.getType().getType());
-
-        }
-
-        @Override
-        public void localDeviceRemoved(Registry registry, LocalDevice device) {
-            Log.e("DeviceListRegistryListener",
-                    "localDeviceRemoved:" + device.toString()
-                            + device.getType().getType());
-        }
-
-        public void dmrAdded(final DeviceItem di) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if (!mDmrList.contains(di)) {
-                        mDmrList.add(di);
-                        mDmrDevAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
-
-        public void dmrRemoved(final DeviceItem di) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    mDmrList.remove(di);
-                    mDmrDevAdapter.notifyDataSetChanged();
-                }
-            });
-        }
+    @Override
+    public void onChange() {
+        mDmrDevAdapter.notifyDataSetChanged();
     }
 
     class DevAdapter extends ArrayAdapter<DeviceItem> {
@@ -307,7 +154,7 @@ public class DevicesActivity extends Activity {
 
         public DevAdapter(Context context, int textViewResourceId, List<DeviceItem> objects) {
             super(context, textViewResourceId, objects);
-            this.mInflater = ((LayoutInflater) context.getSystemService("layout_inflater"));
+            this.mInflater = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE));
             this.deviceItems = objects;
         }
 
