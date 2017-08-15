@@ -16,13 +16,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Binder;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.zxt.dlna.R;
 import com.zxt.dlna.activity.SettingActivity;
-import com.zxt.dlna.application.BaseApplication;
 import com.zxt.dlna.dmp.DeviceItem;
 import com.zxt.dlna.util.FixedAndroidHandler;
 
@@ -48,7 +47,22 @@ public class RenderService extends Service {
     private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
     private AndroidUpnpService upnpService;
     private DeviceListRegistryListener deviceListRegistryListener;
-    private Binder binder = new DeviceListBinder();
+
+    IDeviceList.Stub binder = new IDeviceList.Stub() {
+        @Override
+        public List<String> getList() throws RemoteException {
+            List<String> devices = new ArrayList<>(mDmrList.size());
+            for(DeviceItem d:mDmrList){
+                devices.add(d.toString());
+            }
+            return devices;
+        }
+
+        @Override
+        public void search() throws RemoteException {
+            searchNetwork();
+        }
+    };
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
@@ -57,7 +71,6 @@ public class RenderService extends Service {
             mDmrList.clear();
 
             upnpService = (AndroidUpnpService) service;
-            BaseApplication.upnpService = upnpService;
             Log.v(LOGTAG, "Connected to UPnP Service");
 
             if (SettingActivity.getRenderOn(RenderService.this)) {
@@ -70,12 +83,6 @@ public class RenderService extends Service {
             upnpService.getRegistry().addListener(deviceListRegistryListener);
             // Refresh device list
             upnpService.getControlPoint().search();
-
-            // select first device by default
-
-            if (null != mDmrList && mDmrList.size() > 0 && null == BaseApplication.dmrDeviceItem) {
-                BaseApplication.dmrDeviceItem = mDmrList.get(0);
-            }
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -92,8 +99,6 @@ public class RenderService extends Service {
         LoggingUtil.resetRootHandler(new FixedAndroidHandler());
         Logger.getLogger("org.teleal.cling").setLevel(Level.INFO);
 
-        init();
-
         deviceListRegistryListener = new DeviceListRegistryListener();
 
         this.bindService(new Intent(this, AndroidUpnpServiceImpl.class),
@@ -102,12 +107,6 @@ public class RenderService extends Service {
         Notification notification = new Notification.Builder(this.getApplicationContext()).setSmallIcon(R.drawable.icon_media_play).setContentTitle("DroidDLNA").setContentText("Running").build();//.setFlag(Notification.FLAG_FOREGROUND_SERVICE, true);
         notification.flags = Notification.FLAG_FOREGROUND_SERVICE|Notification.FLAG_NO_CLEAR;
         startForeground(0x112, notification);
-    }
-
-    private void init() {
-        if (null != mDmrList && mDmrList.size() > 0) {
-            BaseApplication.dmrDeviceItem = mDmrList.get(0);
-        }
     }
 
     @Override
@@ -218,22 +217,9 @@ public class RenderService extends Service {
         void onChange();
     }
 
-    public static interface DeviceListService {
-        List<DeviceItem> getDeviceList();
-        void registerListener(Context context, DeviceListChangeListener listener);
-    }
-
-    class DeviceListBinder extends Binder implements DeviceListService {
-        @Override
-        public List<DeviceItem> getDeviceList() {
-            return mDmrList;
-        }
-
-        @Override
-        public void registerListener(Context context, DeviceListChangeListener listener) {
-            IntentFilter filter = new IntentFilter(DEVICE_LIST_CHANGE_ACTION);
-            context.registerReceiver(new DeviceListChangeReceiver(listener), filter, ACCESS_DEVICE_LIST_CHANGE_PERMISSION, null);
-        }
+    public static void registerListener(Context context, DeviceListChangeListener listener) {
+        IntentFilter filter = new IntentFilter(DEVICE_LIST_CHANGE_ACTION);
+        context.registerReceiver(new DeviceListChangeReceiver(listener), filter, ACCESS_DEVICE_LIST_CHANGE_PERMISSION, null);
     }
 
     private static class DeviceListChangeReceiver extends BroadcastReceiver {

@@ -22,9 +22,7 @@ import java.util.HashMap;
 public class BaseApplication extends MultiDexApplication {
 
     public static DeviceItem deviceItem;
-    public static DeviceItem dmrDeviceItem;
     public static boolean isLocalDmr = true;
-    public static AndroidUpnpService upnpService;
     public static Context mContext;
     private static InetAddress inetAddress;
     private static String hostAddress;

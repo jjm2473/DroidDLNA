@@ -41,12 +41,6 @@
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
-            android:name="com.zxt.dlna.activity.ControlActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-        <activity
             android:name="com.zxt.dlna.activity.SettingActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleInstance"
@@ -115,8 +109,8 @@
         </activity>
 
         <service android:name="com.zxt.dlna.dmr.RenderPlayerService" android:stopWithTask="false" />
-        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" android:stopWithTask="false" />
-        <service android:name="com.zxt.dlna.dmr.RenderService" android:stopWithTask="false" android:exported="false" />
+        <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" android:stopWithTask="false" android:process=":back" />
+        <service android:name="com.zxt.dlna.dmr.RenderService" android:stopWithTask="false" android:process=":back" />
 
     </application>
 </manifest>

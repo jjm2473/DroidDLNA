@@ -33,8 +33,6 @@ import com.zxt.dlna.R;
 import com.zxt.dlna.activity.SettingActivity;
 import com.zxt.dlna.application.BaseApplication;
 import com.zxt.dlna.application.ConfigData;
-import com.zxt.dlna.dmc.DMCControl;
-import com.zxt.dlna.dmc.GenerateXml;
 import com.zxt.dlna.util.FileUtil;
 import com.zxt.dlna.util.ImageUtil;
 import com.zxt.dlna.util.ShakeListener;
@@ -71,9 +69,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
     private String mPlayUri = null;
     private String currentContentFormatMimeType = "";
     private String metaData = "";
-    private DeviceItem dmrDeviceItem = null;
-    private boolean isLocalDmr = true;
-    private DMCControl dmcControl = null;
     private AndroidUpnpService upnpService = null;
     private ArrayList<ContentItem> mListPhotos = new ArrayList<ContentItem>();
     private ProgressBar mSpinner;
@@ -161,18 +156,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
 
         mCurrentPosition = ConfigData.photoPosition;
         mListPhotos = ConfigData.listPhotos;
-
-        dmrDeviceItem = BaseApplication.dmrDeviceItem;
-        upnpService = BaseApplication.upnpService;
-
-        isLocalDmr = BaseApplication.isLocalDmr;
-        if (!isLocalDmr) {
-            currentContentFormatMimeType = localIntent
-                    .getStringExtra("currentContentFormatMimeType");
-            metaData = localIntent.getStringExtra("metaData");
-            dmcControl = new DMCControl(this, 1, dmrDeviceItem, upnpService,
-                    mPlayUri, metaData);
-        }
     }
 
     @Override
@@ -244,20 +227,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
             if (!TextUtils.isEmpty(uri)) {
                 mPlayUri = uri;
                 showImage(mPlayUri);
-
-                if (!isLocalDmr) {
-                    dmcControl.stop(true);
-                    try {
-                        dmcControl.setCurrentPlayPath(mPlayUri,
-                                new GenerateXml()
-                                        .generate((ContentItem) mListPhotos
-                                                .get(mCurrentPosition)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    dmcControl.getProtocolInfos(currentContentFormatMimeType);
-                }
             }
         }
         return isLast;
@@ -277,19 +246,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
             if (!TextUtils.isEmpty(uri)) {
                 mPlayUri = uri;
                 showImage(mPlayUri);
-                if (!isLocalDmr) {
-                    dmcControl.stop(true);
-                    try {
-                        dmcControl.setCurrentPlayPath(mPlayUri,
-                                new GenerateXml()
-                                        .generate((ContentItem) mListPhotos
-                                                .get(mCurrentPosition)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    dmcControl.getProtocolInfos(currentContentFormatMimeType);
-                }
             }
         }
         return isFirst;
@@ -306,17 +262,11 @@ public class ImageDisplay extends Activity implements OnClickListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!isLocalDmr) {
-            dmcControl.stop(true);
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (!isLocalDmr) {
-            dmcControl.stop(true);
-        }
     }
 
     @Override
@@ -376,17 +326,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
 
     private void showImage(String url) {
         fetchBitmap2(url);
-        if (!isLocalDmr) {
-            try {
-                dmcControl.setCurrentPlayPath(mPlayUri, new GenerateXml()
-                        .generate((ContentItem) mListPhotos
-                                .get(mCurrentPosition)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            dmcControl.getProtocolInfos(currentContentFormatMimeType);
-        }
     }
 
     private void fetchBitmap2(String url) {

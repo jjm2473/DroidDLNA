@@ -7,24 +7,22 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zxt.dlna.R;
-import com.zxt.dlna.application.BaseApplication;
-import com.zxt.dlna.dmp.DeviceItem;
+import com.zxt.dlna.dmr.IDeviceList;
 import com.zxt.dlna.dmr.RenderService;
-import com.zxt.dlna.util.Utils;
 
 import java.util.List;
 
@@ -35,22 +33,27 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     private final static String LOGTAG = "DevicesActivity";
     private static boolean serverPrepared = false;
 
-    private List<DeviceItem> mDmrList;
+    private IDeviceList iDeviceList;
+    private List<String> mDmrList;
     private long exitTime = 0;
     private DevAdapter mDmrDevAdapter;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
-
         public void onServiceConnected(ComponentName className, IBinder service) {
-
-            RenderService.DeviceListService deviceListService = (RenderService.DeviceListService) service;
-            mDmrList = deviceListService.getDeviceList();
-            init();
-            deviceListService.registerListener(DevicesActivity.this, DevicesActivity.this);
+            Log.e(LOGTAG, "Service connected");
+            iDeviceList = IDeviceList.Stub.asInterface(service);
+            try {
+                mDmrList = iDeviceList.getList();
+                init();
+                RenderService.registerListener(DevicesActivity.this, DevicesActivity.this);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                Toast.makeText(DevicesActivity.this, "Call render service failed!", Toast.LENGTH_LONG).show();
+            }
         }
 
         public void onServiceDisconnected(ComponentName className) {
-
+            Log.e(LOGTAG, "Service disconnected");
         }
     };
 
@@ -62,37 +65,23 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
         Intent intent = new Intent(this.getApplicationContext(), RenderService.class);
         getApplicationContext().startService(intent);
-        this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void init() {
-
         ListView dmrLv = (ListView) findViewById(R.id.renderer_list);
 
         mDmrDevAdapter = new DevAdapter(DevicesActivity.this, 0, mDmrList);
         dmrLv.setAdapter(mDmrDevAdapter);
-        dmrLv.setOnItemClickListener(new OnItemClickListener() {
+
+        findViewById(R.id.select_renderer_header).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                if (null != mDmrList && mDmrList.size() > 0) {
-                    if (null != mDmrList.get(arg2).getDevice()
-                            && null != BaseApplication.deviceItem
-                            && null != mDmrList.get(arg2).getDevice().getDetails().getModelDetails()
-                            && Utils.DMR_NAME.equals(mDmrList.get(arg2)
-                            .getDevice().getDetails().getModelDetails()
-                            .getModelName())
-                            && Utils.getDevName(
-                            mDmrList.get(arg2).getDevice().getDetails()
-                                    .getFriendlyName()).equals(
-                            Utils.getDevName(BaseApplication.deviceItem
-                                    .getDevice().getDetails()
-                                    .getFriendlyName()))) {
-                        BaseApplication.isLocalDmr = true;
-                    } else {
-                        BaseApplication.isLocalDmr = false;
-                    }
-                    BaseApplication.dmrDeviceItem = mDmrList.get(arg2);
-                    mDmrDevAdapter.notifyDataSetChanged();
+            public void onClick(View v) {
+                try {
+                    iDeviceList.search();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+
                 }
             }
         });
@@ -100,8 +89,8 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     protected void onDestroy() {
+        getApplicationContext().unbindService(serviceConnection);
         super.onDestroy();
-        this.unbindService(serviceConnection);
     }
 
     @Override
@@ -115,7 +104,11 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
-                //searchNetwork();
+                try {
+                    iDeviceList.search();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 break;
             case 1: {
                 finish();
@@ -142,17 +135,23 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     public void onChange() {
-        mDmrDevAdapter.notifyDataSetChanged();
+        try {
+            List<String> list = iDeviceList.getList();
+            mDmrList.clear();
+            mDmrList.addAll(list);
+            mDmrDevAdapter.notifyDataSetChanged();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Update list failed:Remote Exception!", Toast.LENGTH_LONG).show();
+        }
     }
 
-    class DevAdapter extends ArrayAdapter<DeviceItem> {
+    class DevAdapter extends ArrayAdapter<String> {
 
-        private static final String TAG = "DeviceAdapter";
-        public int dmrPosition = 0;
         private LayoutInflater mInflater;
-        private List<DeviceItem> deviceItems;
+        private List<String> deviceItems;
 
-        public DevAdapter(Context context, int textViewResourceId, List<DeviceItem> objects) {
+        public DevAdapter(Context context, int textViewResourceId, List<String> objects) {
             super(context, textViewResourceId, objects);
             this.mInflater = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE));
             this.deviceItems = objects;
@@ -162,7 +161,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
             return this.deviceItems.size();
         }
 
-        public DeviceItem getItem(int paramInt) {
+        public String getItem(int paramInt) {
             return this.deviceItems.get(paramInt);
         }
 
@@ -182,8 +181,8 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
                 holder = (DevHolder) view.getTag();
             }
 
-            DeviceItem item = (DeviceItem) this.deviceItems.get(position);
-            holder.filename.setText(item.toString());
+            String item = this.deviceItems.get(position);
+            holder.filename.setText(item);
             return view;
         }
 
