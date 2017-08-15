@@ -20,6 +20,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.zxt.dlna.Manifest;
 import com.zxt.dlna.R;
 import com.zxt.dlna.activity.SettingActivity;
 import com.zxt.dlna.dmp.DeviceItem;
@@ -40,9 +41,7 @@ import java.util.logging.Logger;
 
 public class RenderService extends Service {
     private final static String LOGTAG = "RenderService";
-
     private static final String DEVICE_LIST_CHANGE_ACTION = "com.zxt.dlna.dmr.DEVICE_LIST_CHANGE_ACTION";
-    private static final String ACCESS_DEVICE_LIST_CHANGE_PERMISSION = "com.zxt.dlna.dmr.permission.ACCESS_DEVICE_CHANGE";
 
     private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
     private AndroidUpnpService upnpService;
@@ -209,7 +208,7 @@ public class RenderService extends Service {
         }
 
         public void notifyChange(){
-            RenderService.this.sendBroadcast(new Intent(DEVICE_LIST_CHANGE_ACTION), ACCESS_DEVICE_LIST_CHANGE_PERMISSION);
+            RenderService.this.sendBroadcast(new Intent(DEVICE_LIST_CHANGE_ACTION), Manifest.permission.INTERNAL);
         }
     }
 
@@ -219,7 +218,7 @@ public class RenderService extends Service {
 
     public static void registerListener(Context context, DeviceListChangeListener listener) {
         IntentFilter filter = new IntentFilter(DEVICE_LIST_CHANGE_ACTION);
-        context.registerReceiver(new DeviceListChangeReceiver(listener), filter, ACCESS_DEVICE_LIST_CHANGE_PERMISSION, null);
+        context.registerReceiver(new DeviceListChangeReceiver(listener), filter, Manifest.permission.INTERNAL, null);
     }
 
     private static class DeviceListChangeReceiver extends BroadcastReceiver {

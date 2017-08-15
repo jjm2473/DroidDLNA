@@ -1,15 +1,29 @@
 package com.zxt.dlna.dmp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import com.zxt.dlna.Manifest;
 import com.zxt.dlna.util.Action;
 
 public class GPlayer extends Player {
-    private static MediaListener mMediaListener;
+    private static final String EXTRA_STATUS = "status";
+    private static final String EXTRA_VALUE = "value";
+    private static enum Status{
+        START,
+        PAUSE,
+        STOP,
+        EOM,
+        PC,
+        DC
+    }
 
-    public static void setMediaListener(MediaListener mediaListener) {
-        mMediaListener = mediaListener;
+    public static void setMediaListener(Context mContext, MediaListener mediaListener) {
+        IntentFilter filter = new IntentFilter(Action.VIDEO_PLAY);
+        mContext.registerReceiver(new StatusBroadcastReceiver(mediaListener), filter, Manifest.permission.INTERNAL, null);
     }
 
     @Override
@@ -17,44 +31,32 @@ public class GPlayer extends Player {
         setMediaListener0(new MediaListener() {
             @Override
             public void pause() {
-                if(mMediaListener != null){
-                    mMediaListener.pause();
-                }
+                sendStatusBroadcast(Status.PAUSE, 0);
             }
 
             @Override
             public void start() {
-                if(mMediaListener != null){
-                    mMediaListener.start();
-                }
+                sendStatusBroadcast(Status.START, 0);
             }
 
             @Override
             public void stop() {
-                if(mMediaListener != null){
-                    mMediaListener.stop();
-                }
+                sendStatusBroadcast(Status.STOP, 0);
             }
 
             @Override
             public void endOfMedia() {
-                if(mMediaListener != null){
-                    mMediaListener.endOfMedia();
-                }
+                sendStatusBroadcast(Status.EOM, 0);
             }
 
             @Override
             public void positionChanged(int position) {
-                if(mMediaListener != null){
-                    mMediaListener.positionChanged(position);
-                }
+                sendStatusBroadcast(Status.PC, position);
             }
 
             @Override
             public void durationChanged(int duration) {
-                if(mMediaListener != null){
-                    mMediaListener.durationChanged(duration);
-                }
+                sendStatusBroadcast(Status.DC, duration);
             }
         });
         super.onCreate(savedInstanceState);
@@ -66,7 +68,6 @@ public class GPlayer extends Player {
     protected void onDestroy() {
         super.onDestroy();
         unregisterBrocast();
-        mMediaListener = null;
     }
 
     private PlayBrocastReceiver playRecevieBrocast = new PlayBrocastReceiver();
@@ -74,11 +75,52 @@ public class GPlayer extends Player {
     public void registerBrocast() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Action.DMR);
-        intentFilter.addAction(Action.VIDEO_PLAY);
         registerReceiver(this.playRecevieBrocast, intentFilter);
     }
 
     public void unregisterBrocast() {
         unregisterReceiver(this.playRecevieBrocast);
+    }
+
+    private void sendStatusBroadcast(Status status, int value){
+        Intent intent = new Intent(Action.VIDEO_PLAY);
+        intent.putExtra(EXTRA_STATUS, status.name());
+        intent.putExtra(EXTRA_VALUE, value);
+        this.sendBroadcast(intent);
+    }
+
+    public static class StatusBroadcastReceiver extends BroadcastReceiver{
+        MediaListener mMediaListener;
+
+        public StatusBroadcastReceiver(MediaListener mMediaListener) {
+            this.mMediaListener = mMediaListener;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Status status = Status.valueOf(intent.getStringExtra(EXTRA_STATUS));
+            if(status != null){
+                switch (status){
+                    case START:
+                        mMediaListener.start();
+                        break;
+                    case PAUSE:
+                        mMediaListener.pause();
+                        break;
+                    case STOP:
+                        mMediaListener.stop();
+                        break;
+                    case EOM:
+                        mMediaListener.endOfMedia();
+                        break;
+                    case PC:
+                        mMediaListener.positionChanged(intent.getIntExtra(EXTRA_VALUE, 0));
+                        break;
+                    case DC:
+                        mMediaListener.durationChanged(intent.getIntExtra(EXTRA_VALUE, 0));
+                        break;
+                }
+            }
+        }
     }
 }

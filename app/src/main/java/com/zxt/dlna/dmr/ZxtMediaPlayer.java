@@ -144,7 +144,7 @@ public class ZxtMediaPlayer {
 
         transportStateChanged(TransportState.STOPPED);
 
-        GPlayer.setMediaListener(new GstMediaListener());
+        GPlayer.setMediaListener(mContext, new GstMediaListener());
 
         Intent intent = new Intent();
         intent.setClass(mContext, RenderPlayerService.class);
