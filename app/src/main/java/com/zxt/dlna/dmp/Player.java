@@ -509,7 +509,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     public void onSeekComplete(MediaPlayer mp) {
         Log.v(LOGTAG, "onSeekComplete Called");
         if (null != mMediaListener) {
-            mMediaListener.endOfMedia();
+            mMediaListener.positionChanged(mMediaPlayer.getCurrentPosition());
         }
     }
 
