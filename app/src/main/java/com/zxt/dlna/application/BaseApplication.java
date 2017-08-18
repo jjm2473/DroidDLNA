@@ -1,8 +1,8 @@
 package com.zxt.dlna.application;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.support.multidex.MultiDexApplication;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -19,7 +19,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BaseApplication extends MultiDexApplication {
+public class BaseApplication extends Application {
 
     public static DeviceItem deviceItem;
     public static boolean isLocalDmr = true;
