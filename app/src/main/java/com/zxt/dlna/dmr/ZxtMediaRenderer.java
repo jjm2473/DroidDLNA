@@ -126,7 +126,7 @@ public class ZxtMediaRenderer {
                     new DeviceIdentity(udn),
                     new UDADeviceType("MediaRenderer", 1),
                     new DeviceDetails(
-                            SettingActivity.getRenderName(context) + " (" + android.os.Build.MODEL + ")",
+                            createName(context),
                             new ManufacturerDetails(Utils.MANUFACTURER),
                             new ModelDetails(Utils.DMR_NAME, Utils.DMR_DESC, "1", Utils.DMR_MODEL_URL),
                             new DLNADoc[]{
@@ -176,6 +176,17 @@ public class ZxtMediaRenderer {
         return device;
     }
 
+    private String createName(String name) {
+        return name + " (" + android.os.Build.MODEL + ")";
+    }
+
+    private String createName(Context context) {
+        return createName(SettingActivity.getRenderName(context));
+    }
+
+    public void updateName(String name) {
+        device.getDetails().setFriendlyName(createName(name));
+    }
 
     synchronized public Map<UnsignedIntegerFourBytes, ZxtMediaPlayer> getMediaPlayers() {
         return mediaPlayers;

@@ -36,7 +36,7 @@ public class DeviceDetails implements Validatable {
     final private static Logger log = Logger.getLogger(DeviceDetails.class.getName());
 
     final private URL baseURL;
-    final private String friendlyName;
+    private String friendlyName;
     final private ManufacturerDetails manufacturerDetails;
     final private ModelDetails modelDetails;
     final private String serialNumber;
@@ -195,6 +195,10 @@ public class DeviceDetails implements Validatable {
 
     public DLNACaps getSecProductCaps() {
         return secProductCaps;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
     public List<ValidationError> validate() {

@@ -28,7 +28,7 @@ public class UpnpUtil {
         // return true;
         // }
 
-        if (UpnpUtil.isMediaServerDevice(device) && !UpnpUtil.isLocalIpAddress(device)) {
+        if (UpnpUtil.isMediaServerDevice(device)) {
             return true;
         }
 
@@ -127,12 +127,8 @@ public class UpnpUtil {
 
     public static UDN uniqueSystemIdentifier(String salt) {
         StringBuilder systemSalt = new StringBuilder();
-        Log.d(TAG, "host:" + BaseApplication.getHostName() + " ip:" + BaseApplication.getHostAddress());
-        if (null != BaseApplication.getHostName()
-                && null != BaseApplication.getHostAddress()) {
-            systemSalt.append(BaseApplication.getHostName()).append(
-                    BaseApplication.getHostAddress());
-        }
+        systemSalt.append(BaseApplication.getAndroidId());
+        systemSalt.append(android.os.Build.FINGERPRINT);
         systemSalt.append(android.os.Build.MODEL);
         systemSalt.append(android.os.Build.MANUFACTURER);
 

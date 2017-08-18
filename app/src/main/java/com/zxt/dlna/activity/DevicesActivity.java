@@ -5,11 +5,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +27,7 @@ import com.zxt.dlna.dmr.RenderService;
 
 import java.util.List;
 
-public class DevicesActivity extends Activity implements RenderService.DeviceListChangeListener {
+public class DevicesActivity extends Activity implements RenderService.DeviceListChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final int DMR_GET_NO = 0;
     public static final int DMR_GET_SUC = 1;
@@ -66,6 +67,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
         Intent intent = new Intent(this.getApplicationContext(), RenderService.class);
         getApplicationContext().startService(intent);
         getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
     private void init() {
@@ -89,6 +91,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     protected void onDestroy() {
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
         getApplicationContext().unbindService(serviceConnection);
         super.onDestroy();
     }
@@ -120,20 +123,6 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), R.string.exit, Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                finish();
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public void onChange() {
         try {
             List<String> list = iDeviceList.getList();
@@ -143,6 +132,17 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
         } catch (RemoteException e) {
             e.printStackTrace();
             Toast.makeText(this, "Update list failed:Remote Exception!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(SettingActivity.PLAYER_NAME.equals(key)){
+            try {
+                iDeviceList.updateName(SettingActivity.getRenderName(this));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 

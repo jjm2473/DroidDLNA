@@ -31,7 +31,6 @@ import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.zxt.dlna.R;
 import com.zxt.dlna.activity.SettingActivity;
-import com.zxt.dlna.application.BaseApplication;
 import com.zxt.dlna.application.ConfigData;
 import com.zxt.dlna.util.FileUtil;
 import com.zxt.dlna.util.ImageUtil;
@@ -101,14 +100,6 @@ public class ImageDisplay extends Activity implements OnClickListener,
 
         ;
     };
-
-    public static void playImage(String url) {
-        Intent intent = new Intent();
-        intent.setClass(BaseApplication.getContext(), ImageDisplay.class);
-        intent.putExtra("playURI", url);
-        BaseApplication.getContext().startActivity(intent);
-        Log.d(TAG, url);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

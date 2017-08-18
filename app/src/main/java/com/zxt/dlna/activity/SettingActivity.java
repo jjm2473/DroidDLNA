@@ -1,7 +1,6 @@
 package com.zxt.dlna.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -9,22 +8,24 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.view.KeyEvent;
 
 import com.zxt.dlna.R;
 import com.zxt.dlna.util.PreferenceHead;
 
 public class SettingActivity extends PreferenceActivity {
+    public static final String RENDER_STATUS = "dmr_status";
+    public static final String PLAYER_NAME = "player_name";
+
     public static boolean getRenderOn(Context context) {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        return prefs.getBoolean("dmr_status", true);
+        return prefs.getBoolean(RENDER_STATUS, true);
     }
 
     public static String getRenderName(Context context) {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        return prefs.getString("player_name",
+        return prefs.getString(PLAYER_NAME,
                 context.getString(R.string.player_name_local));
     }
 
@@ -61,14 +62,6 @@ public class SettingActivity extends PreferenceActivity {
         preferenceScreen.addPreference(ph);
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     private void setLayoutResource(Preference preference) {
         if (preference instanceof PreferenceScreen) {
             PreferenceScreen ps = (PreferenceScreen) preference;
@@ -90,5 +83,6 @@ public class SettingActivity extends PreferenceActivity {
             preference.setLayoutResource(R.layout.preference);
         }
     }
+
 
 }

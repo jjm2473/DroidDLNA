@@ -16,8 +16,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.zxt.dlna.Manifest;
@@ -30,6 +32,7 @@ import org.fourthline.cling.android.AndroidUpnpService;
 import org.fourthline.cling.android.AndroidUpnpServiceImpl;
 import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.registry.DefaultRegistryListener;
 import org.fourthline.cling.registry.Registry;
 import org.seamless.util.logging.LoggingUtil;
@@ -46,6 +49,7 @@ public class RenderService extends Service {
     private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
     private AndroidUpnpService upnpService;
     private DeviceListRegistryListener deviceListRegistryListener;
+    private ZxtMediaRenderer mediaRenderer;
 
     IDeviceList.Stub binder = new IDeviceList.Stub() {
         @Override
@@ -61,10 +65,14 @@ public class RenderService extends Service {
         public void search() throws RemoteException {
             searchNetwork();
         }
+
+        @Override
+        public void updateName(String name) throws RemoteException {
+            updateLocalDeviceName(name);
+        }
     };
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
-
         public void onServiceConnected(ComponentName className, IBinder service) {
 
             mDmrList.clear();
@@ -72,8 +80,8 @@ public class RenderService extends Service {
             upnpService = (AndroidUpnpService) service;
             Log.v(LOGTAG, "Connected to UPnP Service");
 
-            if (SettingActivity.getRenderOn(RenderService.this)) {
-                ZxtMediaRenderer mediaRenderer = new ZxtMediaRenderer(1, RenderService.this);
+            mediaRenderer = new ZxtMediaRenderer(1, RenderService.this);
+            if (SettingActivity.getRenderOn(RenderService.this.getApplicationContext())) {
                 upnpService.getRegistry().addDevice(mediaRenderer.getDevice());
                 deviceListRegistryListener.dmrAdded(new DeviceItem(mediaRenderer.getDevice()));
             }
@@ -114,6 +122,7 @@ public class RenderService extends Service {
         super.onDestroy();
         if (upnpService != null) {
             upnpService.getRegistry().removeListener(deviceListRegistryListener);
+            upnpService = null;
         }
         this.unbindService(serviceConnection);
         stopForeground(true);
@@ -134,6 +143,22 @@ public class RenderService extends Service {
             return;
         upnpService.getRegistry().removeAllRemoteDevices();
         upnpService.getControlPoint().search();
+    }
+
+    private void updateLocalDeviceName(String name) {
+        if(mediaRenderer != null){
+            mediaRenderer.updateName(name);
+            LocalDevice localDevice = mediaRenderer.getDevice();
+            UDN localUdn = localDevice.getIdentity().getUdn();
+            for(DeviceItem d:mDmrList){
+                if(d.getUdn().equals(localUdn)){
+                    mDmrList.remove(d);
+                    mDmrList.add(new DeviceItem(localDevice));
+                    break;
+                }
+            }
+            deviceListRegistryListener.notifyChange();
+        }
     }
 
     public class DeviceListRegistryListener extends DefaultRegistryListener {
