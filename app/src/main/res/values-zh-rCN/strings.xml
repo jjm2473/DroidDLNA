@@ -95,6 +95,10 @@
     <string name="setting_msg">设置</string>
     <string name="about_brief">DroidDLNA能够让多媒体分享变得更加便利，通过无线网手机和电视/电脑/等实现多媒体的共享，轻松互相浏览/播放/控制各设备存储中的音乐、视频以及图片等.\nDroidDLNA具备如下功能：\n1支持DLNA所有协议(包括：DMP,DMS,DMC,DMR)，集DLNA播放器、DLNA服务器、DLNA客户端和DLNA播放控制器一体，功能丰富；\n 2 通过wifi和以太网自动扫描UPnP/DLNA媒体服务获得共享资源；\n 3 可以共享设备上多媒体资源给别人，也可以使用其他DLNA设备的多媒体资源；\n 4 可以浏览，播放，控制多媒体资源，支持图片和视频缩略图显示。</string>
 
+    <string name="auto_run">自动运行</string>
+    <string name="auto_run_on">系统启动时自动运行本地播放器服务</string>
+    <string name="auto_run_off">手动运行本地播放器服务</string>
+
     <!-- Menu -->
     <string name="menu_exit">退出</string>
 

@@ -95,6 +95,10 @@
     <string name="setting_msg">setting</string>
     <string name="about_brief">DroidDLNA is a full featured UPnP/DLNA Control Point, UPnP Media Renderer and UPnP Media Server. This app is based on Cling 2.0, Cling is a UPnP-compatible software stack for Java environments.\n Play easily your music, videos and images on your phone and devices on your network (DLNA TVs, XBMC, WMP, ...), from your external UPnP Media Servers. Play your phone/tablet media to those devices.</string>
 
+    <string name="auto_run">Auto Run</string>
+    <string name="auto_run_on">start local player service on system startup</string>
+    <string name="auto_run_off">manual start local player service</string>
+
     <!-- Menu -->
     <string name="menu_exit">exit</string>
 

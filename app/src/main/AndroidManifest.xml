@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <permission android:name="com.zxt.dlna.dmr.permission.INTERNAL" android:protectionLevel="signature" />
     <uses-permission android:name="com.zxt.dlna.dmr.permission.INTERNAL" />
@@ -22,11 +23,7 @@
         <activity
             android:name="com.zxt.dlna.activity.StartActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.IndexActivity"
@@ -35,15 +32,21 @@
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.DevicesActivity"
+            android:label="@string/appName"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:theme="@android:style/Theme.Black" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.zxt.dlna.activity.SettingActivity"
+            android:label="@string/setting"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name="com.zxt.dlna.dmp.GPlayer"
@@ -107,6 +110,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
 
+        <receiver android:name="com.zxt.dlna.dmr.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <service android:name="com.zxt.dlna.dmr.RenderPlayerService" android:stopWithTask="false" />
         <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl" android:stopWithTask="false" android:process=":back" />
         <service android:name="com.zxt.dlna.dmr.RenderService" android:stopWithTask="false" android:process=":back" />

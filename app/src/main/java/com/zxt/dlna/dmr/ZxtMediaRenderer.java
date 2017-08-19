@@ -30,6 +30,7 @@ import org.fourthline.cling.support.lastchange.LastChange;
 import org.fourthline.cling.support.lastchange.LastChangeAwareServiceManager;
 import org.fourthline.cling.support.model.TransportState;
 import org.fourthline.cling.support.renderingcontrol.lastchange.RenderingControlLastChangeParser;
+import org.seamless.xml.DOMParser;
 
 import java.io.IOException;
 import java.util.Map;
@@ -53,6 +54,10 @@ public class ZxtMediaRenderer {
     final protected LocalDevice device;
 
     protected Context mContext;
+    static{
+        // fix DOMParser <clinit> Thread.currentThread().getContextClassLoader() return null;
+        DOMParser.XML_SCHEMA_RESOURCE.toString();
+    }
 
     public ZxtMediaRenderer(int numberOfPlayers, Context context) {
         mContext = context;

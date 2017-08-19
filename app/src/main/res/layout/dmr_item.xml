@@ -17,9 +17,9 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dip"
             android:layout_marginRight="60dip"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:text="text"
+            android:textSize="16sp" />
 
     </RelativeLayout>
 

@@ -10,9 +10,11 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
 import com.zxt.dlna.R;
+import com.zxt.dlna.dmr.IRenderService;
+import com.zxt.dlna.dmr.RenderServiceStarter;
 import com.zxt.dlna.util.PreferenceHead;
 
-public class SettingActivity extends PreferenceActivity {
+public class SettingActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String RENDER_STATUS = "dmr_status";
     public static final String PLAYER_NAME = "player_name";
 
@@ -48,11 +50,32 @@ public class SettingActivity extends PreferenceActivity {
         return Integer.valueOf(prefs.getString("image_slide_time", "5"));
     }
 
+    RenderServiceStarter starter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        starter = new RenderServiceStarter(this, new RenderServiceStarter.Callback() {
+            @Override
+            public void onServiceConnected(IRenderService iRenderService) {
+
+            }
+
+            @Override
+            public void onServiceDisconnected() {
+
+            }
+        });
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
         addPreferencesFromResource(R.xml.preference);
         addTitleBar();
+    }
+
+    @Override
+    protected void onDestroy() {
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        starter.unbind();
+        super.onDestroy();
     }
 
     private void addTitleBar() {
@@ -84,5 +107,10 @@ public class SettingActivity extends PreferenceActivity {
         }
     }
 
-
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(SettingActivity.PLAYER_NAME.equals(key)){
+            starter.setDevName(SettingActivity.getRenderName(this));
+        }
+    }
 }

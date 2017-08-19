@@ -163,7 +163,7 @@ public class RenderService extends Service {
 
     private void startLocalDevice(){
         synchronized (State.class) {
-            if (upnpService != null) {
+            if (upnpService != null && state != State.RUNNING) {
                 state = State.STARTING;
                 upnpService.getRegistry().resume();
                 upnpService.getRegistry().addDevice(mediaRenderer.getDevice());

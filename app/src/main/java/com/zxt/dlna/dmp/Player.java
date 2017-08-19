@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -14,19 +13,23 @@ import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,12 +64,11 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     private MediaListener mMediaListener = null;
     Display currentDisplay;
+    View surfaceParent;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     MediaPlayer mMediaPlayer;
     MediaController mediaController;
-    int videoWidth = 0;
-    int videoHeight = 0;
     boolean readyToPlay = false;
     String playURI;
     private AudioManager mAudioManager;
@@ -110,7 +112,9 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            Log.d(LOGTAG, "msg=" + msg.what);
+            if(msg.what != MEDIA_PLAYER_PROGRESS_UPDATE){
+                Log.d(LOGTAG, "msg=" + msg.what);
+            }
             switch (msg.what) {
                 case MEDIA_PLAYER_BUFFERING_UPDATE: {
 
@@ -184,6 +188,18 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         setContentView(R.layout.gplayer);
         mAudioManager = (AudioManager) getSystemService(Service.AUDIO_SERVICE);
 
+        surfaceParent = findViewById(R.id.gplayer_parent);
+        if(Build.VERSION.SDK_INT >= 16){
+            surfaceParent.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE);
+            surfaceParent.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if(mMediaPlayer.isPlaying()){
+                        resize();
+                    }
+                }
+            });
+        }
         surfaceView = (SurfaceView) findViewById(R.id.gplayer_surfaceview);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
@@ -513,26 +529,32 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
     }
 
+    private void resize(){
+        int maxWidth = surfaceParent.getWidth();
+        int maxHeight = surfaceParent.getHeight();
+        int videoWidth = mMediaPlayer.getVideoWidth();
+        int videoHeight = mMediaPlayer.getVideoHeight();
+        float heightRatio = (float) maxHeight / (float) videoHeight;
+        float widthRatio = (float) maxWidth / (float) videoWidth;
+        if(heightRatio != Float.NaN && heightRatio != Float.POSITIVE_INFINITY &&
+                widthRatio != Float.NaN && widthRatio != Float.POSITIVE_INFINITY) {
+            if (heightRatio < widthRatio) {
+                videoHeight = (int) Math.floor((float) videoHeight * heightRatio);
+                videoWidth = (int) Math.floor((float) videoWidth * heightRatio);
+            } else {
+                videoHeight = (int) Math.floor((float) videoHeight * widthRatio);
+                videoWidth = (int) Math.floor((float) videoWidth * widthRatio);
+            }
+            surfaceView.setLayoutParams(new FrameLayout.LayoutParams(videoWidth, videoHeight, Gravity.CENTER));
+        } else {
+            surfaceView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        }
+    }
+
     @Override
     public void onPrepared(MediaPlayer mp) {
         Log.v(LOGTAG, "onPrepared Called");
-        videoWidth = mp.getVideoWidth();
-        videoHeight = mp.getVideoHeight();
-        if (videoWidth > currentDisplay.getWidth() || videoHeight > currentDisplay.getHeight()) {
-            float heightRatio = (float) videoHeight / (float) currentDisplay.getHeight();
-            float widthRatio = (float) videoWidth / (float) currentDisplay.getWidth();
-            if (heightRatio > 1 || widthRatio > 1) {
-                if (heightRatio > widthRatio) {
-                    videoHeight = (int) Math.ceil((float) videoHeight / (float) heightRatio);
-                    videoWidth = (int) Math.ceil((float) videoWidth / (float) heightRatio);
-                } else {
-                    videoHeight = (int) Math.ceil((float) videoHeight / (float) widthRatio);
-                    videoWidth = (int) Math.ceil((float) videoWidth / (float) widthRatio);
-                }
-            }
-        }
-        // surfaceView.setLayoutParams(new FrameLayout.LayoutParams(videoWidth,
-        // videoHeight));
+        resize();
         mp.start();
         if (null != mMediaListener) {
             mMediaListener.start();
@@ -573,15 +595,29 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         exit();
     }
 
+    private void toastError(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
     @Override
     public boolean onError(MediaPlayer mp, int whatError, int extra) {
         Log.d(LOGTAG, "onError Called " + whatError + "  " + extra);
         if (whatError == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
             Log.e(LOGTAG, "Media Error, Server Died " + extra);
+            toastError("Media Error, Server Died " + extra);
         } else if (whatError == MediaPlayer.MEDIA_ERROR_UNKNOWN) {
             Log.e(LOGTAG, "Media Error, Error Unknown " + extra);
+            toastError("Media Error, Error Unknown " + extra);
+        } else if (whatError == MediaPlayer.MEDIA_ERROR_IO) {
+            Log.e(LOGTAG, "Media Error, Error IO " + extra);
+            toastError("Media Error, Error IO " + extra);
+        } else if (whatError == MediaPlayer.MEDIA_ERROR_MALFORMED) {
+            Log.e(LOGTAG, "Media Error, Error Malformed " + extra);
+            toastError("Media Error, Error Malformed " + extra);
         } else if (whatError == -38) {
             return true;
+        } else {
+            toastError("Media Error, Error (" + whatError + "," + extra + ")");
         }
 
         return false;
@@ -674,7 +710,9 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     public void stop() {
 
         try {
-            mMediaPlayer.stop();
+            if(mMediaPlayer.isPlaying()){
+                mMediaPlayer.stop();
+            }
             if (null != mMediaListener) {
                 mMediaListener.stop();
             }

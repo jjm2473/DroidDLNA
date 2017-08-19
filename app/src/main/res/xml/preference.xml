@@ -7,9 +7,9 @@
             android:defaultValue="true"
             android:enabled="true"
             android:key="dmr_status"
-            android:summaryOff="@string/player_off"
-            android:summaryOn="@string/player_on"
-            android:title="@string/player" />
+            android:summaryOff="@string/auto_run_off"
+            android:summaryOn="@string/auto_run_on"
+            android:title="@string/auto_run" />
 
         <EditTextPreference
             android:defaultValue="@string/player_name_local"
