@@ -15,11 +15,15 @@
 
 package org.fourthline.cling;
 
+import org.fourthline.cling.model.ServerClientTokens;
 import org.fourthline.cling.model.message.header.STAllHeader;
 import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.registry.Registry;
 import org.fourthline.cling.registry.RegistryListener;
+import org.fourthline.cling.transport.impl.jetty.StreamClientConfigurationImpl;
+import org.fourthline.cling.transport.impl.jetty.StreamClientImpl;
+import org.fourthline.cling.transport.spi.StreamClient;
 
 /**
  * Runs a simple UPnP discovery procedure.
@@ -88,7 +92,7 @@ public class Main {
 
         // This will create necessary network resources for UPnP right away
         System.out.println("Starting Cling...");
-        UpnpService upnpService = new UpnpServiceImpl(listener);
+        UpnpService upnpService = new UpnpServiceImpl(new JettyClientConfig(), listener);
 
         // Send a search message to all devices and services, they should respond soon
         System.out.println("Sending SEARCH message to all devices...");
@@ -96,11 +100,33 @@ public class Main {
 
         // Let's wait 10 seconds for them to respond
         System.out.println("Waiting 10 seconds before shutting down...");
-        Thread.sleep(10000);
+        Thread.sleep(20000);
 
         // Release all resources and advertise BYEBYE to other UPnP devices
         System.out.println("Stopping Cling...");
         upnpService.shutdown();
+    }
+    private static class JettyClientConfig extends DefaultUpnpServiceConfiguration{
+        @Override
+        public StreamClient createStreamClient() {
+            // Use Jetty
+            return new StreamClientImpl(
+                    new StreamClientConfigurationImpl(
+                            getSyncProtocolExecutorService()
+                    ) {
+                        @Override
+                        public String getUserAgentValue(int majorVersion, int minorVersion) {
+                            // TODO: UPNP VIOLATION: Synology NAS requires User-Agent to contain
+                            // "Android" to return DLNA protocolInfo required to stream to Samsung TV
+                            // see: http://two-play.com/forums/viewtopic.php?f=6&t=81
+                            ServerClientTokens tokens = new ServerClientTokens(majorVersion, minorVersion);
+                            tokens.setOsName("Jetty");
+                            tokens.setOsVersion("0");
+                            return tokens.toString();
+                        }
+                    }
+            );
+        }
     }
 }
 
