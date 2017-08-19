@@ -16,54 +16,75 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.zxt.dlna.Manifest;
 import com.zxt.dlna.R;
-import com.zxt.dlna.activity.SettingActivity;
 import com.zxt.dlna.dmp.DeviceItem;
 import com.zxt.dlna.util.FixedAndroidHandler;
 
 import org.fourthline.cling.android.AndroidUpnpService;
 import org.fourthline.cling.android.AndroidUpnpServiceImpl;
-import org.fourthline.cling.model.meta.LocalDevice;
-import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.model.types.UDN;
-import org.fourthline.cling.registry.DefaultRegistryListener;
-import org.fourthline.cling.registry.Registry;
 import org.seamless.util.logging.LoggingUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RenderService extends Service {
     private final static String LOGTAG = "RenderService";
-    private static final String DEVICE_LIST_CHANGE_ACTION = "com.zxt.dlna.dmr.DEVICE_LIST_CHANGE_ACTION";
+    private static final String DEVICE_STATE_CHANGE_ACTION = "com.zxt.dlna.dmr.DEVICE_STATE_CHANGE_ACTION";
+    private static final String EXTRA_TYPE = "type";
+    private static final int TYPE_NAME = 1;
+    private static final int TYPE_STATE = 2;
+    public static final long LAST_CHANGE_FIRING_INTERVAL_MILLISECONDS = 500;
 
-    private ArrayList<DeviceItem> mDmrList = new ArrayList<>();
+    private static enum State {
+        INIT(0),
+        //UPNPCONNECTED(1),
+        STARTING(2),
+        RUNNING(3),
+        //UPNPDISCONNECTED(4),
+        STOPPING(5),
+        STOPPED(6);
+
+        public final int v;
+
+        State(int v){
+            this.v = v;
+        }
+    }
+
     private AndroidUpnpService upnpService;
-    private DeviceListRegistryListener deviceListRegistryListener;
     private ZxtMediaRenderer mediaRenderer;
+    private DeviceItem localDevice;
+    private State state;
+    private boolean renderOn = false;
+    private Thread eventFireThread = null;
 
-    IDeviceList.Stub binder = new IDeviceList.Stub() {
+    IRenderService.Stub binder = new IRenderService.Stub() {
+
         @Override
-        public List<String> getList() throws RemoteException {
-            List<String> devices = new ArrayList<>(mDmrList.size());
-            for(DeviceItem d:mDmrList){
-                devices.add(d.toString());
-            }
-            return devices;
+        public String getDeviceName() throws RemoteException {
+            return localDevice.toString();
         }
 
         @Override
-        public void search() throws RemoteException {
-            searchNetwork();
+        public boolean isRunning() throws RemoteException {
+            return state == State.RUNNING;
+        }
+
+        @Override
+        public void start() throws RemoteException {
+            renderOn = true;
+            startLocalDevice();
+        }
+
+        @Override
+        public void stop() throws RemoteException {
+            renderOn = false;
+            stopLocalDevice();
         }
 
         @Override
@@ -74,26 +95,23 @@ public class RenderService extends Service {
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-
-            mDmrList.clear();
-
-            upnpService = (AndroidUpnpService) service;
             Log.v(LOGTAG, "Connected to UPnP Service");
+            upnpService = (AndroidUpnpService) service;
+            //state = State.UPNPCONNECTED;
 
-            mediaRenderer = new ZxtMediaRenderer(1, RenderService.this);
-            if (SettingActivity.getRenderOn(RenderService.this.getApplicationContext())) {
-                upnpService.getRegistry().addDevice(mediaRenderer.getDevice());
-                deviceListRegistryListener.dmrAdded(new DeviceItem(mediaRenderer.getDevice()));
+            if (renderOn) {
+                startLocalDevice();
             }
-
             // Getting ready for future device advertisements
-            upnpService.getRegistry().addListener(deviceListRegistryListener);
+            //upnpService.getRegistry().addListener(deviceListRegistryListener);
             // Refresh device list
-            upnpService.getControlPoint().search();
+            //upnpService.getControlPoint().search();
         }
 
         public void onServiceDisconnected(ComponentName className) {
             upnpService = null;
+            //state = State.UPNPDISCONNECTED;
+            stopLocalDevice();
         }
     };
 
@@ -106,26 +124,24 @@ public class RenderService extends Service {
         LoggingUtil.resetRootHandler(new FixedAndroidHandler());
         Logger.getLogger("org.teleal.cling").setLevel(Level.INFO);
 
-        deviceListRegistryListener = new DeviceListRegistryListener();
+        mediaRenderer = new ZxtMediaRenderer(1, RenderService.this);
+        localDevice = new DeviceItem(mediaRenderer.getDevice());
+
+        state = State.INIT;
 
         this.bindService(new Intent(this, AndroidUpnpServiceImpl.class),
                 serviceConnection, Context.BIND_AUTO_CREATE);
-
-        Notification notification = new Notification.Builder(this.getApplicationContext()).setSmallIcon(R.drawable.icon_media_play).setContentTitle("DroidDLNA").setContentText("Running").build();//.setFlag(Notification.FLAG_FOREGROUND_SERVICE, true);
-        notification.flags = Notification.FLAG_FOREGROUND_SERVICE|Notification.FLAG_NO_CLEAR;
-        startForeground(0x112, notification);
     }
 
     @Override
     public void onDestroy() {
         Log.i(LOGTAG, "onDestroy");
         super.onDestroy();
+        this.unbindService(serviceConnection);
+        stopLocalDevice();
         if (upnpService != null) {
-            upnpService.getRegistry().removeListener(deviceListRegistryListener);
             upnpService = null;
         }
-        this.unbindService(serviceConnection);
-        stopForeground(true);
     }
 
     @Override
@@ -145,104 +161,111 @@ public class RenderService extends Service {
         upnpService.getControlPoint().search();
     }
 
+    private void startLocalDevice(){
+        synchronized (State.class) {
+            if (upnpService != null) {
+                state = State.STARTING;
+                upnpService.getRegistry().resume();
+                upnpService.getRegistry().addDevice(mediaRenderer.getDevice());
+                startEventFire();
+
+                Notification notification = new Notification.Builder(this.getApplicationContext()).setSmallIcon(R.drawable.icon_media_play).setContentTitle("DroidDLNA").setContentText("Running").build();//.setFlag(Notification.FLAG_FOREGROUND_SERVICE, true);
+                notification.flags = Notification.FLAG_FOREGROUND_SERVICE|Notification.FLAG_NO_CLEAR;
+                startForeground(0x112, notification);
+            }
+        }
+    }
+
+    private void stopLocalDevice() {
+        synchronized (State.class) {
+            if (state.v >= State.RUNNING.v && state.v < State.STOPPED.v) {
+                stopEventFire();
+                if (upnpService != null) {
+                    upnpService.getRegistry().removeDevice(mediaRenderer.getDevice());
+                    upnpService.getRegistry().pause();
+                }
+            }
+        }
+        stopForeground(true);
+    }
+
+    private void startEventFire(){
+        synchronized (State.class) {
+            if (eventFireThread == null && state == State.STARTING) {
+                state = RenderService.State.RUNNING;
+                notifyStateChange();
+                eventFireThread = new Thread() {
+                    @Override
+                    public void run() {
+                        while (state == RenderService.State.RUNNING) {
+                            mediaRenderer.fireLastChange();
+                            try {
+                                Thread.sleep(LAST_CHANGE_FIRING_INTERVAL_MILLISECONDS);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                        }
+                        synchronized (RenderService.State.class) {
+                            state = RenderService.State.STOPPED;
+                            RenderService.State.class.notifyAll();
+                        }
+                        notifyStateChange();
+                    }
+                };
+                eventFireThread.start();
+                try {
+                    State.class.wait(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void stopEventFire(){
+        if (eventFireThread != null && eventFireThread.isAlive()) {
+            synchronized (State.class) {
+                if (state.v < State.STOPPING.v) {
+                    state = State.STOPPING;
+                }
+                eventFireThread.interrupt();
+                try {
+                    State.class.wait(100);
+                    eventFireThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                eventFireThread = null;
+            }
+        }
+    }
+
     private void updateLocalDeviceName(String name) {
         if(mediaRenderer != null){
             mediaRenderer.updateName(name);
-            LocalDevice localDevice = mediaRenderer.getDevice();
-            UDN localUdn = localDevice.getIdentity().getUdn();
-            for(DeviceItem d:mDmrList){
-                if(d.getUdn().equals(localUdn)){
-                    mDmrList.remove(d);
-                    mDmrList.add(new DeviceItem(localDevice));
-                    break;
-                }
-            }
-            deviceListRegistryListener.notifyChange();
+            notifyNameChange();
         }
     }
 
-    public class DeviceListRegistryListener extends DefaultRegistryListener {
-
-		/* Discovery performance optimization for very slow Android devices! */
-
-        @Override
-        public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
-        }
-
-        @Override
-        public void remoteDeviceDiscoveryFailed(Registry registry, final RemoteDevice device, final Exception ex) {
-        }
-
-		/*
-         * End of optimization, you can remove the whole block if your Android
-		 * handset is fast (>= 600 Mhz)
-		 */
-
-        @Override
-        public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-            Log.e("DeviceListRegistryListener", "remoteDeviceAdded:" + device.toString() + " Type: " +device.getType().getType());
-
-            if (device.getType().getNamespace().equals("schemas-upnp-org")
-                    && device.getType().getType().equals("MediaRenderer")) {
-                final DeviceItem dmrDisplay = new DeviceItem(device, device
-                        .getDetails().getFriendlyName(),
-                        device.getDisplayString(), "(REMOTE) "
-                        + device.getType().getDisplayString());
-                dmrAdded(dmrDisplay);
-            }
-        }
-
-        @Override
-        public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-            Log.e("DeviceListRegistryListener", "remoteDeviceRemoved:" + device.toString() + " Type: " +device.getType().getType());
-            if (device.getType().getNamespace().equals("schemas-upnp-org")
-                    && device.getType().getType().equals("MediaRenderer")) {
-                final DeviceItem dmrDisplay = new DeviceItem(device, device
-                        .getDetails().getFriendlyName(),
-                        device.getDisplayString(), "(REMOTE) "
-                        + device.getType().getDisplayString());
-                dmrRemoved(dmrDisplay);
-            }
-        }
-
-        @Override
-        public void localDeviceAdded(Registry registry, LocalDevice device) {
-            Log.e("DeviceListRegistryListener",
-                    "localDeviceAdded:" + device.toString()
-                            + " Type: " + device.getType().getType());
-
-        }
-
-        @Override
-        public void localDeviceRemoved(Registry registry, LocalDevice device) {
-            Log.e("DeviceListRegistryListener",
-                    "localDeviceRemoved:" + device.toString()
-                            + " Type: " + device.getType().getType());
-        }
-
-        public void dmrAdded(final DeviceItem di) {
-            if (!mDmrList.contains(di)) {
-                mDmrList.add(di);
-            }
-            notifyChange();
-        }
-
-        public void dmrRemoved(final DeviceItem di) {
-            mDmrList.remove(di);
-            notifyChange();
-        }
-
-        public void notifyChange(){
-            RenderService.this.sendBroadcast(new Intent(DEVICE_LIST_CHANGE_ACTION), Manifest.permission.INTERNAL);
-        }
+    private void notifyNameChange(){
+        notifyChange(TYPE_NAME);
+    }
+    private void notifyStateChange(){
+        notifyChange(TYPE_STATE);
+    }
+    private void notifyChange(int type){
+        Intent intent = new Intent(DEVICE_STATE_CHANGE_ACTION);
+        intent.putExtra(EXTRA_TYPE, type);
+        RenderService.this.sendBroadcast(intent, Manifest.permission.INTERNAL);
     }
 
     public static interface DeviceListChangeListener{
-        void onChange();
+        void onNameChange();
+        void onStateChange();
     }
 
     public static void registerListener(Context context, DeviceListChangeListener listener) {
-        IntentFilter filter = new IntentFilter(DEVICE_LIST_CHANGE_ACTION);
+        IntentFilter filter = new IntentFilter(DEVICE_STATE_CHANGE_ACTION);
         context.registerReceiver(new DeviceListChangeReceiver(listener), filter, Manifest.permission.INTERNAL, null);
     }
 
@@ -255,7 +278,15 @@ public class RenderService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            listener.onChange();
+            int type = intent.getIntExtra(EXTRA_TYPE, 0);
+            switch (type){
+                case TYPE_NAME:
+                    listener.onNameChange();
+                    break;
+                case TYPE_STATE:
+                    listener.onStateChange();
+                    break;
+            }
         }
     }
 }

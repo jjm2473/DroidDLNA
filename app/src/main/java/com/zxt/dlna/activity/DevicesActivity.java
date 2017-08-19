@@ -22,9 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zxt.dlna.R;
-import com.zxt.dlna.dmr.IDeviceList;
+import com.zxt.dlna.dmr.IRenderService;
 import com.zxt.dlna.dmr.RenderService;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DevicesActivity extends Activity implements RenderService.DeviceListChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -32,21 +34,26 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     public static final int DMR_GET_NO = 0;
     public static final int DMR_GET_SUC = 1;
     private final static String LOGTAG = "DevicesActivity";
-    private static boolean serverPrepared = false;
 
-    private IDeviceList iDeviceList;
+    private IRenderService iRenderService;
     private List<String> mDmrList;
-    private long exitTime = 0;
     private DevAdapter mDmrDevAdapter;
+    private long exitTime = 0;
+    private String localDevieName = "";
+    private boolean localDevieRunning = false;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.e(LOGTAG, "Service connected");
-            iDeviceList = IDeviceList.Stub.asInterface(service);
+            iRenderService = IRenderService.Stub.asInterface(service);
             try {
-                mDmrList = iDeviceList.getList();
+                localDevieRunning = iRenderService.isRunning();
+                localDevieName = iRenderService.getDeviceName();
                 init();
                 RenderService.registerListener(DevicesActivity.this, DevicesActivity.this);
+                if(SettingActivity.getRenderOn(DevicesActivity.this)){
+                    iRenderService.start();
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
                 Toast.makeText(DevicesActivity.this, "Call render service failed!", Toast.LENGTH_LONG).show();
@@ -55,12 +62,14 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
         public void onServiceDisconnected(ComponentName className) {
             Log.e(LOGTAG, "Service disconnected");
+            iRenderService = null;
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        iRenderService = null;
 
         setContentView(R.layout.devices);
 
@@ -73,20 +82,10 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     private void init() {
         ListView dmrLv = (ListView) findViewById(R.id.renderer_list);
 
+        mDmrList = new ArrayList<>(1);
+        updateList();
         mDmrDevAdapter = new DevAdapter(DevicesActivity.this, 0, mDmrList);
         dmrLv.setAdapter(mDmrDevAdapter);
-
-        findViewById(R.id.select_renderer_header).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    iDeviceList.search();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-
-                }
-            }
-        });
     }
 
     @Override
@@ -107,27 +106,42 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
-                try {
-                    iDeviceList.search();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
                 break;
             case 1: {
                 finish();
-                System.exit(0);
                 break;
             }
         }
         return false;
     }
 
+    private void updateList(){
+        List<String> list = Collections.singletonList(getNs());
+        mDmrList.clear();
+        mDmrList.addAll(list);
+    }
+
+    private String getNs(){
+        return localDevieName + " " + (localDevieRunning?"Running":"Stoped");
+    }
+
     @Override
-    public void onChange() {
+    public void onNameChange() {
         try {
-            List<String> list = iDeviceList.getList();
-            mDmrList.clear();
-            mDmrList.addAll(list);
+            localDevieName = iRenderService.getDeviceName();
+            updateList();
+            mDmrDevAdapter.notifyDataSetChanged();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Update list failed:Remote Exception!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onStateChange() {
+        try {
+            localDevieRunning = iRenderService.isRunning();
+            updateList();
             mDmrDevAdapter.notifyDataSetChanged();
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -137,11 +151,31 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(iRenderService == null){
+            return;
+        }
         if(SettingActivity.PLAYER_NAME.equals(key)){
             try {
-                iDeviceList.updateName(SettingActivity.getRenderName(this));
+                iRenderService.updateName(SettingActivity.getRenderName(this));
             } catch (RemoteException e) {
                 e.printStackTrace();
+            }
+        } else if(SettingActivity.RENDER_STATUS.equals(key)){
+            boolean renderOn = SettingActivity.getRenderOn(this);
+            if(renderOn != localDevieRunning){
+                if(renderOn){
+                    try {
+                        iRenderService.start();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        iRenderService.stop();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
