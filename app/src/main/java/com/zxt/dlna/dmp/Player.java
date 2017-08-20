@@ -73,7 +73,8 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     MediaPlayer mMediaPlayer;
-    private boolean playerReady = false;
+    private boolean videoPlayerReady = false;
+    private boolean preparing = false;
     private Intent createIntent;
     //MediaController mediaController;
     boolean readyToPlay = false;
@@ -214,7 +215,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         musicTitle = (TextView) findViewById(R.id.music_title);
         musicPicture = (ImageView) findViewById(R.id.music_picture);
 
-        playerReady = false;
+        videoPlayerReady = false;
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
@@ -222,6 +223,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnSeekCompleteListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
+        mMediaPlayer.setDisplay(null);
 
         surfaceView = (SurfaceView) findViewById(R.id.gplayer_surfaceview);
         surfaceHolder = surfaceView.getHolder();
@@ -322,6 +324,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     @Override
     protected void onNewIntent(Intent intent) {
         Log.i(LOGTAG, "onNewIntent");
+        boolean onlyMusic = false;
         if(Intent.ACTION_VIEW.equals(intent.getAction())){
             playURI = intent.getDataString();
             String type = MediaType.UNKNOWN;
@@ -335,15 +338,19 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
             switch (type) {
                 case MediaType.AUDIO:
+                    onlyMusic = true;
                     musicLayout.setVisibility(View.VISIBLE);
                     surfaceView.setVisibility(View.GONE);
                     musicTitle.setText(name);
                     setPictureUri(pictureUri);
-                    //mMediaPlayer.setDisplay(null);
+                    mMediaPlayer.setDisplay(null);
                     break;
                 case MediaType.VIDEO:
-                    musicLayout.setVisibility(View.GONE);
-                    surfaceView.setVisibility(View.VISIBLE);
+                    if (!videoPlayerReady) {
+                        createIntent = intent;
+                        musicLayout.setVisibility(View.GONE);
+                        surfaceView.setVisibility(View.VISIBLE);
+                    }
                     //mMediaPlayer.setDisplay(surfaceHolder);
                     break;
                 default:
@@ -367,10 +374,11 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             }
             mMediaPlayer.reset();
             mProgressLayout.setVisibility(View.VISIBLE);
-            if(playerReady){
+            if(onlyMusic || videoPlayerReady){
                 toNewUri.run();
+                createIntent = null;
             } else {
-                mHandler.postDelayed(toNewUri, 200);
+                //mHandler.postDelayed(toNewUri, 200);
             }
         }
         //super.onNewIntent(intent);
@@ -546,24 +554,26 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
         mMediaPlayer.setDisplay(holder);
 
-        onPlayerReady();
+        onVideoPlayerReady();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v(LOGTAG, "surfaceDestroyed Called");
-        mMediaPlayer.setDisplay(null);
+        if(mMediaPlayer != null){
+            mMediaPlayer.setDisplay(null);
+        }
+        videoPlayerReady = false;
     }
 
     protected void onPlayerUnReady() {
 
     }
 
-    protected void onPlayerReady() {
-        playerReady = true;
+    protected void onVideoPlayerReady() {
+        videoPlayerReady = true;
         if(createIntent != null){
             onNewIntent(createIntent);
-            createIntent = null;
         }
     }
 
@@ -617,7 +627,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         if (null != mMediaListener) {
             mMediaListener.start();
         }
-
+        preparing = false;
         // mediaController.setMediaPlayer(this);
         // mediaController.setAnchorView(this.findViewById(R.id.gplayer_surfaceview));
         // mediaController.setEnabled(true);
@@ -684,22 +694,8 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         return false;
     }
 
-    public void setUri(String uri) {
-        try {
-            mMediaPlayer.reset();
-            playURI = uri;
-            mMediaPlayer.setDataSource(playURI);
-        } catch (IllegalArgumentException e) {
-            Log.v(LOGTAG, e.getMessage());
-        } catch (IllegalStateException e) {
-            Log.v(LOGTAG, e.getMessage());
-        } catch (IOException e) {
-            Log.v(LOGTAG, e.getMessage());
-        }
-    }
-
     public void pause() {
-        if (mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             if (null != mMediaListener) {
                 mMediaListener.pause();
@@ -708,6 +704,9 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     }
 
     public void seekTo(int pos) {
+        if(mMediaPlayer == null || preparing){
+            return;
+        }
         if(mCanSeek) {
             mMediaPlayer.seekTo(pos);
             if (null != mMediaListener) {
@@ -717,7 +716,9 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     }
 
     public void start() {
-
+        if(mMediaPlayer == null || preparing){
+            return;
+        }
         try {
             mMediaPlayer.start();
             mHandler.sendEmptyMessageDelayed(MEDIA_PLAYER_PROGRESS_UPDATE, 200);
@@ -733,7 +734,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     public void stop() {
 
         try {
-            if(mMediaPlayer.isPlaying()){
+            if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
                 mMediaPlayer.stop();
             }
             if (null != mMediaListener) {
@@ -853,7 +854,8 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 try {
                     mMediaPlayer.setDataSource(playURI);
                     mCanSeek = true;
-                    mMediaPlayer.prepare();
+                    preparing = true;
+                    mMediaPlayer.prepareAsync();
                 } catch (IOException e) {
                     Log.e(LOGTAG, "", e);
                     mVideoTitle.setText("IOException");

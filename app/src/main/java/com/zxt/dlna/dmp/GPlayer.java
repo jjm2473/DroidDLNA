@@ -61,29 +61,12 @@ public class GPlayer extends Player {
         });
         super.onCreate(savedInstanceState);
 
-        playReceiveBroadcast = null;
-    }
-
-    @Override
-    protected void onPlayerReady() {
-        super.onPlayerReady();
-        if(playReceiveBroadcast == null){
-            playReceiveBroadcast = registerBroadcast();
-        }
-    }
-
-    @Override
-    protected void onPlayerUnReady() {
-        super.onPlayerUnReady();
-        if(playReceiveBroadcast != null){
-            this.unregisterReceiver(playReceiveBroadcast);
-            playReceiveBroadcast = null;
-        }
+        playReceiveBroadcast = registerBroadcast();
     }
 
     @Override
     protected void onDestroy() {
-        onPlayerUnReady();
+        this.unregisterReceiver(playReceiveBroadcast);
         super.onDestroy();
     }
 
