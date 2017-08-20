@@ -264,9 +264,11 @@ public class RenderService extends Service {
         void onStateChange();
     }
 
-    public static void registerListener(Context context, DeviceListChangeListener listener) {
+    public static BroadcastReceiver registerListener(Context context, DeviceListChangeListener listener) {
         IntentFilter filter = new IntentFilter(DEVICE_STATE_CHANGE_ACTION);
-        context.registerReceiver(new DeviceListChangeReceiver(listener), filter, Manifest.permission.INTERNAL, null);
+        DeviceListChangeReceiver receiver = new DeviceListChangeReceiver(listener);
+        context.registerReceiver(receiver, filter, Manifest.permission.INTERNAL, null);
+        return receiver;
     }
 
     private static class DeviceListChangeReceiver extends BroadcastReceiver {

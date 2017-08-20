@@ -80,6 +80,13 @@ public class ImageUtil {
         }
 
         File file = new File(filePath);
+        if(!file.exists()){
+            File parentFile = file.getParentFile();
+            if(!parentFile.exists()){
+                parentFile.mkdirs();
+            }
+            file.createNewFile();
+        }
         FileOutputStream out;
         out = new FileOutputStream(file);
         if (bitmap.compress(format, 70, out)) {

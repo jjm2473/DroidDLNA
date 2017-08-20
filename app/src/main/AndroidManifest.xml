@@ -107,6 +107,7 @@
         <activity
             android:name="com.zxt.dlna.dmp.ImageDisplay"
             android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
 

@@ -3,10 +3,12 @@ package com.zxt.dlna.dmp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -31,7 +33,6 @@ import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.zxt.dlna.R;
 import com.zxt.dlna.activity.SettingActivity;
-import com.zxt.dlna.application.ConfigData;
 import com.zxt.dlna.util.FileUtil;
 import com.zxt.dlna.util.ImageUtil;
 import com.zxt.dlna.util.ShakeListener;
@@ -58,12 +59,12 @@ public class ImageDisplay extends Activity implements OnClickListener,
     private PointF start = new PointF();
     private PointF mid = new PointF();
     private SuperImageView mImageView;
-    private Button mPreBtn;
-    private Button mNextBtn;
-    private Button mDownloadBtn;
-    private Button mSharedBtn;
-    private Button mSlideBtn;
-    private Button mRotateBtn;
+    private ImageButton mPreBtn;
+    private ImageButton mNextBtn;
+    private ImageButton mDownloadBtn;
+    private ImageButton mSharedBtn;
+    private ImageButton mSlideBtn;
+    private ImageButton mRotateBtn;
     private LinearLayout mButtonLayout;
     private String mPlayUri = null;
     private String currentContentFormatMimeType = "";
@@ -115,7 +116,7 @@ public class ImageDisplay extends Activity implements OnClickListener,
                 .displayer(new FadeInBitmapDisplayer(300)).build();
 
         initView();
-        initData();
+        initData(getIntent());
         showImage(mPlayUri);
 
         addShake();
@@ -123,30 +124,26 @@ public class ImageDisplay extends Activity implements OnClickListener,
 
     private void initView() {
         mImageView = (SuperImageView) this.findViewById(R.id.imageView);
-        mPreBtn = (Button) this.findViewById(R.id.preButton);
-        mNextBtn = (Button) this.findViewById(R.id.nextButton);
+        mPreBtn = (ImageButton) this.findViewById(R.id.preButton);
+        mNextBtn = (ImageButton) this.findViewById(R.id.nextButton);
         mButtonLayout = (LinearLayout) this.findViewById(R.id.buttonLayout);
         mPreBtn.setOnClickListener(this);
         mNextBtn.setOnClickListener(this);
         mImageView.setOnTouchListener(this);
         mSpinner = (ProgressBar) findViewById(R.id.loading);
 
-        mDownloadBtn = (Button) this.findViewById(R.id.downloadButton);
+        mDownloadBtn = (ImageButton) this.findViewById(R.id.downloadButton);
         mDownloadBtn.setOnClickListener(this);
-        mSharedBtn = (Button) this.findViewById(R.id.sharedButton);
+        mSharedBtn = (ImageButton) this.findViewById(R.id.sharedButton);
         mSharedBtn.setOnClickListener(this);
-        mSlideBtn = (Button) this.findViewById(R.id.slideButton);
+        mSlideBtn = (ImageButton) this.findViewById(R.id.slideButton);
         mSlideBtn.setOnClickListener(this);
-        mRotateBtn = (Button) this.findViewById(R.id.rotateButton);
+        mRotateBtn = (ImageButton) this.findViewById(R.id.rotateButton);
         mRotateBtn.setOnClickListener(this);
     }
 
-    private void initData() {
-        Intent localIntent = getIntent();
-        mPlayUri = localIntent.getStringExtra("playURI");
-
-        mCurrentPosition = ConfigData.photoPosition;
-        mListPhotos = ConfigData.listPhotos;
+    private void initData(Intent intent) {
+        mPlayUri = intent.getStringExtra("playURI");
     }
 
     @Override
@@ -166,13 +163,13 @@ public class ImageDisplay extends Activity implements OnClickListener,
             case R.id.slideButton: {
                 if (!isSlidePlaying) {
                     isSlidePlaying = true;
-                    mSlideBtn.setBackgroundResource(R.drawable.ic_slide_pause);
+                    mSlideBtn.setImageResource(R.drawable.ic_slide_pause);
                     mHandler.sendEmptyMessageDelayed(MSG_SLIDE_START, 5000);
                     Toast.makeText(mContext, R.string.info_image_slide_start,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     isSlidePlaying = false;
-                    mSlideBtn.setBackgroundResource(R.drawable.ic_slide_start);
+                    mSlideBtn.setImageResource(R.drawable.ic_slide_start);
                     mHandler.removeMessages(MSG_SLIDE_START);
                     Toast.makeText(mContext, R.string.info_image_slide_pause,
                             Toast.LENGTH_SHORT).show();
@@ -180,16 +177,22 @@ public class ImageDisplay extends Activity implements OnClickListener,
                 break;
             }
             case R.id.downloadButton: {
-                String path = saveCurrentBitmap();
-                if (!TextUtils.isEmpty(path)) {
-                    Toast.makeText(
-                            mContext,
-                            mContext.getString(R.string.info_download_image) + path,
-                            Toast.LENGTH_SHORT).show();
+                if(checkSdcardWritePermission()){
+                    String path = saveCurrentBitmap();
+                    if (!TextUtils.isEmpty(path)) {
+                        Toast.makeText(
+                                mContext,
+                                mContext.getString(R.string.info_download_image) + path,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, R.string.info_download_image_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(mContext, R.string.info_download_image_error,
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.info_download_image_permission,
+                            Toast.LENGTH_LONG).show();
                 }
+
                 break;
             }
             case R.id.sharedButton: {
@@ -409,5 +412,35 @@ public class ImageDisplay extends Activity implements OnClickListener,
                 nextImage();
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        initData(intent);
+        showImage(mPlayUri);
+    }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1001;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE" };
+
+    private boolean checkSdcardWritePermission(){
+        if(Build.VERSION.SDK_INT < 23){
+            return true;
+        }
+        try {
+            //检测是否有写的权限
+            int permission = this.checkSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                this.requestPermissions(PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

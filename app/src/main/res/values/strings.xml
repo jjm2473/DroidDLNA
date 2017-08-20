@@ -60,6 +60,7 @@
     <string name="info_image_slide_pause">pause playing picture slides</string>
     <string name="info_download_image">already download picture to</string>
     <string name="info_download_image_error">fail to save picture</string>
+    <string name="info_download_image_permission">grant permissions before download picture</string>
     <string name="info_share_image">share picture</string>
 
     <!-- player -->

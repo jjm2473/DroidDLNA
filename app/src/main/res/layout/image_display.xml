@@ -18,57 +18,68 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/buttonLayout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="bottom"
+        android:background="@color/transparentdarkgray"
         android:gravity="center_vertical"
-        android:visibility="gone" >
+        android:orientation="horizontal"
+        android:visibility="visible">
 
-        <Button
+        <ImageButton
             android:id="@+id/preButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/image_pre" 
-            android:layout_weight="1"/>
-        <Button
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/image_pre" />
+
+        <ImageButton
             android:id="@+id/downloadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_menu_download" 
             android:layout_marginLeft="10dip"
-            android:layout_weight="1"/>
-         <Button
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/ic_menu_download" />
+
+        <ImageButton
             android:id="@+id/sharedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_menu_share" 
             android:layout_marginLeft="10dip"
-            android:layout_weight="1"/>
-        <Button
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/ic_menu_share" />
+
+        <ImageButton
             android:id="@+id/slideButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_slide_start" 
             android:layout_marginLeft="10dip"
-            android:layout_weight="1"/>
-        
-         <Button
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/ic_slide_start" />
+
+        <ImageButton
             android:id="@+id/rotateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_menu_rotate" 
             android:layout_marginLeft="10dip"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/ic_menu_rotate" />
 
-        <Button
+        <ImageButton
             android:id="@+id/nextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/image_next" 
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="#0fff"
+            android:src="@drawable/image_next" />
     </LinearLayout>
 
 </FrameLayout>

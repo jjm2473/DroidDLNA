@@ -101,5 +101,6 @@
 
     <!-- Menu -->
     <string name="menu_exit">退出</string>
+    <string name="info_download_image_permission">保存图片前先授权读写SD卡</string>
 
 </resources>

@@ -22,6 +22,7 @@ public class ZxtConnectionManagerService extends ConnectionManagerService {
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/pjpeg")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/tiff")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/x-ms-bmp")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("image/*")));
 
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/3gpp")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/mp4")));
@@ -35,6 +36,10 @@ public class ZxtConnectionManagerService extends ConnectionManagerService {
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/quicktime")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/x-msvideo")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/x-ms-wmv")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/h261")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/h263")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/h264")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("video/*")));
 
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/aac")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/3gpp")));
@@ -46,6 +51,7 @@ public class ZxtConnectionManagerService extends ConnectionManagerService {
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/x-mid")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/x-wav")));
         sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/x-ms-wma")));
+        sinkProtocolInfo.add(new ProtocolInfo(MimeType.valueOf("audio/*")));
 
         log.info("Supported MIME types: " + sinkProtocolInfo.size());
     }
