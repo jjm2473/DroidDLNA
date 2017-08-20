@@ -60,6 +60,7 @@
     <string name="info_image_slide_pause">暂停图片幻灯片放映</string>
     <string name="info_download_image">图片已经下载到</string>
     <string name="info_download_image_error">图片保存失败</string>
+    <string name="info_download_image_permission">保存图片前先授权读写SD卡</string>
     <string name="info_share_image">分享图片</string>
 
     <!-- player -->
@@ -99,8 +100,9 @@
     <string name="auto_run_on">系统启动时自动运行本地播放器服务</string>
     <string name="auto_run_off">手动运行本地播放器服务</string>
 
+    <string name="toggle_service">开关本地播放器服务</string>
+
     <!-- Menu -->
     <string name="menu_exit">退出</string>
-    <string name="info_download_image_permission">保存图片前先授权读写SD卡</string>
 
 </resources>
