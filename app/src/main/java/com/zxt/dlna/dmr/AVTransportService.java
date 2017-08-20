@@ -106,7 +106,7 @@ public class AVTransportService extends AbstractAVTransportService {
         }
 
         Log.i(TAG, data.type + " : " + data.name);
-        getInstance(instanceId).setURI(uri, data.type, data.name, metaData);
+        getInstance(instanceId).setURI(uri, data, metaData);
     }
 
     @Override

@@ -60,27 +60,7 @@ public class ZxtMediaPlayer {
         this.avTransportLastChange = avTransportLastChange;
         this.renderingControlLastChange = renderingControlLastChange;
 
-        try {
-            // Disconnect the old bus listener
-            /* TODO: That doesn't work for some reason...
-            getPipeline().getBus().disconnect(
-                    (Bus.STATE_CHANGED) Reflections.getField(getClass(), "stateChanged").get(this)
-            );
-            */
-
-            // Connect a fixed bus state listener
-//            getPipeline().getBus().connect(busStateChanged);
-
-            // Connect a bus tag listener
-//            getPipeline().getBus().connect(busTag);
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
-//        addMediaListener(new GstMediaListener());
-
-//        setVideoSink(videoComponent.getElement());
+        GPlayer.setMediaListener(mContext, new GstMediaListener());
     }
 
     public UnsignedIntegerFourBytes getInstanceId() {
@@ -132,7 +112,7 @@ public class ZxtMediaPlayer {
     }
 
     // @Override
-    synchronized public void setURI(URI uri, String type, String name, String currentURIMetaData) {
+    synchronized public void setURI(URI uri, MetaData data, String currentURIMetaData) {
         Log.i(TAG, "setURI " + uri);
 
         currentMediaInfo = new MediaInfo(uri.toString(), currentURIMetaData);
@@ -144,12 +124,10 @@ public class ZxtMediaPlayer {
 
         transportStateChanged(TransportState.STOPPED);
 
-        GPlayer.setMediaListener(mContext, new GstMediaListener());
-
         Intent intent = new Intent();
         intent.setClass(mContext, RenderPlayerService.class);
-        intent.putExtra("type", type);
-        intent.putExtra("name", name);
+        intent.putExtra("type", data.type);
+        intent.putExtra("name", data.name);
         intent.putExtra("playURI", uri.toString());
         mContext.startService(intent);
     }

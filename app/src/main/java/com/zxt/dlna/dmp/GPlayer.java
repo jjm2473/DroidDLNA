@@ -21,9 +21,9 @@ public class GPlayer extends Player {
         DC
     }
 
-    public static void setMediaListener(Context mContext, MediaListener mediaListener) {
+    public static void setMediaListener(Context context, MediaListener mediaListener) {
         IntentFilter filter = new IntentFilter(Action.VIDEO_PLAY);
-        mContext.registerReceiver(new StatusBroadcastReceiver(mediaListener), filter, Manifest.permission.INTERNAL, null);
+        context.registerReceiver(new StatusBroadcastReceiver(mediaListener), filter, Manifest.permission.INTERNAL, null);
     }
 
     @Override

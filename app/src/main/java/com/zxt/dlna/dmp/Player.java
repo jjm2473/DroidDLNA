@@ -339,6 +339,9 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
 
         if (!TextUtils.isEmpty(playURI)) {
+
+            mHandler.removeCallbacks(toExit);
+
             if(mMediaPlayer.isPlaying()){
                 mMediaPlayer.pause();
             }
@@ -381,7 +384,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     @Override
     protected void onDestroy() {
-        exit();
+        fastExit();
         super.onDestroy();
     }
 
@@ -392,7 +395,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 Toast.makeText(this, R.string.player_exit, Toast.LENGTH_SHORT).show();
                 lastBack = System.currentTimeMillis();
             } else {
-                exit();
+                fastExit();
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -403,11 +406,19 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         return super.onKeyDown(keyCode, event);
     }
 
-    private void exit() {
+    private void delayExit(){
+        mHandler.postDelayed(toExit, 1000);
+    }
+
+    private void fastExit(){
         if (null != mMediaListener) {
             mMediaListener.endOfMedia();
             mMediaListener = null;
         }
+        exit();
+    }
+
+    private void exit() {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -422,8 +433,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         int id = v.getId();
         switch (id) {
             case R.id.topBar_back:
-                exit();
-
+                fastExit();
                 break;
             case R.id.sound:
                 isMute = !isMute;
@@ -569,6 +579,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         Log.v(LOGTAG, "onPrepared Called");
         resize();
         mp.start();
+        updatePausePlay();
         if (null != mMediaListener) {
             mMediaListener.start();
         }
@@ -604,8 +615,11 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.v(LOGTAG, "onCompletion Called");
-
-        exit();
+        if (null != mMediaListener) {
+            mMediaListener.endOfMedia();
+        }
+        updatePausePlay();
+        delayExit();
     }
 
     private void toastError(String msg){
@@ -733,7 +747,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             Log.e(LOGTAG, "stop()", e);
         }
 
-        // exit();
+        delayExit();
     }
 
     public interface MediaListener {
@@ -791,4 +805,10 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
     }
 
+    private Runnable toExit = new Runnable() {
+        @Override
+        public void run() {
+            fastExit();
+        }
+    };
 }
