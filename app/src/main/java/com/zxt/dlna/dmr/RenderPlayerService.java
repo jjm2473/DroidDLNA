@@ -8,6 +8,7 @@ package com.zxt.dlna.dmr;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 
 import com.zxt.dlna.dmp.GPlayer;
@@ -20,6 +21,12 @@ public class RenderPlayerService extends Service {
         return null;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        onStart(intent, startId);
+        return START_NOT_STICKY;
+    }
+
     public void onStart(Intent intent, int startId) {
         //xgf fix bug null point
         if (null != intent) {
@@ -27,22 +34,11 @@ public class RenderPlayerService extends Service {
             String type = intent.getStringExtra("type");
             Intent intent2;
 
-            if (type.equals("audio")) {
-                // new Thread(new RenderPlayerService.1(this,
-                // intent.getStringExtra("playURI"),
-                // intent.getStringExtra("name"))).start();
-                intent2 = new Intent(this, GPlayer.class);
-                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent2.putExtra("name", intent.getStringExtra("name"));
-                intent2.putExtra("playURI", intent.getStringExtra("playURI"));
-                startActivity(intent2);
-            } else if (type.equals("video")) {
-                intent2 = new Intent(this, GPlayer.class);
-                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent2.putExtra("name", intent.getStringExtra("name"));
-                intent2.putExtra("playURI", intent.getStringExtra("playURI"));
-                startActivity(intent2);
-            } else if (type.equals("image")) {
+            if (type.equals(MediaType.AUDIO)) {
+                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"));
+            } else if (type.equals(MediaType.VIDEO)) {
+                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"));
+            } else if (type.equals(MediaType.IMAGE)) {
                 intent2 = new Intent(this, ImageDisplay.class);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent2.putExtra("name", intent.getStringExtra("name"));
@@ -55,5 +51,13 @@ public class RenderPlayerService extends Service {
                 sendBroadcast(intent2);
             }
         }
+    }
+
+    private void startAvPlayer(String name, String type, String uri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri), this, GPlayer.class);
+        intent.putExtra("name", name);
+        intent.putExtra("type", type);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

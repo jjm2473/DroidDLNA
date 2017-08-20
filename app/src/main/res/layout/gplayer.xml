@@ -9,11 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
         <SurfaceView
             android:id="@+id/gplayer_surfaceview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"></SurfaceView>
+
+        <ImageView
+            android:id="@+id/novideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/icon_audio"
+            android:visibility="gone" />
     </FrameLayout>
 
     <include layout="@layout/player_buffer" />

@@ -50,7 +50,7 @@
         <activity
             android:name="com.zxt.dlna.dmp.GPlayer"
             android:label="@string/dlna_player"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
@@ -58,7 +58,7 @@
         <activity
             android:name="com.zxt.dlna.dmp.Player"
             android:label="@string/player"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
             android:screenOrientation="landscape"
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >

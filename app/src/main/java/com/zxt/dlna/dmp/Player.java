@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -27,7 +26,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -63,12 +61,13 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     private static final int MEDIA_PLAYER_HIDDEN_CONTROL = 4009;
 
     private MediaListener mMediaListener = null;
-    Display currentDisplay;
     View surfaceParent;
+    ImageView noVideo;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     MediaPlayer mMediaPlayer;
-    MediaController mediaController;
+    private Intent createIntent;
+    //MediaController mediaController;
     boolean readyToPlay = false;
     String playURI;
     private AudioManager mAudioManager;
@@ -185,6 +184,8 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createIntent = getIntent();
+
         setContentView(R.layout.gplayer);
         mAudioManager = (AudioManager) getSystemService(Service.AUDIO_SERVICE);
 
@@ -200,13 +201,13 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 }
             });
         }
+        noVideo = (ImageView) findViewById(R.id.novideo);
         surfaceView = (SurfaceView) findViewById(R.id.gplayer_surfaceview);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mMediaPlayer = new MediaPlayer();
-
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnInfoListener(this);
@@ -215,40 +216,16 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         mMediaPlayer.setOnVideoSizeChangedListener(this);
 
         initControl();
-
-        Intent intent = getIntent();
-        if(Intent.ACTION_VIEW.equals(intent.getAction())){
-            switch (MediaType.fromMime(intent.getType())){
-                case MediaType.AUDIO:
-                case MediaType.VIDEO:
-                    playURI = intent.getDataString();
-                    break;
-
-                default:
-                    finish();
-                    return;
-            }
-        }else {
-            playURI = intent.getStringExtra("playURI");
-        }
-
-        if (!TextUtils.isEmpty(playURI)) {
-            setUri(playURI);
-        }
-
-        setTitle(intent);
-        currentDisplay = getWindowManager().getDefaultDisplay();
     }
 
-    private void setTitle(Intent intent) {
-        String name = intent.getStringExtra("name");
+    private void setTitle(String name) {
         if (!TextUtils.isEmpty(name)) {
             mVideoTitle.setText(name);
         }
     }
 
     private void initControl() {
-        mediaController = new MediaController(this);
+        // mediaController = new MediaController(this);
 
         mBufferLayout = (RelativeLayout) findViewById(R.id.buffer_info);
         mProgressBarPreparing = (ProgressBar) findViewById(R.id.player_prepairing);
@@ -330,25 +307,53 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     }
 
     @Override
-    protected void onNewIntent(final Intent intent) {
+    protected void onNewIntent(Intent intent) {
         Log.i(LOGTAG, "onNewIntent");
-        final String uri = intent.getStringExtra("playURI");
-        if (!TextUtils.isEmpty(uri)) {
-            mMediaPlayer.pause();
+        if(Intent.ACTION_VIEW.equals(intent.getAction())){
+            playURI = intent.getDataString();
+            String type = MediaType.UNKNOWN;
+            if(intent.getType() == null){
+                type = intent.getStringExtra("type");
+            } else {
+                type = MediaType.fromMime(intent.getType());
+            }
+            String name = intent.getStringExtra("name");
+
+            switch (type) {
+                case MediaType.AUDIO:
+                    noVideo.setVisibility(View.VISIBLE);
+                    surfaceView.setVisibility(View.GONE);
+                    //mMediaPlayer.setDisplay(null);
+                    break;
+                case MediaType.VIDEO:
+                    noVideo.setVisibility(View.GONE);
+                    surfaceView.setVisibility(View.VISIBLE);
+                    //mMediaPlayer.setDisplay(surfaceHolder);
+                    break;
+                default:
+                    finish();
+                    return;
+            }
+
+            setTitle(name);
+        }
+
+        if (!TextUtils.isEmpty(playURI)) {
+            if(mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+            }
             mProgressLayout.setVisibility(View.VISIBLE);
             mHandler.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
                     if(!Player.this.isFinishing() && mMediaPlayer != null) {
-                        playURI = uri;
                         Log.i(LOGTAG, "load new uri");
                         try {
                             mMediaPlayer.reset();
                             mMediaPlayer.setDataSource(playURI);
                             mCanSeek = true;
                             mMediaPlayer.prepareAsync();
-                            setTitle(intent);
                         } catch (IOException e) {
                             Log.e(LOGTAG, "", e);
                             mVideoTitle.setText("IOException");
@@ -357,7 +362,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 }
             }, 500);
         }
-        super.onNewIntent(intent);
+        //super.onNewIntent(intent);
     }
 
     @Override
@@ -504,21 +509,23 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v(LOGTAG, "surfaceCreated Called");
         mMediaPlayer.setDisplay(holder);
-        try {
-            mMediaPlayer.prepareAsync();
-        } catch (IllegalStateException e) {
-            Log.v(LOGTAG, "IllegalStateException", e);
+        if(createIntent != null){
+            onNewIntent(createIntent);
+            createIntent = null;
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v(LOGTAG, "surfaceDestroyed Called");
+        if(mMediaPlayer != null){
+            mMediaPlayer.setDisplay(null);
+        }
     }
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        Log.v(LOGTAG, "onVideoSizeChanged Called");
+        Log.v(LOGTAG, "onVideoSizeChanged : "+width+", "+height);
     }
 
     @Override
@@ -545,9 +552,15 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 videoHeight = (int) Math.floor((float) videoHeight * widthRatio);
                 videoWidth = (int) Math.floor((float) videoWidth * widthRatio);
             }
+            noVideo.setVisibility(View.GONE);
             surfaceView.setLayoutParams(new FrameLayout.LayoutParams(videoWidth, videoHeight, Gravity.CENTER));
+            surfaceView.setVisibility(View.VISIBLE);
         } else {
-            surfaceView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+            Log.i(LOGTAG, "invalid video size "+videoWidth+", "+videoHeight);
+            surfaceView.setVisibility(View.GONE);
+            noVideo.setVisibility(View.VISIBLE);
+            //surfaceView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+
         }
     }
 
@@ -720,7 +733,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             Log.e(LOGTAG, "stop()", e);
         }
 
-        exit();
+        // exit();
     }
 
     public interface MediaListener {

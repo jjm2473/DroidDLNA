@@ -59,49 +59,54 @@ public class AVTransportService extends AbstractAVTransportService {
     }
 
     private void play(UnsignedIntegerFourBytes instanceId, URI uri, String metaData) throws AVTransportException {
-        String type = MediaType.UNKNOWN;
-        String name = null;
+        MetaData data = null;
         if(metaData != null) {
             try {
-                MetaData data = MetaData.parse(metaData);
-                if(data.type != null){
-                    type = data.type;
+                data = MetaData.parse(metaData);
+                if(data.artist != null){
+                    data.name += " - "+data.artist;
                 }
-                if(data.name != null){
-                    name = data.name;
+                if(data.album != null){
+                    data.name += " - "+data.album;
                 }
             } catch (SAXException e) {
                 Log.e(TAG, "Parse meta data", e);
             }
         }
+        if(data == null){
+            data = new MetaData();
+        }
+        if(data.type == null){
+            data.type = MediaType.UNKNOWN;
+        }
 
-        if(MediaType.UNKNOWN.equals(type)) {
+        if(MediaType.UNKNOWN.equals(data.type)) {
             switch (uri.getScheme()) {
                 case "http":
                 case "https":
                     try {
-                        type = getTypeOfHttpHead(uri);
+                        data.type = getTypeOfHttpHead(uri);
                     } catch (Exception e) {
                         Log.e(TAG, "HEAD HTTP(s) " + uri.toString(), e);
                     }
-                    if (!MediaType.UNKNOWN.equals(type)) {
+                    if (!MediaType.UNKNOWN.equals(data.type)) {
                         break;
                     }
                 case "file":
-                    type = MediaType.fromUriPath(uri);
+                    data.type = MediaType.fromUriPath(uri);
                     break;
                 default:
-                    type = MediaType.VIDEO;
+                    data.type = MediaType.VIDEO;
                     break;
             }
         }
 
-        if(name == null){
-            name = uri.toString();
+        if(data.name == null){
+            data.name = uri.toString();
         }
 
-        Log.i(TAG, type + " : " + name);
-        getInstance(instanceId).setURI(uri, type, name, metaData);
+        Log.i(TAG, data.type + " : " + data.name);
+        getInstance(instanceId).setURI(uri, data.type, data.name, metaData);
     }
 
     @Override
