@@ -1,14 +1,11 @@
 package com.zxt.dlna.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,25 +38,16 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     private List<String> mDmrList;
     private DevAdapter mDmrDevAdapter;
     private long exitTime = 0;
-    private String localDevieName = "";
+    private String localDevieName = "...";
     private boolean localDevieRunning = false;
+    private BroadcastReceiver listenerReceiver;
 
     private RenderServiceStarter.Callback serviceConnection = new RenderServiceStarter.Callback() {
         public void onServiceConnected(IRenderService service) {
             Log.e(LOGTAG, "Service connected");
             iRenderService = service;
-            try {
-                localDevieRunning = iRenderService.isRunning();
-                localDevieName = iRenderService.getDeviceName();
-                init();
-                RenderService.registerListener(DevicesActivity.this, DevicesActivity.this);
-//                if(SettingActivity.getRenderOn(DevicesActivity.this)){
-//                    iRenderService.start();
-//                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                Toast.makeText(DevicesActivity.this, "Call render service failed!", Toast.LENGTH_LONG).show();
-            }
+            onNameChange();
+            onStateChange();
         }
 
         public void onServiceDisconnected() {
@@ -77,6 +64,8 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
         setContentView(R.layout.devices);
 
+        initView();
+
         starter = new RenderServiceStarter(this, serviceConnection);
         if(SettingActivity.getRenderOn(DevicesActivity.this)){
             starter.start();
@@ -84,15 +73,17 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
             starter.bind();
         }
 
+        listenerReceiver = RenderService.registerListener(DevicesActivity.this, DevicesActivity.this);
+    }
+
+    private void initView() {
         findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 jumpToSettings();
             }
         });
-    }
 
-    private void init() {
         serviceSwitch = (ImageButton) findViewById(R.id.service_switch);
         updateSwitch();
         serviceSwitch.setOnClickListener(new View.OnClickListener(){
@@ -122,6 +113,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     protected void onDestroy() {
+        this.unregisterReceiver(listenerReceiver);
         starter.unbind();
         super.onDestroy();
     }
