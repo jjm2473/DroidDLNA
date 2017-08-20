@@ -346,24 +346,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 mMediaPlayer.pause();
             }
             mProgressLayout.setVisibility(View.VISIBLE);
-            mHandler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(!Player.this.isFinishing() && mMediaPlayer != null) {
-                        Log.i(LOGTAG, "load new uri");
-                        try {
-                            mMediaPlayer.reset();
-                            mMediaPlayer.setDataSource(playURI);
-                            mCanSeek = true;
-                            mMediaPlayer.prepareAsync();
-                        } catch (IOException e) {
-                            Log.e(LOGTAG, "", e);
-                            mVideoTitle.setText("IOException");
-                        }
-                    }
-                }
-            }, 500);
+            mHandler.postDelayed(toNewUri, 500);
         }
         //super.onNewIntent(intent);
     }
@@ -804,6 +787,22 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
         }
     }
+    private Runnable toNewUri = new Runnable() {
+        @Override
+        public void run() {
+            if(!Player.this.isFinishing() && mMediaPlayer != null) {
+                try {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.setDataSource(playURI);
+                    mCanSeek = true;
+                    mMediaPlayer.prepareAsync();
+                } catch (IOException e) {
+                    Log.e(LOGTAG, "", e);
+                    mVideoTitle.setText("IOException");
+                }
+            }
+        }
+    };
 
     private Runnable toExit = new Runnable() {
         @Override
