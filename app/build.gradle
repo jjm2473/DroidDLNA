@@ -19,11 +19,10 @@ android {
 }
 
 dependencies {
-
-    compile files('libs/cdi-api.jar')
-    compile files('libs/http-2.2.1.jar')
-    compile files('libs/httpclient-4.2.2.jar')
-    compile files('libs/httpcore-4.2.3.jar')
+    provided files('libs/cdi-api.jar')
+    provided files('libs/http-2.2.1.jar')
+    provided files('libs/httpclient-4.2.2.jar')
+    provided files('libs/httpcore-4.2.3.jar')
     compile files('libs/javax.annotation_1.0.jar')
     compile files('libs/javax.inject.jar')
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '8.2.0.v20160908'
@@ -40,7 +39,6 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
     compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
     compile files('libs/universal-image-loader-1.8.4-with-sources.jar')
-
     // compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
     // compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.5'
     // compile files('libs/javax.servlet-3.0.0.v201103241009.jar')
