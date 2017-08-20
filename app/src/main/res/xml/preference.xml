@@ -15,7 +15,8 @@
             android:defaultValue="@string/player_name_local"
             android:key="player_name"
             android:summary="@string/player_name_breif"
-            android:title="@string/player_name" />
+            android:title="@string/player_name"
+            android:singleLine="true" />
 
         <Preference
             android:key="net_setting"

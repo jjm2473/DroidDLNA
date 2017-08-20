@@ -55,6 +55,7 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.preference);
         starter = new RenderServiceStarter(this, new RenderServiceStarter.Callback() {
             @Override
             public void onServiceConnected(IRenderService iRenderService) {
@@ -68,7 +69,6 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
         });
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
         addPreferencesFromResource(R.xml.preference);
-        addTitleBar();
     }
 
     @Override

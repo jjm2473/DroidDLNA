@@ -2,19 +2,14 @@ package com.zxt.dlna.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,21 +18,13 @@ import com.zxt.dlna.dmr.IRenderService;
 import com.zxt.dlna.dmr.RenderService;
 import com.zxt.dlna.dmr.RenderServiceStarter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class DevicesActivity extends Activity implements RenderService.DeviceListChangeListener {
-
-    public static final int DMR_GET_NO = 0;
-    public static final int DMR_GET_SUC = 1;
     private final static String LOGTAG = "DevicesActivity";
 
     private IRenderService iRenderService;
     private ImageButton serviceSwitch;
-    private List<String> mDmrList;
-    private DevAdapter mDmrDevAdapter;
-    private long exitTime = 0;
+    private TextView deviceName;
+    private TextView deviceState;
     private String localDevieName = "...";
     private boolean localDevieRunning = false;
     private BroadcastReceiver listenerReceiver;
@@ -84,8 +71,11 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
             }
         });
 
+        deviceName = (TextView) findViewById(R.id.device_name_tv);
+        deviceState = (TextView) findViewById(R.id.device_state_tv);
+
         serviceSwitch = (ImageButton) findViewById(R.id.service_switch);
-        updateSwitch();
+        updateState();
         serviceSwitch.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -102,13 +92,6 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
                 }
             }
         });
-
-        ListView dmrLv = (ListView) findViewById(R.id.renderer_list);
-
-        mDmrList = new ArrayList<>(1);
-        updateList();
-        mDmrDevAdapter = new DevAdapter(DevicesActivity.this, 0, mDmrList);
-        dmrLv.setAdapter(mDmrDevAdapter);
     }
 
     @Override
@@ -120,7 +103,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, R.string.search_lan).setIcon(android.R.drawable.ic_menu_search);
+        menu.add(0, 0, 0, R.string.setting).setIcon(R.drawable.button_setting);
         menu.add(0, 1, 0, R.string.menu_exit).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         return true;
     }
@@ -128,8 +111,10 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 0:
+            case 0: {
+                jumpToSettings();
                 break;
+            }
             case 1: {
                 finish();
                 break;
@@ -138,18 +123,13 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
         return false;
     }
 
-    private void updateSwitch() {
+    private void updateState() {
+        deviceState.setText(localDevieRunning?"Running":"Stopped");
         serviceSwitch.setImageResource(localDevieRunning?android.R.drawable.ic_media_pause:android.R.drawable.ic_media_play);
     }
 
-    private void updateList(){
-        List<String> list = Collections.singletonList(getNs());
-        mDmrList.clear();
-        mDmrList.addAll(list);
-    }
-
-    private String getNs(){
-        return localDevieName + " " + (localDevieRunning?"Running":"Stoped");
+    private void updateName() {
+        deviceName.setText(localDevieName);
     }
 
     private void jumpToSettings(){
@@ -161,8 +141,7 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     public void onNameChange() {
         try {
             localDevieName = iRenderService.getDeviceName();
-            updateList();
-            mDmrDevAdapter.notifyDataSetChanged();
+            updateName();
         } catch (RemoteException e) {
             e.printStackTrace();
             Toast.makeText(this, "Update list failed:Remote Exception!", Toast.LENGTH_LONG).show();
@@ -173,58 +152,10 @@ public class DevicesActivity extends Activity implements RenderService.DeviceLis
     public void onStateChange() {
         try {
             localDevieRunning = iRenderService.isRunning();
-            updateSwitch();
-            updateList();
-            mDmrDevAdapter.notifyDataSetChanged();
+            updateState();
         } catch (RemoteException e) {
             e.printStackTrace();
             Toast.makeText(this, "Update list failed:Remote Exception!", Toast.LENGTH_LONG).show();
         }
-    }
-
-    class DevAdapter extends ArrayAdapter<String> {
-
-        private LayoutInflater mInflater;
-        private List<String> deviceItems;
-
-        public DevAdapter(Context context, int textViewResourceId, List<String> objects) {
-            super(context, textViewResourceId, objects);
-            this.mInflater = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE));
-            this.deviceItems = objects;
-        }
-
-        public int getCount() {
-            return this.deviceItems.size();
-        }
-
-        public String getItem(int paramInt) {
-            return this.deviceItems.get(paramInt);
-        }
-
-        public long getItemId(int paramInt) {
-            return paramInt;
-        }
-
-        public View getView(int position, View view, ViewGroup viewGroup) {
-
-            DevHolder holder;
-            if (view == null) {
-                view = this.mInflater.inflate(R.layout.dmr_item, null);
-                holder = new DevHolder();
-                holder.filename = ((TextView) view.findViewById(R.id.dmr_name_tv));
-                view.setTag(holder);
-            } else {
-                holder = (DevHolder) view.getTag();
-            }
-
-            String item = this.deviceItems.get(position);
-            holder.filename.setText(item);
-            return view;
-        }
-
-        public final class DevHolder {
-            public TextView filename;
-        }
-
     }
 }
