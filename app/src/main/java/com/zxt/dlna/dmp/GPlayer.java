@@ -61,25 +61,40 @@ public class GPlayer extends Player {
         });
         super.onCreate(savedInstanceState);
 
-        registerBrocast();
+        playReceiveBroadcast = null;
+    }
+
+    @Override
+    protected void onPlayerReady() {
+        super.onPlayerReady();
+        if(playReceiveBroadcast == null){
+            playReceiveBroadcast = registerBroadcast();
+        }
+    }
+
+    @Override
+    protected void onPlayerUnReady() {
+        super.onPlayerUnReady();
+        if(playReceiveBroadcast != null){
+            this.unregisterReceiver(playReceiveBroadcast);
+            playReceiveBroadcast = null;
+        }
     }
 
     @Override
     protected void onDestroy() {
+        onPlayerUnReady();
         super.onDestroy();
-        unregisterBrocast();
     }
 
-    private PlayBrocastReceiver playRecevieBrocast = new PlayBrocastReceiver();
+    private PlayBroadcastReceiver playReceiveBroadcast = null;
 
-    public void registerBrocast() {
+    public PlayBroadcastReceiver registerBroadcast() {
+        PlayBroadcastReceiver playReceiveBroadcast = new PlayBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Action.DMR);
-        registerReceiver(this.playRecevieBrocast, intentFilter);
-    }
-
-    public void unregisterBrocast() {
-        unregisterReceiver(this.playRecevieBrocast);
+        this.registerReceiver(playReceiveBroadcast, intentFilter);
+        return playReceiveBroadcast;
     }
 
     private void sendStatusBroadcast(Status status, int value){

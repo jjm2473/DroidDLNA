@@ -5,6 +5,10 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -13,6 +17,7 @@ import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +36,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -45,10 +49,11 @@ import com.zxt.dlna.util.Action;
 import com.zxt.dlna.util.Utils;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class Player extends Activity implements OnCompletionListener, OnErrorListener,
         OnInfoListener, OnPreparedListener, OnSeekCompleteListener, OnVideoSizeChangedListener,
-        SurfaceHolder.Callback, MediaController.MediaPlayerControl, OnClickListener {
+        SurfaceHolder.Callback, OnClickListener {
     public final static String LOGTAG = "GPlayer";
     private static final int MEDIA_PLAYER_BUFFERING_UPDATE = 4001;
     private static final int MEDIA_PLAYER_COMPLETION = 4002;
@@ -62,10 +67,13 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     private MediaListener mMediaListener = null;
     View surfaceParent;
-    ImageView noVideo;
+    View musicLayout;
+    TextView musicTitle;
+    ImageView musicPicture;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     MediaPlayer mMediaPlayer;
+    private boolean playerReady = false;
     private Intent createIntent;
     //MediaController mediaController;
     boolean readyToPlay = false;
@@ -195,18 +203,18 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             surfaceParent.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                 @Override
                 public void onSystemUiVisibilityChange(int visibility) {
-                    if(mMediaPlayer.isPlaying()){
+                    if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
                         resize();
                     }
                 }
             });
         }
-        noVideo = (ImageView) findViewById(R.id.novideo);
-        surfaceView = (SurfaceView) findViewById(R.id.gplayer_surfaceview);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(this);
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
+        musicLayout = findViewById(R.id.music_layout);
+        musicTitle = (TextView) findViewById(R.id.music_title);
+        musicPicture = (ImageView) findViewById(R.id.music_picture);
+
+        playerReady = false;
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
@@ -214,6 +222,11 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnSeekCompleteListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
+
+        surfaceView = (SurfaceView) findViewById(R.id.gplayer_surfaceview);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
+        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         initControl();
     }
@@ -318,15 +331,18 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 type = MediaType.fromMime(intent.getType());
             }
             String name = intent.getStringExtra("name");
+            String pictureUri = intent.getStringExtra("pictureUri");
 
             switch (type) {
                 case MediaType.AUDIO:
-                    noVideo.setVisibility(View.VISIBLE);
+                    musicLayout.setVisibility(View.VISIBLE);
                     surfaceView.setVisibility(View.GONE);
+                    musicTitle.setText(name);
+                    setPictureUri(pictureUri);
                     //mMediaPlayer.setDisplay(null);
                     break;
                 case MediaType.VIDEO:
-                    noVideo.setVisibility(View.GONE);
+                    musicLayout.setVisibility(View.GONE);
                     surfaceView.setVisibility(View.VISIBLE);
                     //mMediaPlayer.setDisplay(surfaceHolder);
                     break;
@@ -343,12 +359,38 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
             mHandler.removeCallbacks(toExit);
 
             if(mMediaPlayer.isPlaying()){
-                mMediaPlayer.pause();
+                mMediaPlayer.stop();
+                if(mMediaListener != null){
+                    mMediaListener.stop();
+                    mMediaListener.endOfMedia();
+                }
             }
+            mMediaPlayer.reset();
             mProgressLayout.setVisibility(View.VISIBLE);
-            mHandler.postDelayed(toNewUri, 500);
+            if(playerReady){
+                toNewUri.run();
+            } else {
+                mHandler.postDelayed(toNewUri, 200);
+            }
         }
         //super.onNewIntent(intent);
+    }
+
+    private void setPictureUri(String pictureUri) {
+        if(pictureUri == null){
+            musicPicture.setImageResource(R.drawable.icon_audio);
+        }else{
+            Uri uri = Uri.parse(pictureUri);
+            if("file".equals(uri.getScheme())) {
+                musicPicture.setImageURI(uri);
+            } else {
+                fetchRemoteMusicPicture(uri);
+            }
+        }
+    }
+
+    private void fetchRemoteMusicPicture(Uri uri) {
+        new Thread(new PictureFetch(uri, mHandler, loadMusicPicture)).start();
     }
 
     @Override
@@ -495,24 +537,33 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.v(LOGTAG, "surfaceChanged Called");
+        //Log.v(LOGTAG, "surfaceChanged Called");
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v(LOGTAG, "surfaceCreated Called");
+
         mMediaPlayer.setDisplay(holder);
-        if(createIntent != null){
-            onNewIntent(createIntent);
-            createIntent = null;
-        }
+
+        onPlayerReady();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v(LOGTAG, "surfaceDestroyed Called");
-        if(mMediaPlayer != null){
-            mMediaPlayer.setDisplay(null);
+        mMediaPlayer.setDisplay(null);
+    }
+
+    protected void onPlayerUnReady() {
+
+    }
+
+    protected void onPlayerReady() {
+        playerReady = true;
+        if(createIntent != null){
+            onNewIntent(createIntent);
+            createIntent = null;
         }
     }
 
@@ -545,13 +596,13 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
                 videoHeight = (int) Math.floor((float) videoHeight * widthRatio);
                 videoWidth = (int) Math.floor((float) videoWidth * widthRatio);
             }
-            noVideo.setVisibility(View.GONE);
+            musicLayout.setVisibility(View.GONE);
             surfaceView.setLayoutParams(new FrameLayout.LayoutParams(videoWidth, videoHeight, Gravity.CENTER));
             surfaceView.setVisibility(View.VISIBLE);
         } else {
-            Log.i(LOGTAG, "invalid video size "+videoWidth+", "+videoHeight);
+            //Log.i(LOGTAG, "invalid video size "+videoWidth+", "+videoHeight);
             surfaceView.setVisibility(View.GONE);
-            noVideo.setVisibility(View.VISIBLE);
+            musicLayout.setVisibility(View.VISIBLE);
             //surfaceView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
 
         }
@@ -633,41 +684,6 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         return false;
     }
 
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
-    }
-
-    @Override
-    public int getDuration() {
-        return mMediaPlayer.getDuration();
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
-    }
-
     public void setUri(String uri) {
         try {
             mMediaPlayer.reset();
@@ -682,7 +698,6 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
     }
 
-    @Override
     public void pause() {
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
@@ -692,7 +707,6 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
     }
 
-    @Override
     public void seekTo(int pos) {
         if(mCanSeek) {
             mMediaPlayer.seekTo(pos);
@@ -702,7 +716,6 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         }
     }
 
-    @Override
     public void start() {
 
         try {
@@ -747,7 +760,7 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
         void durationChanged(int duration);
     }
 
-    class PlayBrocastReceiver extends BroadcastReceiver {
+    class PlayBroadcastReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             String str1 = intent.getStringExtra("helpAction");
@@ -787,15 +800,60 @@ public class Player extends Activity implements OnCompletionListener, OnErrorLis
 
         }
     }
+
+
+
+    private static interface PictureFetchCallback extends Runnable {
+        void setDrawable(Drawable drawable);
+    }
+
+    private PictureFetchCallback loadMusicPicture = new PictureFetchCallback() {
+        Drawable drawable;
+
+        @Override
+        public void setDrawable(Drawable drawable) {
+            this.drawable = drawable;
+        }
+
+        @Override
+        public void run() {
+            if(drawable != null && !Player.this.isFinishing() && mMediaPlayer != null){
+                musicPicture.setImageDrawable(drawable);
+            }
+        }
+    };
+
+    private static class PictureFetch implements Runnable {
+        Uri uri;
+        Handler handler;
+        PictureFetchCallback cb;
+
+        public PictureFetch(Uri uri, Handler handler, PictureFetchCallback cb) {
+            this.uri = uri;
+            this.handler = handler;
+            this.cb = cb;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(new URL(uri.toString()).openStream());
+                cb.setDrawable(new BitmapDrawable(bitmap));
+                handler.post(cb);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private Runnable toNewUri = new Runnable() {
         @Override
         public void run() {
             if(!Player.this.isFinishing() && mMediaPlayer != null) {
                 try {
-                    mMediaPlayer.reset();
                     mMediaPlayer.setDataSource(playURI);
                     mCanSeek = true;
-                    mMediaPlayer.prepareAsync();
+                    mMediaPlayer.prepare();
                 } catch (IOException e) {
                     Log.e(LOGTAG, "", e);
                     mVideoTitle.setText("IOException");

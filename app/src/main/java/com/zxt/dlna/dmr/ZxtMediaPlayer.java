@@ -129,6 +129,9 @@ public class ZxtMediaPlayer {
         intent.putExtra("type", data.type);
         intent.putExtra("name", data.name);
         intent.putExtra("playURI", uri.toString());
+        if(data.picture != null){
+            intent.putExtra("picture", data.picture);
+        }
         mContext.startService(intent);
     }
 

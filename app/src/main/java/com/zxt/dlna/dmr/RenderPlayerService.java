@@ -35,9 +35,9 @@ public class RenderPlayerService extends Service {
             Intent intent2;
 
             if (type.equals(MediaType.AUDIO)) {
-                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"));
+                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"), intent.getStringExtra("picture"));
             } else if (type.equals(MediaType.VIDEO)) {
-                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"));
+                startAvPlayer(intent.getStringExtra("name"), type, intent.getStringExtra("playURI"), null);
             } else if (type.equals(MediaType.IMAGE)) {
                 intent2 = new Intent(this, ImageDisplay.class);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -53,10 +53,13 @@ public class RenderPlayerService extends Service {
         }
     }
 
-    private void startAvPlayer(String name, String type, String uri) {
+    private void startAvPlayer(String name, String type, String uri, String pictureUri) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri), this, GPlayer.class);
         intent.putExtra("name", name);
         intent.putExtra("type", type);
+        if(pictureUri != null){
+            intent.putExtra("pictureUri", pictureUri);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
